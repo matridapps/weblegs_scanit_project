@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "weblegs-scanit-babec",
+    "staging": "scan-it-8268d"
+  },
+  "targets": {},
+  "etags": {}
+}
