@@ -978,8 +978,6 @@ class _PreOrderScreenWebState extends State<PreOrderScreenWeb> {
             : preOrdersList.length;
   }
 
-  bool
-
   /// API METHODS -
 
   /// THIS API IS FOR FETCHING SKU SEARCH SUGGESTIONS

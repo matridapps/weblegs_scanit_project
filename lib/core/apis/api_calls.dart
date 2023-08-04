@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
+import 'package:absolute_app/models/shop_replinsh_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:absolute_app/core/utils/app_export.dart';
@@ -310,4 +311,19 @@ class ApiCalls {
       return '';
     }
   }
+
+
+  static Future<List<ShopReplenishSku>> returnShopReplenishList() async {
+
+    Uri uri = Uri.parse('https://weblegs.info/JadlamApp/api/GetShopReplenishSKU');
+
+
+    final response = await http.get(uri);
+
+
+    return shopReplenishModelFromJson(response.body).sku;
+
+  }
+
+
 }

@@ -1,5 +1,11 @@
+
+import 'package:absolute_app/core/blocs/shop_repienish_bloc/shop_repienish_bloc.dart';
 import 'package:absolute_app/core/utils/app_export.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'screens/web_screens/new_screens_by_vishal/shop_screen/widgets/no_transition_builder_for_web.dart';
 
 const keyApplicationId = 'uc9gqlNy0ykz3ws8X1Kcf69k8kgIDLYYkZOv0RMa';
 const keyClientKey = 'kOE90HhFp0VKOKspT8eRlZaPzobHnK7xkp8rJYSh';
@@ -38,6 +44,19 @@ void main() async {
   // checkCameraPermission();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) async {
+    const double minWidth = 600;
+
+// // Function to handle the resize event
+//     void handleResize(js.JsObject event ) {
+//       double windowWidth = js.context['innerWidth'].toDouble();
+//       if (windowWidth < minWidth) {
+//         js.context['resizeTo'](minWidth, js.context['innerHeight']);
+//       }
+//     }
+//
+//
+//     // Add an event listener for the resize event
+//     js.context.callMethod('addEventListener', ['resize', handleResize]);
     runApp(const MyApp());
   });
 }
@@ -47,18 +66,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => BusinessLogic(),
-        ),
+        BlocProvider(
+          create: (context) => ShopRepienishBloc(),
+        )
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: 'RobotoSerif',
-        ),
-        home: const SplashScreen(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => BusinessLogic(),
+          ),
+        ],
+        child
+
+            : MaterialApp(
+
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  pageTransitionsTheme: NoTransitionsOnWeb(),
+                ),
+                home: const SplashScreen(),
+              ),
       ),
     );
   }

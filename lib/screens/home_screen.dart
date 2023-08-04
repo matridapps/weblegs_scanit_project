@@ -11,6 +11,7 @@ import 'package:absolute_app/screens/mobile_device_screens/settings_screen.dart'
 import 'package:absolute_app/screens/web_screens/ean_for_web.dart';
 import 'package:absolute_app/screens/login_screen.dart';
 import 'package:absolute_app/screens/pick_list.dart';
+import 'package:absolute_app/screens/web_screens/new_screens_by_vishal/shop_screen/shop_screen.dart';
 import 'package:absolute_app/screens/web_screens/pack_and_scan_web_new.dart';
 import 'package:absolute_app/screens/web_screens/pre_order_screen_web.dart';
 import 'package:absolute_app/screens/web_screens/print_node_settings_web.dart';
@@ -52,7 +53,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<bool> isTapped = [false, false, false, false, false, false, false];
+  List<bool> isTapped = [false, false, false, false, false, false, false,false];
   List<ParseObject> printNodeData = [];
 
   bool isFirstTimeScanCamera = true;
@@ -532,6 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         false,
                         false,
                         false,
+                        false,
                         false
                       ];
                     });
@@ -608,6 +610,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             false,
                             false,
                             false,
+                            false,
                             false
                           ];
                         });
@@ -674,6 +677,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             false,
                             false,
                             true,
+                            false,
                             false,
                             false,
                             false,
@@ -753,6 +757,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             false,
                             false,
                             true,
+                            false,
                             false,
                             false,
                             false
@@ -838,6 +843,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             false,
                             true,
                             false,
+                            false,
                             false
                           ];
                         });
@@ -905,6 +911,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               false,
                               false,
                               true,
+                              false,
                               false
                             ];
                           });
@@ -981,7 +988,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               false,
                               false,
                               false,
-                              true
+                              true,
+                              false
                             ];
                           });
                           await Future.delayed(const Duration(milliseconds: 400),
@@ -1035,11 +1043,71 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 100),
-                      child: SizedBox(
-                        height: 300,
-                        width: 300,
+                     Padding(
+                      padding: const EdgeInsets.only(left: 100),
+                      child: GestureDetector(
+                        onTap: () async {
+                          setState(() {
+                            isTapped = [
+                              false,
+                              false,
+                              false,
+                              false,
+                              false,
+                              false,
+                              false,
+                              true
+                            ];
+                          });
+                          // await Future.delayed(const Duration(milliseconds: 400),
+                          //         () async {
+                          //       await NavigationMethods.push(
+                          //         context,
+                          //         const PreOrderScreenWeb(),
+                          //       );
+                          //     });
+                        },
+                        child: Card(
+                          elevation: isTapped[7] ? 20 : 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Container(
+                            height: 300,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: isTapped[7] == true
+                                  ? linearGradient1
+                                  : linearGradient2,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  width: 200,
+                                  child: Image.asset(
+                                    'assets/home_screen_assets/single_color/store.png',
+                                    color: isTapped[7] == true
+                                        ? Colors.white
+                                        : appColor,
+                                  ),
+                                ),
+                                Text(
+                                  'Shops',
+                                  style: TextStyle(
+                                    color: isTapped[7] == true
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 20,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -1051,7 +1119,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
+/*My Work: Vishal*/
   Widget _screenSmallerThan24InchBuilder(BuildContext context, Size size) {
     return SingleChildScrollView(
       child: SizedBox(
@@ -1076,7 +1144,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         false,
                         false,
                         false,
-                        false
+                        false,
+                        false,
+
                       ];
                     });
                     await Future.delayed(const Duration(milliseconds: 400),
@@ -1150,7 +1220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           false,
                           false,
-                          false
+                          false,
+                          false,
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
@@ -1213,6 +1284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           false,
                           true,
+                          false,
                           false,
                           false,
                           false,
@@ -1289,6 +1361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           false,
                           true,
+                          false,
                           false,
                           false,
                           false
@@ -1371,6 +1444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           true,
                           false,
+                          false,
                           false
                         ];
                       });
@@ -1436,7 +1510,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           false,
                           true,
-                          false
+                          false,
+                          false,
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
@@ -1509,7 +1584,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                           false,
                           false,
-                          true
+                          true,
+                          false
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
@@ -1562,9 +1638,70 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: size.width * .15,
-                    width: size.width * .15,
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          true
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              const ShopScreen(),
+
+                            );
+                          });
+                    },
+                    child: Card(
+                      elevation: isTapped[7] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        height: size.width * .15,
+                        width: size.width * .15,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[7] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .1,
+                              width: size.width * .1,
+                              child: Image.asset(
+                                'assets/home_screen_assets/single_color/store.png',
+                                color: isTapped[7] == true
+                                    ? Colors.white
+                                    : appColor,
+                              ),
+                            ),
+                            Text(
+                              'Shops',
+                              style: TextStyle(
+                                color: isTapped[7] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1591,7 +1728,7 @@ class _HomeScreenState extends State<HomeScreen> {
               GestureDetector(
                 onTap: () async {
                   setState(() {
-                    isTapped = [true, false, false, false, false, false];
+                    isTapped = [true, false, false, false, false, false,false,];
                   });
                   await Future.delayed(const Duration(milliseconds: 400),
                       () async {
@@ -1655,7 +1792,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, true, false, false, false, false];
+                      isTapped = [false, true, false, false, false, false,false];
                     });
                     await Future.delayed(const Duration(milliseconds: 400), () {
                       NavigationMethods.push(
@@ -1727,7 +1864,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, false, true, false, false, false];
+                      isTapped = [false, false, true, false, false, false,false];
                     });
                     await Future.delayed(const Duration(milliseconds: 400), () {
                       NavigationMethods.push(
@@ -1790,7 +1927,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, false, false, true, false, false];
+                      isTapped = [false, false, false, true, false, false,false];
                     });
                     await Future.delayed(const Duration(milliseconds: 400), () {
                       NavigationMethods.push(
@@ -1861,7 +1998,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, false, false, false, true, false];
+                      isTapped = [false, false, false, false, true, false,false];
                     });
                     await Future.delayed(const Duration(milliseconds: 400), () {
                       NavigationMethods.push(
@@ -1923,7 +2060,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, false, false, false, false, true];
+                      isTapped = [false, false, false, false, false, true,false,];
                     });
                     await Future.delayed(const Duration(milliseconds: 400), () {
                       NavigationMethods.push(
@@ -1974,9 +2111,75 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+
               ],
             ),
-          )
+          ),
+          GestureDetector(
+            onTap: () async {
+              setState(() {
+                isTapped = [
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+                  false,
+
+                  true
+                ];
+              });
+              await Future.delayed(const Duration(milliseconds: 400),
+                      () async {
+                    await NavigationMethods.push(
+                      context,
+                      const ShopScreen(),
+
+                    );
+                  });
+            },
+            child: Card(
+              elevation: isTapped[6] ? 20 : 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                height: size.width * .4,
+                width: size.width * .4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: isTapped[6] == true
+                      ? linearGradient1
+                      : linearGradient2,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: size.width * .25,
+                      width: size.width * .25,
+                      child: Image.asset(
+                        'assets/home_screen_assets/single_color/store.png',
+                        color: isTapped[6] == true
+                            ? Colors.white
+                            : appColor,
+                      ),
+                    ),
+                    Text(
+                      'Shops',
+                      style: TextStyle(
+                        color: isTapped[6] == true
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 16,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

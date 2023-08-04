@@ -61,6 +61,10 @@ dependencies:
   animated_custom_dropdown: ^1.5.0
   easy_search_bar: ^2.5.0
   flutter_web_pagination: ^0.0.3
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+  auto_size_text: ^3.0.0
+  modal_side_sheet: ^0.0.1
 
 dev_dependencies:
   flutter_test:
@@ -95,10 +99,10 @@ flutter:
     - assets/new_order_screen/orderpage-print.png
     - assets/ean_for_web/barcode.png
     - assets/add_new_rule_assets/dd_icon.png
-  # NOW ADD ONLY LINK TO DIRECTORIES
     - assets/label_icons/
     - assets/home_screen_assets/multi_color/
     - assets/home_screen_assets/single_color/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
