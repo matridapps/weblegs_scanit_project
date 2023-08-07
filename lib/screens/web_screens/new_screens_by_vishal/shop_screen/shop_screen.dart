@@ -316,7 +316,7 @@ class ShopReplenishForMobile extends StatelessWidget {
   /// LIST GENERATOR FOR PRE-ORDERS
   List<Widget> _preOrdersListMaker(Size size) {
     return List.generate(
-      data.length,
+      10/*data.length*/,
       (index) => GestureDetector(
         // onTap: () {
         //   setState(() {

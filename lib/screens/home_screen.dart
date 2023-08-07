@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String scanBarcodeResult = '';
   String controllerText = '';
   String apiKey = '';
-  String webAppLastUpdatedLocal = 'Last Updated at 07 August, 2023 07:58 AM';
+  String webAppLastUpdatedLocal = 'Last Updated at 07 August, 2023 11:40 AM';
   String webAppLastUpdated = '';
 
   LinearGradient linearGradient1 = const LinearGradient(
