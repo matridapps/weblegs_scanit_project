@@ -40,7 +40,7 @@ class PicklistDCSplittingScreenWeb extends StatefulWidget {
 class _PicklistDCSplittingScreenWebState
     extends State<PicklistDCSplittingScreenWeb> {
   final RoundedLoadingButtonController allocateController =
-      RoundedLoadingButtonController();
+  RoundedLoadingButtonController();
 
   List<SkuXX> details = [];
   List<String> dcList = [];
@@ -89,149 +89,149 @@ class _PicklistDCSplittingScreenWebState
         ),
         body: isScreenVisible == false
             ? const Center(
-                child: CircularProgressIndicator(
-                  color: appColor,
-                ),
-              )
+          child: CircularProgressIndicator(
+            color: appColor,
+          ),
+        )
             : Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: size.height * .01,
-                  horizontal: size.width * .035,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+          padding: EdgeInsets.symmetric(
+            vertical: size.height * .01,
+            horizontal: size.width * .035,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Total Orders Count -',
-                              style: TextStyle(
-                                fontSize: 22,
-                              ),
-                            ),
-                            Text(
-                              widget.totalOrders,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
+                      const Text(
+                        'Total Orders Count -',
+                        style: TextStyle(
+                          fontSize: 22,
                         ),
                       ),
-                      Visibility(
-                        visible: dcList.length > 1 &&
-                            checkBoxValueList.any((e) => e == true),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              RoundedLoadingButton(
-                                color: Colors.green,
-                                borderRadius: 10,
-                                elevation: 10,
-                                height: 40,
-                                width: 300,
-                                successIcon: Icons.check_rounded,
-                                failedIcon: Icons.close_rounded,
-                                successColor: Colors.green,
-                                errorColor: appColor,
-                                controller: allocateController,
-                                onPressed: () async =>
-                                    splitAndAllocatePicklist(),
-                                child: const Text(
-                                  'Split & Allocate Picklist',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      Text(
+                        widget.totalOrders,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Table(
-                            border: TableBorder.all(
-                              color: Colors.black,
-                              width: 1,
-                            ),
-                            columnWidths: <int, TableColumnWidth>{
-                              0: FixedColumnWidth(size.width * .25),
-                              1: FixedColumnWidth(size.width * .25),
-                              2: FixedColumnWidth(size.width * .25),
-                            },
-                            children: [
-                              TableRow(
-                                children: <TableCell>[
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Split Distribution Center',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Distribution Center',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Quantity',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              ..._listOfTableRowForAllocationScreen(),
-                            ],
-                          )
-                        ],
-                      ),
+                      )
                     ],
                   ),
                 ),
-              ),
+                Visibility(
+                  visible: dcList.length > 1 &&
+                      checkBoxValueList.any((e) => e == true),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        RoundedLoadingButton(
+                          color: Colors.green,
+                          borderRadius: 10,
+                          elevation: 10,
+                          height: 40,
+                          width: 300,
+                          successIcon: Icons.check_rounded,
+                          failedIcon: Icons.close_rounded,
+                          successColor: Colors.green,
+                          errorColor: appColor,
+                          controller: allocateController,
+                          onPressed: () async =>
+                              splitAndAllocatePicklist(),
+                          child: const Text(
+                            'Split & Allocate Picklist',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Table(
+                      border: TableBorder.all(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                      columnWidths: <int, TableColumnWidth>{
+                        0: FixedColumnWidth(size.width * .25),
+                        1: FixedColumnWidth(size.width * .25),
+                        2: FixedColumnWidth(size.width * .25),
+                      },
+                      children: [
+                        TableRow(
+                          children: <TableCell>[
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Split Distribution Center',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Distribution Center',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Quantity',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        ..._listOfTableRowForAllocationScreen(),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -239,58 +239,58 @@ class _PicklistDCSplittingScreenWebState
   List<TableRow> _listOfTableRowForAllocationScreen() {
     return List.generate(
         dcList.length,
-        (index) => TableRow(
-              children: <TableCell>[
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: dcList.length == 1
-                          ? const SizedBox()
-                          : dcList[index] == 'Distribution Center Not Available'
-                              ? const SizedBox()
-                              : Checkbox(
-                                  activeColor: appColor,
-                                  value: checkBoxValueList[index],
-                                  onChanged: (bool? newValue) {
-                                    setState(() {
-                                      checkBoxValueList[index] =
-                                          !(checkBoxValueList[index]);
-                                    });
-                                    log('V checkBoxValueList At $index >>---> ${checkBoxValueList[index]}');
-                                  },
-                                ),
+            (index) => TableRow(
+          children: <TableCell>[
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: dcList.length == 1
+                      ? const SizedBox()
+                      : dcList[index] == 'Distribution Center Not Available'
+                      ? const SizedBox()
+                      : Checkbox(
+                    activeColor: appColor,
+                    value: checkBoxValueList[index],
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        checkBoxValueList[index] =
+                        !(checkBoxValueList[index]);
+                      });
+                      log('V checkBoxValueList At $index >>---> ${checkBoxValueList[index]}');
+                    },
+                  ),
+                ),
+              ),
+            ),
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    dcList[index],
+                    style: const TextStyle(
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Text(
-                        dcList[index],
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
+              ),
+            ),
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    '${quantityMap[dcList[index]]}',
+                    style: const TextStyle(
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Text(
-                        '${quantityMap[dcList[index]]}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ));
+              ),
+            ),
+          ],
+        ));
   }
 
   void splitAndAllocatePicklist() async {
@@ -300,7 +300,7 @@ class _PicklistDCSplittingScreenWebState
             checkBoxValueList.length - 1) {
           ToastUtils.motionToastCentered(
             message:
-                'All Distribution Centers cannot Split. Please un-tick at least one distribution center.',
+            'All Distribution Centers cannot Split. Please un-tick at least one distribution center.',
             context: context,
           );
           allocateController.reset();
@@ -337,7 +337,7 @@ class _PicklistDCSplittingScreenWebState
         if (checkBoxValueList.every((e) => e == true)) {
           ToastUtils.motionToastCentered(
             message:
-                'All Distribution Centers cannot Split. Please un-tick at least one distribution center.',
+            'All Distribution Centers cannot Split. Please un-tick at least one distribution center.',
             context: context,
           );
           allocateController.reset();
@@ -466,7 +466,7 @@ class _PicklistDCSplittingScreenWebState
         log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
 
         GetPicklistDetailsResponse getPicklistDetailsResponse =
-            GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
+        GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
         log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
@@ -496,7 +496,7 @@ class _PicklistDCSplittingScreenWebState
         quantityMap = {};
         for (var x in tempDcList) {
           quantityMap[x] =
-              !quantityMap.containsKey(x) ? (1) : (quantityMap[x]! + 1);
+          !quantityMap.containsKey(x) ? (1) : (quantityMap[x]! + 1);
         }
         log('V quantityMap >>---> $quantityMap');
 

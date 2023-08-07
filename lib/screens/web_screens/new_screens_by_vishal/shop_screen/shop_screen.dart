@@ -152,8 +152,8 @@ class _ShopScreenState extends State<ShopScreen> {
                                   );
                           },
                         ),
-                        sheetBody: SizedBox(
-                          height: MediaQuery.of(context).size.height,
+                        sheetBody: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
                           child: Column(
                             children: [
                               SizedBox(
@@ -316,7 +316,7 @@ class ShopReplenishForMobile extends StatelessWidget {
   /// LIST GENERATOR FOR PRE-ORDERS
   List<Widget> _preOrdersListMaker(Size size) {
     return List.generate(
-      10/*data.length*/,
+      data.length,
       (index) => GestureDetector(
         // onTap: () {
         //   setState(() {

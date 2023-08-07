@@ -114,8 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop: kIsWeb == true
           ? () async {
-              return true;
-            }
+        return true;
+      }
           : showExitPopupMobile,
       child: Scaffold(
         key: scaffoldKey,
@@ -131,30 +131,30 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: isLoading == true
             ? SizedBox(
-                height: size.height,
-                width: size.width,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: appColor,
-                  ),
-                ),
-              )
+          height: size.height,
+          width: size.width,
+          child: const Center(
+            child: CircularProgressIndicator(
+              color: appColor,
+            ),
+          ),
+        )
             : isError == true
-                ? SizedBox(
-                    height: size.height,
-                    width: size.width,
-                    child: Center(
-                      child: Text(
-                        error,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  )
-                : kIsWeb == true
-                    ? ResponsiveCheck.screenBiggerThan24inch(context) == true
-                        ? _screenBiggerThan24InchBuilder(context, size)
-                        : _screenSmallerThan24InchBuilder(context, size)
-                    : _mobileScreenBuilder(context, size),
+            ? SizedBox(
+          height: size.height,
+          width: size.width,
+          child: Center(
+            child: Text(
+              error,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        )
+            : kIsWeb == true
+            ? ResponsiveCheck.screenBiggerThan24inch(context) == true
+            ? _screenBiggerThan24InchBuilder(context, size)
+            : _screenSmallerThan24InchBuilder(context, size)
+            : _mobileScreenBuilder(context, size),
       ),
     );
   }
@@ -301,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconColor: appColor,
                       collapsedIconColor: Colors.black,
                       leading:
-                          const Icon(Icons.published_with_changes_outlined),
+                      const Icon(Icons.published_with_changes_outlined),
                       trailing: const Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
@@ -364,20 +364,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             trailing: isLoggingOut == true
                                 ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child: CircularProgressIndicator(
-                                      color: appColor,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                color: appColor,
+                                strokeWidth: 2,
+                              ),
+                            )
                                 : const MouseRegion(
-                                    cursor: SystemMouseCursors.click,
-                                    child: Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 15,
-                                    ),
-                                  ),
+                              cursor: SystemMouseCursors.click,
+                              child: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 15,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -535,16 +535,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             trailing: isLoggingOut == true
                                 ? SizedBox(
-                                    height: size.width * .055,
-                                    width: size.width * .055,
-                                    child: const CircularProgressIndicator(
-                                      color: appColor,
-                                    ),
-                                  )
+                              height: size.width * .055,
+                              width: size.width * .055,
+                              child: const CircularProgressIndicator(
+                                color: appColor,
+                              ),
+                            )
                                 : Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: size.width * .05,
-                                  ),
+                              Icons.arrow_forward_ios_rounded,
+                              size: size.width * .05,
+                            ),
                           ),
                         ),
                       ],
@@ -586,22 +586,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ];
                     });
                     await Future.delayed(const Duration(milliseconds: 400),
-                        () async {
-                      await NavigationMethods.push(
-                        context,
-                        EANForWebApp(
-                          screenType: 'product',
-                          accType: widget.accType,
-                          authorization: widget.authorization,
-                          refreshToken: widget.refreshToken,
-                          profileId: widget.profileId,
-                          distCenterId: widget.distCenterId,
-                          distCenterName: widget.distCenterName,
-                          crossVisible: crossVisible,
-                          barcodeToCheck: 0,
-                        ),
-                      );
-                    });
+                            () async {
+                          await NavigationMethods.push(
+                            context,
+                            EANForWebApp(
+                              screenType: 'product',
+                              accType: widget.accType,
+                              authorization: widget.authorization,
+                              refreshToken: widget.refreshToken,
+                              profileId: widget.profileId,
+                              distCenterId: widget.distCenterId,
+                              distCenterName: widget.distCenterName,
+                              crossVisible: crossVisible,
+                              barcodeToCheck: 0,
+                            ),
+                          );
+                        });
                   },
                   child: Card(
                     elevation: isTapped[0] ? 20 : 5,
@@ -663,12 +663,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ];
                         });
                         await Future.delayed(const Duration(milliseconds: 400),
-                            () async {
-                          await NavigationMethods.push(
-                            context,
-                            PackAndScanWebNew(apiKey: apiKey),
-                          );
-                        });
+                                () async {
+                              await NavigationMethods.push(
+                                context,
+                                PackAndScanWebNew(apiKey: apiKey),
+                              );
+                            });
                       },
                       child: Card(
                         elevation: isTapped[1] ? 20 : 5,
@@ -733,22 +733,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ];
                         });
                         await Future.delayed(const Duration(milliseconds: 400),
-                            () async {
-                          await NavigationMethods.push(
-                            context,
-                            EANForWebApp(
-                              screenType: 'jit order',
-                              accType: widget.accType,
-                              authorization: widget.authorization,
-                              refreshToken: widget.refreshToken,
-                              profileId: widget.profileId,
-                              distCenterId: widget.distCenterId,
-                              distCenterName: widget.distCenterName,
-                              crossVisible: crossVisible,
-                              barcodeToCheck: 0,
-                            ),
-                          );
-                        });
+                                () async {
+                              await NavigationMethods.push(
+                                context,
+                                EANForWebApp(
+                                  screenType: 'jit order',
+                                  accType: widget.accType,
+                                  authorization: widget.authorization,
+                                  refreshToken: widget.refreshToken,
+                                  profileId: widget.profileId,
+                                  distCenterId: widget.distCenterId,
+                                  distCenterName: widget.distCenterName,
+                                  crossVisible: crossVisible,
+                                  barcodeToCheck: 0,
+                                ),
+                              );
+                            });
                       },
                       child: Card(
                         elevation: isTapped[2] ? 20 : 5,
@@ -812,22 +812,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ];
                         });
                         await Future.delayed(const Duration(milliseconds: 400),
-                            () async {
-                          await NavigationMethods.push(
-                            context,
-                            EANForWebApp(
-                              screenType: 'transfer',
-                              accType: widget.accType,
-                              authorization: widget.authorization,
-                              refreshToken: widget.refreshToken,
-                              profileId: widget.profileId,
-                              distCenterId: widget.distCenterId,
-                              distCenterName: widget.distCenterName,
-                              crossVisible: crossVisible,
-                              barcodeToCheck: 0,
-                            ),
-                          );
-                        });
+                                () async {
+                              await NavigationMethods.push(
+                                context,
+                                EANForWebApp(
+                                  screenType: 'transfer',
+                                  accType: widget.accType,
+                                  authorization: widget.authorization,
+                                  refreshToken: widget.refreshToken,
+                                  profileId: widget.profileId,
+                                  distCenterId: widget.distCenterId,
+                                  distCenterName: widget.distCenterName,
+                                  crossVisible: crossVisible,
+                                  barcodeToCheck: 0,
+                                ),
+                              );
+                            });
                       },
                       child: Card(
                         elevation: isTapped[3] ? 20 : 5,
@@ -896,12 +896,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ];
                         });
                         await Future.delayed(const Duration(milliseconds: 400),
-                            () async {
-                          await NavigationMethods.push(
-                            context,
-                            const ShipmentRulesScreen(),
-                          );
-                        });
+                                () async {
+                              await NavigationMethods.push(
+                                context,
+                                const ShipmentRulesScreen(),
+                              );
+                            });
                       },
                       child: Card(
                         elevation: isTapped[4] ? 20 : 5,
@@ -1091,7 +1091,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: const EdgeInsets.only(left: 100),
                       child: GestureDetector(
                         onTap: () async {
@@ -1198,22 +1198,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ];
                     });
                     await Future.delayed(const Duration(milliseconds: 400),
-                        () async {
-                      await NavigationMethods.push(
-                        context,
-                        EANForWebApp(
-                          screenType: 'product',
-                          accType: widget.accType,
-                          authorization: widget.authorization,
-                          refreshToken: widget.refreshToken,
-                          profileId: widget.profileId,
-                          distCenterId: widget.distCenterId,
-                          distCenterName: widget.distCenterName,
-                          crossVisible: crossVisible,
-                          barcodeToCheck: 0,
-                        ),
-                      );
-                    });
+                            () async {
+                          await NavigationMethods.push(
+                            context,
+                            EANForWebApp(
+                              screenType: 'product',
+                              accType: widget.accType,
+                              authorization: widget.authorization,
+                              refreshToken: widget.refreshToken,
+                              profileId: widget.profileId,
+                              distCenterId: widget.distCenterId,
+                              distCenterName: widget.distCenterName,
+                              crossVisible: crossVisible,
+                              barcodeToCheck: 0,
+                            ),
+                          );
+                        });
                   },
                   child: Card(
                     elevation: isTapped[0] ? 20 : 5,
@@ -1273,12 +1273,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
-                        await NavigationMethods.push(
-                          context,
-                          PackAndScanWebNew(apiKey: apiKey),
-                        );
-                      });
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              PackAndScanWebNew(apiKey: apiKey),
+                            );
+                          });
                     },
                     child: Card(
                       elevation: isTapped[1] ? 20 : 5,
@@ -1340,22 +1340,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
-                        await NavigationMethods.push(
-                          context,
-                          EANForWebApp(
-                            screenType: 'jit order',
-                            accType: widget.accType,
-                            authorization: widget.authorization,
-                            refreshToken: widget.refreshToken,
-                            profileId: widget.profileId,
-                            distCenterId: widget.distCenterId,
-                            distCenterName: widget.distCenterName,
-                            crossVisible: crossVisible,
-                            barcodeToCheck: 0,
-                          ),
-                        );
-                      });
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              EANForWebApp(
+                                screenType: 'jit order',
+                                accType: widget.accType,
+                                authorization: widget.authorization,
+                                refreshToken: widget.refreshToken,
+                                profileId: widget.profileId,
+                                distCenterId: widget.distCenterId,
+                                distCenterName: widget.distCenterName,
+                                crossVisible: crossVisible,
+                                barcodeToCheck: 0,
+                              ),
+                            );
+                          });
                     },
                     child: Card(
                       elevation: isTapped[2] ? 20 : 5,
@@ -1416,22 +1416,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
-                        await NavigationMethods.push(
-                          context,
-                          EANForWebApp(
-                            screenType: 'transfer',
-                            accType: widget.accType,
-                            authorization: widget.authorization,
-                            refreshToken: widget.refreshToken,
-                            profileId: widget.profileId,
-                            distCenterId: widget.distCenterId,
-                            distCenterName: widget.distCenterName,
-                            crossVisible: crossVisible,
-                            barcodeToCheck: 0,
-                          ),
-                        );
-                      });
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              EANForWebApp(
+                                screenType: 'transfer',
+                                accType: widget.accType,
+                                authorization: widget.authorization,
+                                refreshToken: widget.refreshToken,
+                                profileId: widget.profileId,
+                                distCenterId: widget.distCenterId,
+                                distCenterName: widget.distCenterName,
+                                crossVisible: crossVisible,
+                                barcodeToCheck: 0,
+                              ),
+                            );
+                          });
                     },
                     child: Card(
                       elevation: isTapped[3] ? 20 : 5,
@@ -1497,12 +1497,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
-                        await NavigationMethods.push(
-                          context,
-                          const ShipmentRulesScreen(),
-                        );
-                      });
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              const ShipmentRulesScreen(),
+                            );
+                          });
                     },
                     child: Card(
                       elevation: isTapped[4] ? 20 : 5,
@@ -1637,12 +1637,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
-                        await NavigationMethods.push(
-                          context,
-                          const PreOrderScreenWeb(),
-                        );
-                      });
+                              () async {
+                            await NavigationMethods.push(
+                              context,
+                              const PreOrderScreenWeb(),
+                            );
+                          });
                     },
                     child: Card(
                       elevation: isTapped[6] ? 20 : 5,
@@ -1779,22 +1779,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     isTapped = [true, false, false, false, false, false,false,];
                   });
                   await Future.delayed(const Duration(milliseconds: 400),
-                      () async {
-                    await NavigationMethods.push(
-                      context,
-                      BarcodeCameraScreen(
-                        accType: widget.accType,
-                        authorization: widget.authorization,
-                        refreshToken: widget.refreshToken,
-                        crossVisible: crossVisible,
-                        screenType: 'product',
-                        profileId: widget.profileId,
-                        distCenterName: widget.distCenterName,
-                        distCenterId: widget.distCenterId,
-                        barcodeToCheck: 0,
-                      ),
-                    );
-                  });
+                          () async {
+                        await NavigationMethods.push(
+                          context,
+                          BarcodeCameraScreen(
+                            accType: widget.accType,
+                            authorization: widget.authorization,
+                            refreshToken: widget.refreshToken,
+                            crossVisible: crossVisible,
+                            screenType: 'product',
+                            profileId: widget.profileId,
+                            distCenterName: widget.distCenterName,
+                            distCenterId: widget.distCenterId,
+                            barcodeToCheck: 0,
+                          ),
+                        );
+                      });
                 },
                 child: Card(
                   elevation: isTapped[0] ? 10 : 5,
@@ -1883,7 +1883,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/pack_and_scan_01.png',
                               color:
-                                  isTapped[1] == true ? Colors.white : appColor,
+                              isTapped[1] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2087,7 +2087,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/picklist_01.png',
                               color:
-                                  isTapped[4] == true ? Colors.white : appColor,
+                              isTapped[4] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2140,7 +2140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/pre_order_01.png',
                               color:
-                                  isTapped[5] == true ? Colors.white : appColor,
+                              isTapped[5] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2287,7 +2287,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(
               builder: (context) => LoginScreen(dataFromDB: value),
             ),
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         });
       }

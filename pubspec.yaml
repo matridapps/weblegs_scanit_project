@@ -100,7 +100,6 @@ flutter:
     - assets/new_order_screen/orderpage-print.png
     - assets/ean_for_web/barcode.png
     - assets/add_new_rule_assets/dd_icon.png
-  # NOW ADD ONLY LINK TO DIRECTORIES
     - assets/label_icons/
     - assets/home_screen_assets/multi_color/
     - assets/home_screen_assets/single_color/

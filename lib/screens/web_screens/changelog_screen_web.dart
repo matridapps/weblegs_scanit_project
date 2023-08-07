@@ -65,43 +65,43 @@ class _ChangelogScreenWebState extends State<ChangelogScreenWeb> {
       ),
       body: isLoading == true
           ? SizedBox(
-              height: size.height,
-              width: size.width,
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: appColor,
-                ),
-              ),
-            )
+        height: size.height,
+        width: size.width,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: appColor,
+          ),
+        ),
+      )
           : isError == true
-              ? SizedBox(
-                  height: size.height,
-                  width: size.width,
-                  child: Center(
-                    child: Text(
-                      error,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                )
-              : SizedBox(
-                  height: size.height,
-                  width: size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 20,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ..._changelogListMaker(size),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+          ? SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Center(
+          child: Text(
+            error,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      )
+          : SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 50,
+            vertical: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ..._changelogListMaker(size),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

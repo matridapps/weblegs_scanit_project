@@ -4,15 +4,15 @@ import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SwitchForBundleSkuSetting extends StatefulWidget {
-  const SwitchForBundleSkuSetting({super.key});
+class SwitchForSettingsScreen extends StatefulWidget {
+  const SwitchForSettingsScreen({super.key});
 
   @override
-  State<SwitchForBundleSkuSetting> createState() =>
-      _SwitchForBundleSkuSettingState();
+  State<SwitchForSettingsScreen> createState() =>
+      _SwitchForSettingsScreenState();
 }
 
-class _SwitchForBundleSkuSettingState extends State<SwitchForBundleSkuSetting> {
+class _SwitchForSettingsScreenState extends State<SwitchForSettingsScreen> {
   bool light = false;
 
   @override

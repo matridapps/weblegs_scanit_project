@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
-import 'package:absolute_app/screens/switch_for_bundle_sku_setting.dart';
+import 'package:absolute_app/screens/switch_for_settings_screen.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -165,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         'If enabled, validating SKUs in SIW and SSMQW picklist will validate one order at a time for that SKU Bundle and If disabled, all orders in the SKU bundle will be validated.',
         style: TextStyle(fontSize: size.width * .045),
       ),
-      trailing: const SwitchForBundleSkuSetting(),
+      trailing: const SwitchForSettingsScreen(),
     );
   }
 

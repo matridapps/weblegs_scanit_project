@@ -38,7 +38,7 @@ class PicklistWlSplittingScreenWeb extends StatefulWidget {
 class _PicklistWlSplittingScreenWebState
     extends State<PicklistWlSplittingScreenWeb> {
   final RoundedLoadingButtonController allocateController =
-      RoundedLoadingButtonController();
+  RoundedLoadingButtonController();
 
   List<SkuXX> details = [];
   List<String> locationsList = [];
@@ -87,258 +87,258 @@ class _PicklistWlSplittingScreenWebState
         ),
         body: isScreenVisible == false
             ? const Center(
-                child: CircularProgressIndicator(
-                  color: appColor,
-                ),
-              )
+          child: CircularProgressIndicator(
+            color: appColor,
+          ),
+        )
             : Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: size.height * .01,
-                  horizontal: size.width * .035,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+          padding: EdgeInsets.symmetric(
+            vertical: size.height * .01,
+            horizontal: size.width * .035,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Total Qty to Pick -',
-                              style: TextStyle(
-                                fontSize: 22,
-                              ),
-                            ),
-                            Text(
-                              widget.totalQty,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
+                      const Text(
+                        'Total Qty to Pick -',
+                        style: TextStyle(
+                          fontSize: 22,
                         ),
                       ),
-                      Visibility(
-                        visible: locationsList.length > 1 &&
-                            checkBoxValueList.any((e) => e == true),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              RoundedLoadingButton(
-                                color: Colors.green,
-                                borderRadius: 10,
-                                elevation: 10,
-                                height: 40,
-                                width: 300,
-                                successIcon: Icons.check_rounded,
-                                failedIcon: Icons.close_rounded,
-                                successColor: Colors.green,
-                                errorColor: appColor,
-                                controller: allocateController,
-                                onPressed: () async {
-                                  if (checkBoxValueList
-                                      .any((e) => e == true)) {
-                                    if (locationsList.contains(
-                                        'Warehouse Location Not Available')) {
-                                      if (checkBoxValueList
-                                              .where((e) => e == true)
-                                              .toList()
-                                              .length >=
-                                          checkBoxValueList.length - 1) {
-                                        /// THROW TOAST
-                                        ToastUtils.motionToastCentered(
-                                            message:
-                                                'All Locations cannot Split. Please un-tick at least one location',
-                                            context: context);
-                                        allocateController.reset();
-                                      } else {
-                                        List<int> tempList = [];
-                                        List<String> locationsToSent = [];
-                                        for (int i = 0;
-                                            i < checkBoxValueList.length;
-                                            i++) {
-                                          if (checkBoxValueList[i] == true) {
-                                            tempList.add(i);
-                                          }
-                                        }
-                                        log('V tempList >>---> $tempList');
-
-                                        for (int i = 0;
-                                            i < tempList.length;
-                                            i++) {
-                                          locationsToSent.add(
-                                              locationsList[tempList[i]]);
-                                        }
-                                        log('V locationsToSent >>---> $locationsToSent');
-
-                                        await splitPicklist(
-                                                batchId: widget.batchId,
-                                                locations:
-                                                    locationsToSent.join(','))
-                                            .whenComplete(() => savePickListData(
-                                                picklist:
-                                                    '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
-                                                pickListLength: widget
-                                                        .picklistLength +
-                                                    locationsToSent.length))
-                                            .whenComplete(() async =>
-                                                await Future.delayed(
-                                                    const Duration(
-                                                        seconds: 1), () {
-                                                  allocateController.reset();
-                                                  Navigator.pop(
-                                                      context, true);
-                                                }));
-                                      }
-                                    } else {
-                                      /// DOES NOT HAVE 'NA' LOCATIONS >> JUST
-                                      /// CHECK THAT NOT ALL CHECK BOXES ARE
-                                      /// TICKED.
-                                      if (checkBoxValueList
-                                          .every((e) => e == true)) {
-                                        /// THROW TOAST
-                                        ToastUtils.motionToastCentered(
-                                            message:
-                                                'All Locations cannot Split. Please un-tick at least one location.',
-                                            context: context);
-                                        allocateController.reset();
-                                      } else {
-                                        List<int> tempList = [];
-                                        List<String> locationsToSent = [];
-                                        for (int i = 0;
-                                            i < checkBoxValueList.length;
-                                            i++) {
-                                          if (checkBoxValueList[i] == true) {
-                                            tempList.add(i);
-                                          }
-                                        }
-                                        log('V tempList >>---> $tempList');
-
-                                        for (int i = 0;
-                                            i < tempList.length;
-                                            i++) {
-                                          locationsToSent.add(
-                                              locationsList[tempList[i]]);
-                                        }
-                                        log('V locationsToSent >>---> $locationsToSent');
-
-                                        await splitPicklist(
-                                                batchId: widget.batchId,
-                                                locations:
-                                                    locationsToSent.join(','))
-                                            .whenComplete(() => savePickListData(
-                                                picklist:
-                                                    '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
-                                                pickListLength: widget
-                                                        .picklistLength +
-                                                    locationsToSent.length))
-                                            .whenComplete(() async =>
-                                                await Future.delayed(
-                                                    const Duration(
-                                                        seconds: 1), () {
-                                                  allocateController.reset();
-                                                  Navigator.pop(
-                                                      context, true);
-                                                }));
-                                      }
-                                    }
-                                  } else {
-                                    Navigator.pop(context, false);
-                                  }
-                                },
-                                child: const Text(
-                                  'Split & Allocate Picklist',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      Text(
+                        widget.totalQty,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Table(
-                            border: TableBorder.all(
-                              color: Colors.black,
-                              width: 1,
-                            ),
-                            columnWidths: <int, TableColumnWidth>{
-                              0: FixedColumnWidth(size.width * .25),
-                              1: FixedColumnWidth(size.width * .25),
-                              2: FixedColumnWidth(size.width * .25),
-                            },
-                            children: [
-                              TableRow(
-                                children: <TableCell>[
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Split Location',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Location',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Container(
-                                      height: 40,
-                                      color: Colors.grey.shade200,
-                                      child: const Center(
-                                        child: Text(
-                                          'Quantity',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              ..._listOfTableRowForAllocationScreen(),
-                            ],
-                          )
-                        ],
-                      ),
+                      )
                     ],
                   ),
                 ),
-              ),
+                Visibility(
+                  visible: locationsList.length > 1 &&
+                      checkBoxValueList.any((e) => e == true),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        RoundedLoadingButton(
+                          color: Colors.green,
+                          borderRadius: 10,
+                          elevation: 10,
+                          height: 40,
+                          width: 300,
+                          successIcon: Icons.check_rounded,
+                          failedIcon: Icons.close_rounded,
+                          successColor: Colors.green,
+                          errorColor: appColor,
+                          controller: allocateController,
+                          onPressed: () async {
+                            if (checkBoxValueList
+                                .any((e) => e == true)) {
+                              if (locationsList.contains(
+                                  'Warehouse Location Not Available')) {
+                                if (checkBoxValueList
+                                    .where((e) => e == true)
+                                    .toList()
+                                    .length >=
+                                    checkBoxValueList.length - 1) {
+                                  /// THROW TOAST
+                                  ToastUtils.motionToastCentered(
+                                      message:
+                                      'All Locations cannot Split. Please un-tick at least one location',
+                                      context: context);
+                                  allocateController.reset();
+                                } else {
+                                  List<int> tempList = [];
+                                  List<String> locationsToSent = [];
+                                  for (int i = 0;
+                                  i < checkBoxValueList.length;
+                                  i++) {
+                                    if (checkBoxValueList[i] == true) {
+                                      tempList.add(i);
+                                    }
+                                  }
+                                  log('V tempList >>---> $tempList');
+
+                                  for (int i = 0;
+                                  i < tempList.length;
+                                  i++) {
+                                    locationsToSent.add(
+                                        locationsList[tempList[i]]);
+                                  }
+                                  log('V locationsToSent >>---> $locationsToSent');
+
+                                  await splitPicklist(
+                                      batchId: widget.batchId,
+                                      locations:
+                                      locationsToSent.join(','))
+                                      .whenComplete(() => savePickListData(
+                                      picklist:
+                                      '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
+                                      pickListLength: widget
+                                          .picklistLength +
+                                          locationsToSent.length))
+                                      .whenComplete(() async =>
+                                  await Future.delayed(
+                                      const Duration(
+                                          seconds: 1), () {
+                                    allocateController.reset();
+                                    Navigator.pop(
+                                        context, true);
+                                  }));
+                                }
+                              } else {
+                                /// DOES NOT HAVE 'NA' LOCATIONS >> JUST
+                                /// CHECK THAT NOT ALL CHECK BOXES ARE
+                                /// TICKED.
+                                if (checkBoxValueList
+                                    .every((e) => e == true)) {
+                                  /// THROW TOAST
+                                  ToastUtils.motionToastCentered(
+                                      message:
+                                      'All Locations cannot Split. Please un-tick at least one location.',
+                                      context: context);
+                                  allocateController.reset();
+                                } else {
+                                  List<int> tempList = [];
+                                  List<String> locationsToSent = [];
+                                  for (int i = 0;
+                                  i < checkBoxValueList.length;
+                                  i++) {
+                                    if (checkBoxValueList[i] == true) {
+                                      tempList.add(i);
+                                    }
+                                  }
+                                  log('V tempList >>---> $tempList');
+
+                                  for (int i = 0;
+                                  i < tempList.length;
+                                  i++) {
+                                    locationsToSent.add(
+                                        locationsList[tempList[i]]);
+                                  }
+                                  log('V locationsToSent >>---> $locationsToSent');
+
+                                  await splitPicklist(
+                                      batchId: widget.batchId,
+                                      locations:
+                                      locationsToSent.join(','))
+                                      .whenComplete(() => savePickListData(
+                                      picklist:
+                                      '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
+                                      pickListLength: widget
+                                          .picklistLength +
+                                          locationsToSent.length))
+                                      .whenComplete(() async =>
+                                  await Future.delayed(
+                                      const Duration(
+                                          seconds: 1), () {
+                                    allocateController.reset();
+                                    Navigator.pop(
+                                        context, true);
+                                  }));
+                                }
+                              }
+                            } else {
+                              Navigator.pop(context, false);
+                            }
+                          },
+                          child: const Text(
+                            'Split & Allocate Picklist',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Table(
+                      border: TableBorder.all(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                      columnWidths: <int, TableColumnWidth>{
+                        0: FixedColumnWidth(size.width * .25),
+                        1: FixedColumnWidth(size.width * .25),
+                        2: FixedColumnWidth(size.width * .25),
+                      },
+                      children: [
+                        TableRow(
+                          children: <TableCell>[
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Split Location',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Location',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            TableCell(
+                              child: Container(
+                                height: 40,
+                                color: Colors.grey.shade200,
+                                child: const Center(
+                                  child: Text(
+                                    'Quantity',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        ..._listOfTableRowForAllocationScreen(),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -346,59 +346,59 @@ class _PicklistWlSplittingScreenWebState
   List<TableRow> _listOfTableRowForAllocationScreen() {
     return List.generate(
         locationsList.length,
-        (index) => TableRow(
-              children: <TableCell>[
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: locationsList.length == 1
-                          ? const SizedBox()
-                          : locationsList[index] ==
-                                  'Warehouse Location Not Available'
-                              ? const SizedBox()
-                              : Checkbox(
-                                  activeColor: appColor,
-                                  value: checkBoxValueList[index],
-                                  onChanged: (bool? newValue) {
-                                    setState(() {
-                                      checkBoxValueList[index] =
-                                          !(checkBoxValueList[index]);
-                                    });
-                                    log('V checkBoxValueList At $index >>---> ${checkBoxValueList[index]}');
-                                  },
-                                ),
+            (index) => TableRow(
+          children: <TableCell>[
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: locationsList.length == 1
+                      ? const SizedBox()
+                      : locationsList[index] ==
+                      'Warehouse Location Not Available'
+                      ? const SizedBox()
+                      : Checkbox(
+                    activeColor: appColor,
+                    value: checkBoxValueList[index],
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        checkBoxValueList[index] =
+                        !(checkBoxValueList[index]);
+                      });
+                      log('V checkBoxValueList At $index >>---> ${checkBoxValueList[index]}');
+                    },
+                  ),
+                ),
+              ),
+            ),
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    locationsList[index],
+                    style: const TextStyle(
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Text(
-                        locationsList[index],
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
+              ),
+            ),
+            TableCell(
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    '${quantityMap[locationsList[index]]}',
+                    style: const TextStyle(
+                      fontSize: 18,
                     ),
                   ),
                 ),
-                TableCell(
-                  child: SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Text(
-                        '${quantityMap[locationsList[index]]}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ));
+              ),
+            ),
+          ],
+        ));
   }
 
   void detailsApis() async {
@@ -492,7 +492,7 @@ class _PicklistWlSplittingScreenWebState
         log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
 
         GetPicklistDetailsResponse getPicklistDetailsResponse =
-            GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
+        GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
         log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
@@ -515,7 +515,7 @@ class _PicklistWlSplittingScreenWebState
         quantityMap = {};
         for (var x in tempList) {
           quantityMap[x] =
-              !quantityMap.containsKey(x) ? (1) : (quantityMap[x]! + 1);
+          !quantityMap.containsKey(x) ? (1) : (quantityMap[x]! + 1);
         }
         log('V quantityMap >>---> $quantityMap');
 
