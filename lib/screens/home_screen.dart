@@ -8,6 +8,7 @@ import 'package:absolute_app/core/utils/responsive_check.dart';
 import 'package:absolute_app/screens/mobile_device_screens/barcode_camera_screen.dart';
 import 'package:absolute_app/screens/mobile_device_screens/pre_order_screen.dart';
 import 'package:absolute_app/screens/mobile_device_screens/settings_screen.dart';
+import 'package:absolute_app/screens/web_screens/changelog_screen_web.dart';
 import 'package:absolute_app/screens/web_screens/ean_for_web.dart';
 import 'package:absolute_app/screens/login_screen.dart';
 import 'package:absolute_app/screens/pick_list.dart';
@@ -61,11 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoggingOut = false;
   bool isError = false;
   bool isLoading = false;
+  bool isDCSplitAutomatic = false;
 
   String error = '';
   String scanBarcodeResult = '';
   String controllerText = '';
   String apiKey = '';
+  String webAppLastUpdatedLocal = 'Last Updated at 07 August, 2023 07:58 AM';
+  String webAppLastUpdated = '';
 
   LinearGradient linearGradient1 = const LinearGradient(
     begin: Alignment.bottomCenter,
@@ -189,12 +193,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _webDrawerBuilder(BuildContext context, Size size) {
     return Drawer(
-      child: SizedBox(
-        height: size.height * .9,
-        width: 350,
+      width: 350,
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: 60,
@@ -225,95 +227,129 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
-              child: SizedBox(
-                height: 270,
-                width: 310,
-                child: ListView(
-                  children: [
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        dividerColor: Colors.transparent,
-                      ),
-                      child: ExpansionTile(
-                        textColor: appColor,
-                        collapsedTextColor: Colors.black,
-                        iconColor: appColor,
-                        collapsedIconColor: Colors.black,
-                        leading: const Icon(Icons.settings),
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 15,
-                        ),
-                        title: const Text(
-                          'Settings',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onExpansionChanged: (_) async {
-                          scaffoldKey.currentState?.openEndDrawer();
-                          await NavigationMethods.push(
-                            context,
-                            SettingsScreenWeb(userId: widget.userId),
-                          );
-                        },
-                      ),
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
                     ),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        dividerColor: Colors.transparent,
+                    child: ExpansionTile(
+                      textColor: appColor,
+                      collapsedTextColor: Colors.black,
+                      iconColor: appColor,
+                      collapsedIconColor: Colors.black,
+                      leading: const Icon(Icons.settings),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
                       ),
-                      child: ExpansionTile(
-                        textColor: appColor,
-                        collapsedTextColor: Colors.black,
-                        iconColor: appColor,
-                        collapsedIconColor: Colors.black,
-                        leading: const Icon(Icons.print),
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 15,
+                      title: const Text(
+                        'Settings',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        title: const Text(
-                          'PrintNode Settings',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onExpansionChanged: (_) async {
-                          scaffoldKey.currentState?.openEndDrawer();
-                          await NavigationMethods.push(
-                            context,
-                            PrintNodeSettingsWeb(userId: widget.userId),
-                          );
-                        },
                       ),
+                      onExpansionChanged: (_) async {
+                        scaffoldKey.currentState?.openEndDrawer();
+                        await NavigationMethods.push(
+                          context,
+                          SettingsScreenWeb(userId: widget.userId),
+                        );
+                      },
                     ),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        dividerColor: Colors.transparent,
+                  ),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
+                    ),
+                    child: ExpansionTile(
+                      textColor: appColor,
+                      collapsedTextColor: Colors.black,
+                      iconColor: appColor,
+                      collapsedIconColor: Colors.black,
+                      leading: const Icon(Icons.print),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
                       ),
-                      child: ExpansionTile(
-                        textColor: appColor,
-                        collapsedTextColor: Colors.black,
-                        iconColor: appColor,
-                        collapsedIconColor: Colors.black,
-                        leading: const Icon(Icons.person),
-                        title: const Text(
-                          'Account',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      title: const Text(
+                        'PrintNode Settings',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        children: [
-                          GestureDetector(
-                            onTap: () async => await logout(),
-                            child: ListTile(
-                              leading: const Icon(Icons.logout_outlined),
-                              title: const Row(
+                      ),
+                      onExpansionChanged: (_) async {
+                        scaffoldKey.currentState?.openEndDrawer();
+                        await NavigationMethods.push(
+                          context,
+                          PrintNodeSettingsWeb(userId: widget.userId),
+                        );
+                      },
+                    ),
+                  ),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
+                    ),
+                    child: ExpansionTile(
+                      textColor: appColor,
+                      collapsedTextColor: Colors.black,
+                      iconColor: appColor,
+                      collapsedIconColor: Colors.black,
+                      leading:
+                          const Icon(Icons.published_with_changes_outlined),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
+                      ),
+                      title: const Text(
+                        'Changelog',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onExpansionChanged: (_) async {
+                        scaffoldKey.currentState?.openEndDrawer();
+                        await NavigationMethods.push(
+                          context,
+                          const ChangelogScreenWeb(),
+                        );
+                      },
+                    ),
+                  ),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
+                    ),
+                    child: ExpansionTile(
+                      textColor: appColor,
+                      collapsedTextColor: Colors.black,
+                      iconColor: appColor,
+                      collapsedIconColor: Colors.black,
+                      leading: const Icon(Icons.person),
+                      title: const Text(
+                        'Account',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      children: [
+                        GestureDetector(
+                          onTap: () async => await logout(),
+                          child: ListTile(
+                            leading: const MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Icon(Icons.logout_outlined),
+                            ),
+                            title: const MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
@@ -325,43 +361,55 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ],
                               ),
-                              trailing: isLoggingOut == true
-                                  ? const SizedBox(
-                                      height: 22,
-                                      width: 22,
-                                      child: CircularProgressIndicator(
-                                        color: appColor,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Icon(
+                            ),
+                            trailing: isLoggingOut == true
+                                ? const SizedBox(
+                                    height: 22,
+                                    width: 22,
+                                    child: CircularProgressIndicator(
+                                      color: appColor,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: Icon(
                                       Icons.arrow_forward_ios_rounded,
                                       size: 15,
                                     ),
-                            ),
+                                  ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            const Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Divider(),
+                  ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Text(
-                      'Last Updated at 26 July, 2023 01:31 PM',
-                      style: TextStyle(
+                      webAppLastUpdatedLocal,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      webAppLastUpdated == webAppLastUpdatedLocal
+                          ? '* The Current Web App is the latest.'
+                          : '* The Current Web App is not the latest.\n   Please Reload the Web App.',
+                      overflow: TextOverflow.visible,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -915,8 +963,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               false
                             ];
                           });
-                          await Future.delayed(const Duration(milliseconds: 400),
-                              () async {
+                          await getPrintNodeData().whenComplete(() async {
                             await NavigationMethods.push(
                               context,
                               PickLists(
@@ -927,6 +974,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 distCenterId: widget.distCenterId,
                                 distCenterName: widget.distCenterName,
                                 userName: widget.userId,
+                                isDCSplitAutomatic: isDCSplitAutomatic,
                               ),
                             );
                           });
@@ -992,8 +1040,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               false
                             ];
                           });
-                          await Future.delayed(const Duration(milliseconds: 400),
-                              () async {
+                          await Future.delayed(
+                              const Duration(milliseconds: 400), () async {
                             await NavigationMethods.push(
                               context,
                               const PreOrderScreenWeb(),
@@ -1514,8 +1562,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           false,
                         ];
                       });
-                      await Future.delayed(const Duration(milliseconds: 400),
-                          () async {
+                      await getPrintNodeData().whenComplete(() async {
                         await NavigationMethods.push(
                           context,
                           PickLists(
@@ -1526,6 +1573,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             distCenterId: widget.distCenterId,
                             distCenterName: widget.distCenterName,
                             userName: widget.userId,
+                            isDCSplitAutomatic: isDCSplitAutomatic,
                           ),
                         );
                       });
@@ -1834,9 +1882,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: size.width * .25,
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/pack_and_scan_01.png',
-                              color: isTapped[1] == true
-                                  ? Colors.white
-                                  : appColor,
+                              color:
+                                  isTapped[1] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2000,8 +2047,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {
                       isTapped = [false, false, false, false, true, false,false];
                     });
-                    await Future.delayed(const Duration(milliseconds: 400), () {
-                      NavigationMethods.push(
+                    await getPrintNodeData().whenComplete(() async {
+                      await NavigationMethods.push(
                         context,
                         PickLists(
                           accType: widget.accType,
@@ -2011,6 +2058,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           distCenterId: widget.distCenterId,
                           distCenterName: widget.distCenterName,
                           userName: widget.userId,
+                          isDCSplitAutomatic: isDCSplitAutomatic,
                         ),
                       );
                     });
@@ -2038,9 +2086,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: size.width * .25,
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/picklist_01.png',
-                              color: isTapped[4] == true
-                                  ? Colors.white
-                                  : appColor,
+                              color:
+                                  isTapped[4] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2092,9 +2139,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: size.width * .25,
                             child: Image.asset(
                               'assets/home_screen_assets/single_color/pre_order_01.png',
-                              color: isTapped[5] == true
-                                  ? Colors.white
-                                  : appColor,
+                              color:
+                                  isTapped[5] == true ? Colors.white : appColor,
                             ),
                           ),
                           Text(
@@ -2201,8 +2247,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
         setState(() {
           apiKey = printNodeData[0].get<String>('api_key') ?? '';
+          webAppLastUpdated =
+              printNodeData[0].get<String>('web_app_last_updated') ?? '';
+          isDCSplitAutomatic = (printNodeData[0].get<String>('is_dc_split_automatic') ?? '') == 'Yes' ? true : false;
         });
         log('V apiKey >>---> $apiKey');
+        log('V webAppLastUpdated >>---> $webAppLastUpdated');
+        log('V isDCSplitAutomatic >>---> $isDCSplitAutomatic');
       }
     });
   }

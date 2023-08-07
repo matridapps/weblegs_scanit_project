@@ -34,18 +34,21 @@ class SkuPreOrders {
   String quantity;
   String orderDate;
   String imageUrl;
+  String orderType;
+  String totalCount;
 
-  SkuPreOrders({
-    required this.orderNumber,
-    required this.siteOrderId,
-    required this.sku,
-    required this.title,
-    required this.warehouseLocation,
-    required this.ean,
-    required this.quantity,
-    required this.orderDate,
-    required this.imageUrl,
-  });
+  SkuPreOrders(
+      {required this.orderNumber,
+      required this.siteOrderId,
+      required this.sku,
+      required this.title,
+      required this.warehouseLocation,
+      required this.ean,
+      required this.quantity,
+      required this.orderDate,
+      required this.imageUrl,
+      required this.orderType,
+      required this.totalCount});
 
   factory SkuPreOrders.fromJson(Map<String, dynamic> json) => SkuPreOrders(
         orderNumber: json["OrderNumber"],
@@ -57,6 +60,8 @@ class SkuPreOrders {
         quantity: json["Quantity"],
         orderDate: json["OrderDate"],
         imageUrl: json["ImageUrl"],
+        orderType: json["OrderType"],
+        totalCount: json["TotalCount"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -69,5 +74,7 @@ class SkuPreOrders {
         "Quantity": quantity,
         "OrderDate": orderDate,
         "ImageUrl": imageUrl,
+        "OrderType": orderType,
+        "TotalCount": totalCount,
       };
 }

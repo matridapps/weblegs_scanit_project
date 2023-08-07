@@ -296,6 +296,18 @@ class ApiCalls {
     }
   }
 
+  static Future<List<ParseObject>> getChangelogData() async {
+    QueryBuilder<ParseObject> queryWeblegsData = QueryBuilder<ParseObject>(ParseObject('Changelog'));
+    final ParseResponse apiResponse = await queryWeblegsData.query();
+
+    if (apiResponse.success && apiResponse.results != null) {
+      return apiResponse.results as List<ParseObject>;
+    } else {
+      log('No data');
+      return [];
+    }
+  }
+
   static Future<String> getAllLocations(String accType) async {
     String uri =
         'https://weblegs.info/JadlamApp/api/Location?AccountType=$accType';

@@ -8,28 +8,32 @@ class ToastUtils {
 
   static showShortToast({required String message}) {
     Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,);
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+    );
   }
 
   static showCenteredShortToast({required String message}) {
     Fluttertoast.showToast(
-        msg: message,
-        gravity: ToastGravity.CENTER,
-        toastLength: Toast.LENGTH_SHORT,);
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      toastLength: Toast.LENGTH_SHORT,
+    );
   }
 
   static showLongToast({required String message}) {
     Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,);
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 
   static showCenteredLongToast({required String message}) {
     Fluttertoast.showToast(
-        msg: message,
-        gravity: ToastGravity.CENTER,
-        toastLength: Toast.LENGTH_LONG,);
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 
   static motionToastBottom({
@@ -39,9 +43,12 @@ class ToastUtils {
     MotionToast(
       primaryColor: Colors.grey.shade900,
       backgroundType: BackgroundType.solid,
-      description:  Padding(
+      description: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(message, style: const TextStyle(color: Colors.white),),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       toastDuration: const Duration(milliseconds: 1500),
       displayBorder: false,
@@ -57,27 +64,12 @@ class ToastUtils {
     MotionToast(
       primaryColor: Colors.grey.shade900,
       backgroundType: BackgroundType.solid,
-      description:  Padding(
+      description: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(message, style: const TextStyle(color: Colors.white),),
-      ),
-      displayBorder: false,
-      displaySideBar: false,
-      position: MotionToastPosition.center,
-    ).show(context);
-  }
-
-  static motionToastCentered20S({
-    required String message,
-    required BuildContext context,
-}) {
-    MotionToast(
-      primaryColor: Colors.grey.shade900,
-      backgroundType: BackgroundType.solid,
-      toastDuration: const Duration(seconds: 20),
-      description:  Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(message, style: const TextStyle(color: Colors.white),),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       displayBorder: false,
       displaySideBar: false,
@@ -93,9 +85,12 @@ class ToastUtils {
       primaryColor: Colors.grey.shade900,
       backgroundType: BackgroundType.solid,
       toastDuration: const Duration(milliseconds: 1500),
-      description:  Padding(
+      description: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(message, style: const TextStyle(color: Colors.white),),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
       displayBorder: false,
       displaySideBar: false,
@@ -111,9 +106,13 @@ class ToastUtils {
       primaryColor: Colors.grey.shade900,
       backgroundType: BackgroundType.solid,
       toastDuration: const Duration(milliseconds: 1500),
-      description:  Padding(
+      description: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(message, style: const TextStyle(color: Colors.white),),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
       ),
       displayBorder: false,
       displaySideBar: false,

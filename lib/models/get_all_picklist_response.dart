@@ -40,6 +40,8 @@ class Batch {
   String partialSkus;
   String partialOrders;
   String isAlreadyOpened;
+  String totalWarehouseLocation;
+  String totalDC;
 
   Batch({
     required this.picklist,
@@ -54,6 +56,8 @@ class Batch {
     required this.partialSkus,
     required this.partialOrders,
     required this.isAlreadyOpened,
+    required this.totalWarehouseLocation,
+    required this.totalDC,
   });
 
   factory Batch.fromJson(Map<String, dynamic> json) => Batch(
@@ -69,6 +73,8 @@ class Batch {
         partialSkus: json["partialSkus"],
         partialOrders: json["partialOrders"],
         isAlreadyOpened: json["IsAlreadyOpened"],
+        totalWarehouseLocation: json["TotalWarehouseLocation"],
+        totalDC: json["TotalDCs"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,5 +90,7 @@ class Batch {
         "partialSkus": partialSkus,
         "partialOrders": partialOrders,
         "IsAlreadyOpened": isAlreadyOpened,
+        "TotalWarehouseLocation": totalWarehouseLocation,
+        "TotalDCs": totalDC,
       };
 }

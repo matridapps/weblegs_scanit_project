@@ -51,6 +51,7 @@ class SkuXX {
   bool amazonLabelPrinted;
   bool easyPostLabelPrinted;
   String siteName;
+  String distributionCenter;
 
   SkuXX({
     required this.id,
@@ -68,6 +69,7 @@ class SkuXX {
     required this.amazonLabelPrinted,
     required this.easyPostLabelPrinted,
     required this.siteName,
+    required this.distributionCenter,
   });
 
   factory SkuXX.fromJson(Map<String, dynamic> json) => SkuXX(
@@ -87,6 +89,7 @@ class SkuXX {
         amazonLabelPrinted: json["AmazonLabelPrinted"],
         easyPostLabelPrinted: json["EasyPostLabelPrinted"],
         siteName: json["SiteName"],
+        distributionCenter: json["DistributionCenterCode"] ?? 'Not Available',
       );
 
   Map<String, dynamic> toJson() => {
@@ -106,6 +109,7 @@ class SkuXX {
         "AmazonLabelPrinted": amazonLabelPrinted,
         "EasyPostLabelPrinted": easyPostLabelPrinted,
         "SiteName": siteName,
+        "DistributionCenterCode": distributionCenter,
       };
 }
 
@@ -118,6 +122,7 @@ class OrderQuantity {
   bool easyPostLabel;
   String siteName;
   String siteOrderId;
+  String distributionCenter;
 
   OrderQuantity({
     required this.orderNumber,
@@ -128,6 +133,7 @@ class OrderQuantity {
     required this.easyPostLabel,
     required this.siteName,
     required this.siteOrderId,
+    required this.distributionCenter,
   });
 
   factory OrderQuantity.fromJson(Map<String, dynamic> json) => OrderQuantity(
@@ -139,6 +145,7 @@ class OrderQuantity {
         easyPostLabel: json["EasyPostLabel"],
         siteName: json["SiteName"],
         siteOrderId: json["SiteOrderId"],
+        distributionCenter: json["DistributionCenterCode"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -150,5 +157,6 @@ class OrderQuantity {
         "EasyPostLabel": easyPostLabel,
         "SiteName": siteName,
         "SiteOrderId": siteOrderId,
+        "DistributionCenterCode": distributionCenter,
       };
 }
