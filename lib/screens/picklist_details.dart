@@ -660,7 +660,7 @@ class _PickListDetailsState extends State<PickListDetails> {
   Widget _screenSmallerThan24InchBuilder(BuildContext context, Size size) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: size.height * .01,
+        vertical: size.height * .005,
         horizontal: size.width * .035,
       ),
       child: Column(
@@ -1035,6 +1035,36 @@ class _PickListDetailsState extends State<PickListDetails> {
                                         ),
                                         ...tableForPicklistDetails[id - 1],
                                       ]),
+                                ],
+                              ),
+                            ),
+                            Visibility(
+                              visible: widget.requestType == 'MSMQW',
+                              child: SizedBox(
+                                height: size.height * .008,
+                                width: size.width,
+                              ),
+                            ),
+                            Visibility(
+                              visible: widget.requestType == 'MSMQW',
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Distribution Center : ",
+                                    style: TextStyle(
+                                      fontSize: size.width * .012,
+                                    ),
+                                  ),
+                                  Text(
+                                    details[id - 1].distributionCenter == ''
+                                        ? 'Not Available'
+                                        : details[id - 1].distributionCenter,
+                                    style: TextStyle(
+                                      fontSize: size.width * .012,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -2054,8 +2084,8 @@ class _PickListDetailsState extends State<PickListDetails> {
 
   double webImageSizeIfOrdersMoreThan3(Size size) {
     return details[id - 1].orderQuantity.length > 3
-        ? (size.height * .4) - (30 * (details[id - 1].orderQuantity.length - 3))
-        : size.height * .4;
+        ? (size.height * .35) - (30 * (details[id - 1].orderQuantity.length - 3))
+        : size.height * .35;
   }
 
   void detailsApis() async {

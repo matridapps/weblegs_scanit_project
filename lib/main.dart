@@ -53,12 +53,9 @@ class MyApp extends StatelessWidget {
           create: (_) => BusinessLogic(),
         ),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: 'RobotoSerif',
-        ),
-        home: const SplashScreen(),
+        home: SplashScreen(),
       ),
     );
   }
