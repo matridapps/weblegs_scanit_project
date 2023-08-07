@@ -6,7 +6,7 @@ import 'package:absolute_app/models/shop_replinsh_model.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_network/image_network.dart';
+import  'package:image_network/image_network.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -175,7 +175,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
   List<Widget> _preOrdersListMaker(Size size,
       {required List<ShopReplenishSku> data}) {
     return List.generate(
-      data.length,
+      10/*data.length*/,
       (index) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Card(
@@ -207,21 +207,77 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
-                    height: 200,
+                    height: .2 * widget.constraints.maxHeight,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SizedBox(
-                            height: .17 * widget.constraints.maxHeight,
-                            width: .11 * widget.constraints.maxWidth,
-                            child: ImageWidgetPlaceholder(
-                              image: CachedNetworkImageProvider(
-                                data[index].url,
+                        FittedBox(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(.2),
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 1)),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                height: .17 * widget.constraints.maxHeight,
+                                width: .11 * widget.constraints.maxHeight,
+                                child:
+                                // ImageWidgetPlaceholder(
+                                //   image: CachedNetworkImageProvider(
+                                //     data[index].url,
+                                //   ),
+                                //   placeholder: const Center(
+                                //     child: CircularProgressIndicator(),
+                                //   ),
+                                // )),
+                                ImageNetwork(
+                                  image: data[index].url,
+                                  height: .17 * widget.constraints.maxHeight,
+                                  width: .11 * widget.constraints.maxHeight,
+                                  imageCache: CachedNetworkImageProvider(
+                                    data[index].url,
+                                  ),
+                                  duration: 100,
+                                  fitWeb: BoxFitWeb.contain,
+                                  onLoading: Shimmer(
+                                    duration: const Duration(seconds: 1),
+                                    interval: const Duration(seconds: 2),
+                                    color: Colors.white,
+                                    colorOpacity: 1,
+                                    enabled: true,
+                                    direction: const ShimmerDirection.fromLTRB(),
+                                    child: Container(
+                                      color:
+                                      const Color.fromARGB(160, 192, 192, 192),
+                                    ),
+                                  ),
+                                  onError: Image.asset(
+                                    'assets/no_image/no_image.png',
+                                    height: .12 * widget.constraints.maxHeight,
+                                    width: .12 * widget.constraints.maxHeight,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                               ),
-                              placeholder: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            )),
+                            ),
+                          ),),
+                        // SizedBox(
+                        //     height: .17 * widget.constraints.maxHeight,
+                        //     width: .11 * widget.constraints.maxWidth,
+                        //     child: ImageWidgetPlaceholder(
+                        //       image: CachedNetworkImageProvider(
+                        //         data[index].url,
+                        //       ),
+                        //       placeholder: const Center(
+                        //         child: CircularProgressIndicator(),
+                        //       ),
+                        //     )),
                         Padding(
                           padding: const EdgeInsets.only(left: 50),
                           child: SizedBox(
@@ -342,9 +398,9 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
     required double height,
   }) {
     return List.generate(
-      data.length,
+      10/*data.length*/,
       (index) => SizedBox(
-        height: .27 * height,
+        height: .3 * height,
         width: .5 * width,
         child: Card(
           elevation: 2,
@@ -391,45 +447,46 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                             child: SizedBox(
                                 height: .17 * height,
                                 width: .11 * width,
-                                child: ImageWidgetPlaceholder(
-                                  image: CachedNetworkImageProvider(
-                                    data[index].url,
-                                  ),
-                                  placeholder: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )),
-                            // ImageNetwork(
-                            //   image: data[index].url,
-                            //   height: .17 * height,
-                            //   width: .11 * width,
-                            //   imageCache: CachedNetworkImageProvider(
-                            //     data[index].url,
-                            //   ),
-                            //   duration: 100,
-                            //   fitWeb: BoxFitWeb.contain,
-                            //   onLoading: Shimmer(
-                            //     duration: const Duration(seconds: 1),
-                            //     interval: const Duration(seconds: 2),
-                            //     color: Colors.white,
-                            //     colorOpacity: 1,
-                            //     enabled: true,
-                            //     direction: const ShimmerDirection.fromLTRB(),
-                            //     child: Container(
-                            //       color:
-                            //           const Color.fromARGB(160, 192, 192, 192),
-                            //     ),
-                            //   ),
-                            //   onError: Image.asset(
-                            //     'assets/no_image/no_image.png',
-                            //     height: .12 * width,
-                            //     width: .12 * width,
-                            //     fit: BoxFit.contain,
-                            //   ),
-                            // ),
+                                child:
+                                // ImageWidgetPlaceholder(
+                                //   image: CachedNetworkImageProvider(
+                                //     data[index].url,
+                                //   ),
+                                //   placeholder: const Center(
+                                //     child: CircularProgressIndicator(),
+                                //   ),
+                                // )),
+                            ImageNetwork(
+                              image: data[index].url,
+                              height: .17 * height,
+                              width: .11 * width,
+                              imageCache: CachedNetworkImageProvider(
+                                data[index].url,
+                              ),
+                              duration: 100,
+                              fitWeb: BoxFitWeb.contain,
+                              onLoading: Shimmer(
+                                duration: const Duration(seconds: 1),
+                                interval: const Duration(seconds: 2),
+                                color: Colors.white,
+                                colorOpacity: 1,
+                                enabled: true,
+                                direction: const ShimmerDirection.fromLTRB(),
+                                child: Container(
+                                  color:
+                                      const Color.fromARGB(160, 192, 192, 192),
+                                ),
+                              ),
+                              onError: Image.asset(
+                                'assets/no_image/no_image.png',
+                                height: .12 * width,
+                                width: .12 * width,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ),),
                       SizedBox(
                         width: .04 * width,
                       ),
@@ -559,7 +616,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
     required double height,
   }) {
     return List.generate(
-      data.length,
+      10/*data.length*/,
       (index) => GestureDetector(
         child: SizedBox(
           width: width * .5,
@@ -601,17 +658,75 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                         )
                       : Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                        height: .2 * width,
-                        width: .2 * width,
-                        child: ImageWidgetPlaceholder(
-                          image: CachedNetworkImageProvider(
-                            data[index].url,
+                    child:
+                    // SizedBox(
+                    //     height: .2 * width,
+                    //     width: .2 * width,
+                    //     child: ImageWidgetPlaceholder(
+                    //       image: CachedNetworkImageProvider(
+                    //         data[index].url,
+                    //       ),
+                    //       placeholder: const Center(
+                    //         child: CircularProgressIndicator(),
+                    //       ),
+                    //     )),
+                    FittedBox(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(.2),
+                                blurRadius: 5,
+                                offset: const Offset(0, 1)),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: .2 * width,
+                            width: .2 * width,
+                            child:
+                            // ImageWidgetPlaceholder(
+                            //   image: CachedNetworkImageProvider(
+                            //     data[index].url,
+                            //   ),
+                            //   placeholder: const Center(
+                            //     child: CircularProgressIndicator(),
+                            //   ),
+                            // )),
+                            ImageNetwork(
+                              image: data[index].url,
+                              height: .2 * width,
+                              width: .2 * width,
+                              imageCache: CachedNetworkImageProvider(
+                                data[index].url,
+                              ),
+                              duration: 100,
+                              fitWeb: BoxFitWeb.contain,
+                              onLoading: Shimmer(
+                                duration: const Duration(seconds: 1),
+                                interval: const Duration(seconds: 2),
+                                color: Colors.white,
+                                colorOpacity: 1,
+                                enabled: true,
+                                direction: const ShimmerDirection.fromLTRB(),
+                                child: Container(
+                                  color:
+                                  const Color.fromARGB(160, 192, 192, 192),
+                                ),
+                              ),
+                              onError: Image.asset(
+                                'assets/no_image/no_image.png',
+                                height: .2 * width,
+                                width: .2 * width,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
-                          placeholder: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ))),
+                        ),
+                      ),),
+                  ),
                   SizedBox(
                     height: 160,
                     width: width * .4,

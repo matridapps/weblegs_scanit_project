@@ -40,7 +40,7 @@ class _ScannerWebForShopState extends State<ScannerWebForShop> {
             border: OutlineInputBorder(),
           ),
           onChanged: (String value) async {
-            if (value.length > 4) {
+            if (value.trim().length > 4) {
               if (widget.scanProducts
                   .where((element) => element.productEAN == value)
                   .isNotEmpty) {
