@@ -262,7 +262,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                           Padding(
                             padding: const EdgeInsets.only(left: 50),
                             child: SizedBox(
-                              height: 200,
+                              height: .22 * widget.constraints.maxHeight,
                               width: size.width - .27 * widget.constraints.maxWidth,
                               child: Row(
                                 children: [
@@ -275,7 +275,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                       Text(
                                         'EAN ',
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 18+2,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
@@ -283,7 +283,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                       Text(
                                         'SKU ',
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 18+2,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
@@ -291,7 +291,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                       Text(
                                         'Quantity ',
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 18+2,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
@@ -301,7 +301,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                           'Warehouse Location ',
                                           overflow: TextOverflow.visible,
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 18+2,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -329,14 +329,14 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                       Text(
                                         getCurrentPageItems()[index].sku,
                                         style: TextStyle(
-                                          fontSize: .025 * size.width,
+                                          fontSize: 020 ,
                                           color: Colors.black,
                                         ),
                                       ),
                                       Text(
                                         getCurrentPageItems()[index].quantity,
                                         style: TextStyle(
-                                          fontSize: .025 * size.width,
+                                          fontSize: 020 ,
                                           color: Colors.black,
                                         ),
                                       ),
@@ -346,7 +346,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                               .warehouseLocation,
                                           overflow: TextOverflow.visible,
                                           style: TextStyle(
-                                            fontSize: .025 * size.width,
+                                            fontSize: 020 ,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -377,7 +377,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
     return List.generate(
       getCurrentPageItems().length,
       (index) => SizedBox(
-        height: .32 * height,
+        height: .37 * height,
         width: .5 * width,
         child: Card(
           elevation: 2,
@@ -394,7 +394,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                 AutoSizeText(
                   getCurrentPageItems()[index].title,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  maxLines: 2,
                   style: const TextStyle(
                     fontSize: 20,
                     color: Colors.black,
@@ -403,208 +403,205 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                 ),
                 FittedBox(
                   child: SizedBox(
-                    height: .25 * height,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          FittedBox(
-                            child: SizedBox(
-                              height: .23 * height,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Card(
-                                      child: Center(
-                                        child: ImageNetwork(
-                                          image:
-                                              getCurrentPageItems()[index].url,
-                                          height: .15 *
-                                              widget.constraints.maxHeight,
-                                          width:
-                                              .13 * widget.constraints.maxWidth,
-                                          imageCache:
-                                              CachedNetworkImageProvider(
+                    height: .28 * height,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        FittedBox(
+                          child: SizedBox(
+                            height: .24 * height,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Card(
+                                    child: Center(
+                                      child: ImageNetwork(
+                                        image:
                                             getCurrentPageItems()[index].url,
+                                        height: .15 *
+                                            height,
+                                        width:
+                                            .13 * width,
+                                        imageCache:
+                                            CachedNetworkImageProvider(
+                                          getCurrentPageItems()[index].url,
+                                        ),
+                                        duration: 100,
+                                        fitWeb: BoxFitWeb.cover,
+                                        onLoading: Shimmer(
+                                          duration:
+                                              const Duration(seconds: 1),
+                                          interval:
+                                              const Duration(seconds: 2),
+                                          color: Colors.white,
+                                          colorOpacity: 1,
+                                          enabled: true,
+                                          direction: const ShimmerDirection
+                                              .fromLTRB(),
+                                          child: Container(
+                                            color: const Color.fromARGB(
+                                                160, 192, 192, 192),
                                           ),
-                                          duration: 100,
-                                          fitWeb: BoxFitWeb.cover,
-                                          onLoading: Shimmer(
-                                            duration:
-                                                const Duration(seconds: 1),
-                                            interval:
-                                                const Duration(seconds: 2),
-                                            color: Colors.white,
-                                            colorOpacity: 1,
-                                            enabled: true,
-                                            direction: const ShimmerDirection
-                                                .fromLTRB(),
-                                            child: Container(
-                                              color: const Color.fromARGB(
-                                                  160, 192, 192, 192),
-                                            ),
-                                          ),
-                                          onError: Image.asset(
-                                            'assets/no_image/no_image.png',
-                                            height: .12 *
-                                                widget.constraints.maxHeight,
-                                            width: .12 *
-                                                widget.constraints.maxHeight,
-                                            fit: BoxFit.contain,
-                                          ),
+                                        ),
+                                        onError: Image.asset(
+                                          'assets/no_image/no_image.png',
+                                          height: .12 *
+                                              widget.constraints.maxHeight,
+                                          width: .12 *
+                                              widget.constraints.maxHeight,
+                                          fit: BoxFit.contain,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: .04 * width,
-                                    ),
-                                    SizedBox(
-                                      height: .2 * height,
+                                  ),
+                                  SizedBox(
+                                    width: .04 * width,
+                                  ),
+                                  SizedBox(
+                                    height: .24 * height,
 
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              AutoSizeText(
-                                                'EAN ',
-                                                style: TextStyle(
-                                                  fontSize: .012 * width,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AutoSizeText(
+                                              'EAN ',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
                                               ),
-                                              AutoSizeText(
-                                                'SKU ',
-                                                style: TextStyle(
-                                                  fontSize: .012 * width,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            AutoSizeText(
+                                              'SKU ',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
                                               ),
-                                              AutoSizeText(
-                                                'Quantity ',
-                                                style: TextStyle(
-                                                  fontSize: .012 * width,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            AutoSizeText(
+                                              'Quantity ',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
                                               ),
-                                              AutoSizeText(
-                                                'Warehouse Location ',
-                                                overflow: TextOverflow.visible,
-                                                style: TextStyle(
-                                                  fontSize: .012 * width,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            AutoSizeText(
+                                              'Warehouse Location ',
+                                              overflow: TextOverflow.visible,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
                                               ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: .02 * width,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              getCurrentPageItems()[index]
-                                                      .ean
-                                                      .isEmpty
-                                                  ? AutoSizeText(
-                                                      'Missing EAN',
-                                                      style: TextStyle(
-                                                        fontSize: .01 * width,
-                                                        color: Colors.red,
-                                                      ),
-                                                    )
-                                                  : _copyTextWidget(
-                                                      ean:
-                                                          getCurrentPageItems()[
-                                                                  index]
-                                                              .ean,
-                                                      width: width,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: .02 * width,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            getCurrentPageItems()[index]
+                                                    .ean
+                                                    .isEmpty
+                                                ? AutoSizeText(
+                                                    'Missing EAN',
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.red,
                                                     ),
-                                              AutoSizeText(
-                                                getCurrentPageItems()[index]
-                                                    .sku,
-                                                style: TextStyle(
-                                                  fontSize: .013 * width,
-                                                  color: Colors.black,
-                                                ),
+                                                  )
+                                                : _copyTextWidget(
+                                                    ean:
+                                                        getCurrentPageItems()[
+                                                                index]
+                                                            .ean,
+                                                    width: width,
+                                                  ),
+                                            AutoSizeText(
+                                              getCurrentPageItems()[index]
+                                                  .sku,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
                                               ),
-                                              AutoSizeText(
-                                                _isProductScan(
-                                                        itemFromMainList:
-                                                            getCurrentPageItems()[
-                                                                index])
-                                                    ? _returningQuantity(
-                                                            orignalQuantity: int.parse(
-                                                                getCurrentPageItems()[
-                                                                        index]
-                                                                    .quantity),
-                                                            numberOfTimeProductScan:
-                                                                List<int>.from(
-                                                              widget
-                                                                  .scanProducts
-                                                                  .where((element) =>
-                                                                      element
-                                                                          .productEAN ==
-                                                                      getCurrentPageItems()[
-                                                                              index]
-                                                                          .ean)
-                                                                  .map(
-                                                                    (e) => e
-                                                                        .numberOfTimesProductScanned,
-                                                                  ),
-                                                            )[0])
-                                                        .toString()
-                                                    : getCurrentPageItems()[
-                                                            index]
-                                                        .quantity,
-                                                style: TextStyle(
-                                                  fontSize: .013 * width,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            AutoSizeText(
+                                              _isProductScan(
+                                                      itemFromMainList:
+                                                          getCurrentPageItems()[
+                                                              index])
+                                                  ? _returningQuantity(
+                                                          orignalQuantity: int.parse(
+                                                              getCurrentPageItems()[
+                                                                      index]
+                                                                  .quantity),
+                                                          numberOfTimeProductScan:
+                                                              List<int>.from(
+                                                            widget
+                                                                .scanProducts
+                                                                .where((element) =>
+                                                                    element
+                                                                        .productEAN ==
+                                                                    getCurrentPageItems()[
+                                                                            index]
+                                                                        .ean)
+                                                                .map(
+                                                                  (e) => e
+                                                                      .numberOfTimesProductScanned,
+                                                                ),
+                                                          )[0])
+                                                      .toString()
+                                                  : getCurrentPageItems()[
+                                                          index]
+                                                      .quantity,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
                                               ),
-                                              AutoSizeText(
-                                                getCurrentPageItems()[index]
-                                                    .warehouseLocation,
-                                                overflow: TextOverflow.visible,
-                                                style: TextStyle(
-                                                  fontSize: .013 * width,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            AutoSizeText(
+                                              getCurrentPageItems()[index]
+                                                  .warehouseLocation,
+                                              overflow: TextOverflow.visible,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -859,7 +856,7 @@ class _copyTextWidgetState extends State<_copyTextWidget> {
         widget.ean,
         maxLines: 1,
         style: TextStyle(
-          fontSize: 25,
+          fontSize: 20,
           color: Colors.black,
           decoration: inputDecoration,
         ),

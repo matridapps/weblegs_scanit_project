@@ -7,7 +7,6 @@ import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/navigation_methods.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:absolute_app/core/utils/widgets.dart';
-import 'package:absolute_app/models/get_all_picklist_response.dart';
 import 'package:absolute_app/models/get_locked_picklist_response.dart';
 import 'package:absolute_app/models/get_picklist_details_response.dart';
 import 'package:absolute_app/screens/picklist_details.dart';
