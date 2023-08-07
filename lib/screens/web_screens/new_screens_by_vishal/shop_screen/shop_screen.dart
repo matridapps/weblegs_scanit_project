@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:absolute_app/core/blocs/shop_repienish_bloc/shop_repienish_bloc.dart';
@@ -5,11 +6,13 @@ import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/size_vishal.dart';
 import 'package:absolute_app/models/shop_replinsh_model.dart';
 import 'package:absolute_app/screens/web_screens/new_screens_by_vishal/shop_screen/widgets/scanner_web_shop.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:image_network/image_network.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 
@@ -27,6 +30,8 @@ class _ShopScreenState extends State<ShopScreen> {
 
   bool show = false;
 
+  bool _buttonLoading = false;
+
   @override
   void initState() {
     // WidgetsBinding.instance.addObserver(this);
@@ -41,7 +46,7 @@ class _ShopScreenState extends State<ShopScreen> {
     super.dispose();
   }
 
-  Widget _scanButton({required List<ShopReplenishSku> orignalProducts}) =>
+  Widget _scanButton({required List<ShopReplenishSku> orignalProducts,}) =>
       GestureDetector(
         onTap: () => kIsWeb
             ? Navigator.push(
@@ -50,6 +55,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   builder: (context) => ScannerWebForShop(
                     scanProducts: scanProducts,
                     orignalProducts: orignalProducts,
+                    focusNode: FocusNode(),
                   ),
                 ),
               ).whenComplete(() => scanProducts.isNotEmpty
@@ -75,6 +81,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return SizedBox(
       width: w,
       height: h,
@@ -100,9 +107,9 @@ class _ShopScreenState extends State<ShopScreen> {
                             ),
                           ),
                         ),
-                        actions: [
-                          _scanButton(orignalProducts: state.list),
-                        ],
+                        // actions: [
+                        //   _scanButton(orignalProducts: state.list),
+                        // ],
                         leading: Padding(
                           padding: const EdgeInsets.all(10),
                           child: InkWell(
@@ -127,9 +134,6 @@ class _ShopScreenState extends State<ShopScreen> {
                         show: scanProducts.isNotEmpty,
                         body: LayoutBuilder(
                           builder: (context, constraints) {
-                            log('Width>>> ${constraints.maxWidth}');
-                            log('Height>>> ${constraints.maxHeight}');
-
                             return !kIsWeb && constraints.maxWidth <= 385
                                 ? Scrollbar(
                                     controller: _controller,
@@ -175,26 +179,58 @@ class _ShopScreenState extends State<ShopScreen> {
                                 ),
                               ),
                               SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .135,width:
-                                      MediaQuery.of(context).size.width / 4,
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                  height: MediaQuery.of(context).size.width / 4,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.spaceEvenly,
                                     children: [
-                                      Text(
-                                        'Clear Scan List',
-                                        style: TextStyle(
-                                          fontSize: 20,
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            scanProducts.clear();
+                                            context
+                                                .read<ShopRepienishBloc>()
+                                                .add(
+                                                    ShopRepienishLoadingEvent());
+                                          });
+                                        },
+                                        child: Container(
+                                          color: appColor,
+                                          child: const Padding(
+                                            padding: EdgeInsets.all(15),
+                                            child: AutoSizeText(
+                                              'Clear Scan List',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      Text(
-                                        'Create Picklist',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
+                                      const SizedBox(
+                                        width: 60,
+                                        height: 50,
                                       ),
+                          GestureDetector(
+                            onTap: () async{
+                              setState(()=> _buttonLoading = true);
+                              await createShopReplenishPicklist().whenComplete(() => setState(()=> _buttonLoading = false));
+                            },
+                            child: Container(
+                              color: appColor,
+                              child:  Padding(
+                                padding:const EdgeInsets.all(15),
+                                child:_buttonLoading == true?const CircularProgressIndicator(color: Colors.white,): const AutoSizeText(
+                                  'Create Picklist',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+
                                     ],
                                   ))
                             ],
@@ -213,6 +249,43 @@ class _ShopScreenState extends State<ShopScreen> {
       ),
     );
   }
+
+  Future<void> createShopReplenishPicklist() async {
+ 
+    List<String> _tempList = [];
+
+    for (var element in scanProducts) {
+      _tempList.add(
+          '${element.productEAN}:' '${element.numberOfTimesProductScanned}');
+    }
+
+    log(_tempList.length.toString());
+    log(_tempList.join(',').toString());
+    
+    
+    try{
+
+      final response = await get(Uri.parse('https://weblegs.info/JadlamApp/api/CreateShopReplenishpicklist?SkuandQuantity=${_tempList.join(',')}'));
+      if(jsonDecode(response.body)['message'].toString().toLowerCase().contains('successfully created')){
+        Fluttertoast.showToast(msg: jsonDecode(response.body)['message'].toString());
+
+        setState(() {
+          scanProducts.clear();
+        });
+        context.read<ShopRepienishBloc>().add(ShopRepienishLoadingEvent());
+      }else{
+
+        Fluttertoast.showToast(msg: jsonDecode(response.body)['message'].toString());
+      }
+      
+      
+    }catch(e){
+      Fluttertoast.showToast(msg: 'Something went wrong.\nPlease try again');
+    }
+    
+  }
+
+
 }
 
 class ShopReplenishForMobile extends StatelessWidget {

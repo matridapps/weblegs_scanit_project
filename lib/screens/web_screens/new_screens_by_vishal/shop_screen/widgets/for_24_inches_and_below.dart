@@ -63,10 +63,21 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                 ? SingleChildScrollView(
                     controller: controller,
                     child: Column(
-                      children: _preOrdersListMaker(
-                          Size(widget.constraints.maxWidth,
-                              widget.constraints.maxHeight),
-                          data: widget.data),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal:
+                                  MediaQuery.of(context).size.width / 4),
+                          child: ScannerWebForShop(
+                              scanProducts: widget.scanProducts,
+                              orignalProducts: widget.data, focusNode: FocusNode(),),
+                        ),
+                        ..._preOrdersListMaker(
+                            Size(widget.constraints.maxWidth,
+                                widget.constraints.maxHeight),
+                            data: widget.data)
+                      ],
                     ),
                   )
                 : SizedBox(
@@ -76,21 +87,41 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           alignment: WrapAlignment.center,
                           // spacing:5,
-                          children: _forMobileTypeView(
-                            width: 600,
-                            height: widget.constraints.maxHeight,
-                            data: widget.data,
-                          )),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: MediaQuery.of(context).size.width / 4),
+                              child: ScannerWebForShop(
+                                  scanProducts: widget.scanProducts,
+                                  orignalProducts: widget.data, focusNode: FocusNode(),),
+                            ),
+                            ..._forMobileTypeView(
+                              width: 600,
+                              height: widget.constraints.maxHeight,
+                              data: widget.data,
+                            )
+                          ]),
                     ),
                   )
             : SingleChildScrollView(
                 controller: controller,
                 child: Wrap(
-                  children: _forGridView(
-                    width: widget.constraints.maxWidth,
-                    height: widget.constraints.maxHeight,
-                    data: widget.data,
-                  ),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: MediaQuery.of(context).size.width / 4),
+                      child: ScannerWebForShop(
+                          scanProducts: widget.scanProducts,
+                          orignalProducts: widget.data, focusNode: FocusNode(),),
+                    ),
+                    ..._forGridView(
+                      width: widget.constraints.maxWidth,
+                      height: widget.constraints.maxHeight,
+                      data: widget.data,
+                    )
+                  ],
                 ),
               ),
       ),
@@ -181,45 +212,16 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: 200,
-                          width: 200,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            elevation: 5,
-                            child: Center(
-                              child: ImageNetwork(
-                                image: data[index].url,
-                                imageCache: CachedNetworkImageProvider(
-                                  data[index].url,
-                                ),
-                                height: 195,
-                                width: 195,
-                                duration: 100,
-                                fitWeb: BoxFitWeb.contain,
-                                onLoading: Shimmer(
-                                  duration: const Duration(seconds: 1),
-                                  interval: const Duration(seconds: 2),
-                                  color: Colors.white,
-                                  colorOpacity: 1,
-                                  enabled: true,
-                                  direction: const ShimmerDirection.fromLTRB(),
-                                  child: Container(
-                                    color: const Color.fromARGB(
-                                        160, 192, 192, 192),
-                                  ),
-                                ),
-                                onError: Image.asset(
-                                  'assets/no_image/no_image.png',
-                                  height: 195,
-                                  width: 195,
-                                  fit: BoxFit.contain,
-                                ),
+                            height: .17 * widget.constraints.maxHeight,
+                            width: .11 * widget.constraints.maxWidth,
+                            child: ImageWidgetPlaceholder(
+                              image: CachedNetworkImageProvider(
+                                data[index].url,
                               ),
-                            ),
-                          ),
-                        ),
+                              placeholder: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )),
                         Padding(
                           padding: const EdgeInsets.only(left: 50),
                           child: SizedBox(
@@ -317,34 +319,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 200,
-                                  width: 50,
-                                  child: Center(
-                                    child: Checkbox(
-                                        activeColor: appColor,
-                                        value: true,
-                                        onChanged: (bool? newValue) {
-                                          // setState(() {
-                                          //   checkBoxValueList[index] =
-                                          //   !(checkBoxValueList[
-                                          //   index]);
-                                          // });
-                                          // log('V checkBoxValueList At $index >>---> ${checkBoxValueList[index]}');
-                                          // if (checkBoxValueList
-                                          //     .every((e) => e == true)) {
-                                          //   setState(() {
-                                          //     isAllSelected = true;
-                                          //   });
-                                          // } else {
-                                          //   setState(() {
-                                          //     isAllSelected = false;
-                                          //   });
-                                        }
-                                        // },
-                                        ),
-                                  ),
-                                )
+
                               ],
                             ),
                           ),
@@ -417,9 +392,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                                 height: .17 * height,
                                 width: .11 * width,
                                 child: ImageWidgetPlaceholder(
-                                  image:
-
-                                  CachedNetworkImageProvider(
+                                  image: CachedNetworkImageProvider(
                                     data[index].url,
                                   ),
                                   placeholder: const Center(
@@ -514,10 +487,18 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _copyTextWidget(
-                                  ean: data[index].ean,
-                                  width: width,
-                                ),
+                                data[index].ean.isEmpty
+                                    ? AutoSizeText(
+                                        'Missing EAN',
+                                        style: TextStyle(
+                                          fontSize: .01 * width,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    : _copyTextWidget(
+                                        ean: data[index].ean,
+                                        width: width,
+                                      ),
                                 AutoSizeText(
                                   data[index].sku,
                                   style: TextStyle(
@@ -618,28 +599,19 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                           width: width * .2,
                           fit: BoxFit.contain,
                         )
-                      : ImageNetwork(
-                          image: data[index].url,
-                          imageCache: CachedNetworkImageProvider(
+                      : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                        height: .2 * width,
+                        width: .2 * width,
+                        child: ImageWidgetPlaceholder(
+                          image: CachedNetworkImageProvider(
                             data[index].url,
                           ),
-                          height: width * .2,
-                          width: width * .2,
-                          duration: 100,
-                          fitAndroidIos: BoxFit.contain,
-                          fitWeb: BoxFitWeb.contain,
-                          onLoading: const Center(
-                            child: CircularProgressIndicator(
-                              color: appColor,
-                            ),
+                          placeholder: const Center(
+                            child: CircularProgressIndicator(),
                           ),
-                          onError: Image.asset(
-                            'assets/no_image/no_image.png',
-                            height: width * .2,
-                            width: width * .2,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                        ))),
                   SizedBox(
                     height: 160,
                     width: width * .4,
@@ -696,12 +668,9 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AutoSizeText(
-                                data[index].ean,
-                                style: TextStyle(
-                                  fontSize: width * .015,
-                                  color: Colors.black,
-                                ),
+                              _copyTextWidget(
+                                ean:data[index].ean,
+                                width: width,
                               ),
                               AutoSizeText(
                                 data[index].sku,
@@ -732,17 +701,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 60,
-                    width: width * .4,
-                    child: Center(
-                      child: Checkbox(
-                        activeColor: appColor,
-                        value: true,
-                        onChanged: (bool? value) {},
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
             ),
