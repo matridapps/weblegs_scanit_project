@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:absolute_app/core/blocs/shop_repienish_bloc/shop_repienish_bloc.dart';
 import 'package:absolute_app/core/utils/constants.dart';
-import 'package:absolute_app/core/utils/size_vishal.dart';
 import 'package:absolute_app/models/shop_replinsh_model.dart';
 import 'package:absolute_app/screens/web_screens/new_screens_by_vishal/shop_screen/widgets/scanner_web_shop.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -46,7 +45,10 @@ class _ShopScreenState extends State<ShopScreen> {
     super.dispose();
   }
 
-  Widget _scanButton({required List<ShopReplenishSku> orignalProducts,}) =>
+  // ignore: unused_element
+  Widget _scanButton({
+    required List<ShopReplenishSku> orignalProducts,
+  }) =>
       GestureDetector(
         onTap: () => kIsWeb
             ? Navigator.push(
@@ -81,10 +83,9 @@ class _ShopScreenState extends State<ShopScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    return SizedBox(
-      width: w,
-      height: h,
+    return SafeArea(
+      bottom: true,
+      top: true,
       child: BlocBuilder<ShopRepienishBloc, ShopRepienishState>(
         builder: (context, state) {
           return state is ShopRepienishInitialState ||
@@ -152,88 +153,100 @@ class _ShopScreenState extends State<ShopScreen> {
                                   );
                           },
                         ),
-                        sheetBody: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * .85,
-                                child: ListView.builder(
-                                  itemCount: scanProducts.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Card(
-                                        child: ListTile(
-                                          trailing: Text(
-                                              'Quantity: ${scanProducts[index].numberOfTimesProductScanned}'),
-                                          title: Text(
-                                              "EAN: ${scanProducts[index].productEAN}"),
-                                          // trailing:
-                                          // const Icon(Icons.safety_divider),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.width / 4,
-                                  child: Wrap(
-                                    alignment: WrapAlignment.spaceEvenly,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            scanProducts.clear();
-                                            context
-                                                .read<ShopRepienishBloc>()
-                                                .add(
-                                                    ShopRepienishLoadingEvent());
-                                          });
-                                        },
-                                        child: Container(
-                                          color: appColor,
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(15),
-                                            child: AutoSizeText(
-                                              'Clear Scan List',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white,
+                        sheetBody: SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: SingleChildScrollView(
+                            // physics: const NeverScrollableScrollPhysics(),
+                            child: Column(
+                              children: [
+
+                                ...List.generate(scanProducts.length, (index) => Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    child: ListTile(
+                                      subtitle: Text(
+                                          'Quantity: ${scanProducts[index].numberOfTimesProductScanned}'),
+                                      title: Text(
+                                          "Product: ${scanProducts[index].product.title}"),
+                                      // trailing:
+                                      // const Icon(Icons.safety_divider),
+                                    ),
+                                  ),
+                                )),
+
+
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: SizedBox(
+                                      width: MediaQuery.of(context).size.width / 4,
+                                      height: MediaQuery.of(context).size.height * .2,
+                                      child: ListView(
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  scanProducts.clear();
+                                                  context
+                                                      .read<ShopRepienishBloc>()
+                                                      .add(
+                                                          ShopRepienishLoadingEvent());
+                                                });
+                                              },
+                                              child: Container(
+                                                color: appColor,
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(15),
+                                                  child: AutoSizeText(
+                                                    'Clear Scan List',
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 60,
-                                        height: 50,
-                                      ),
-                          GestureDetector(
-                            onTap: () async{
-                              setState(()=> _buttonLoading = true);
-                              await createShopReplenishPicklist().whenComplete(() => setState(()=> _buttonLoading = false));
-                            },
-                            child: Container(
-                              color: appColor,
-                              child:  Padding(
-                                padding:const EdgeInsets.all(15),
-                                child:_buttonLoading == true?const CircularProgressIndicator(color: Colors.white,): const AutoSizeText(
-                                  'Create Picklist',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                setState(
+                                                    () => _buttonLoading = true);
+                                                await createShopReplenishPicklist()
+                                                    .whenComplete(() => setState(
+                                                        () => _buttonLoading =
+                                                            false));
+                                              },
+                                              child: Container(
+                                                color: appColor,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(15),
+                                                  child: _buttonLoading == true
+                                                      ? const CircularProgressIndicator(
+                                                          color: Colors.white,
+                                                        )
+                                                      : const AutoSizeText(
+                                                          'Create Picklist',
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                                )
+                              ],
                             ),
-                          )
-
-                                    ],
-                                  ))
-                            ],
                           ),
                         ),
                       ),
@@ -251,41 +264,40 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Future<void> createShopReplenishPicklist() async {
- 
+    // ignore: no_leading_underscores_for_local_identifiers
     List<String> _tempList = [];
 
     for (var element in scanProducts) {
       _tempList.add(
-          '${element.productEAN}:' '${element.numberOfTimesProductScanned}');
+          '${element.product.ean}:' '${element.numberOfTimesProductScanned}');
     }
 
     log(_tempList.length.toString());
     log(_tempList.join(',').toString());
-    
-    
-    try{
 
-      final response = await get(Uri.parse('https://weblegs.info/JadlamApp/api/CreateShopReplenishpicklist?SkuandQuantity=${_tempList.join(',')}'));
-      if(jsonDecode(response.body)['message'].toString().toLowerCase().contains('successfully created')){
-        Fluttertoast.showToast(msg: jsonDecode(response.body)['message'].toString());
+    try {
+      final response = await get(Uri.parse(
+          'https://weblegs.info/JadlamApp/api/CreateShopReplenishpicklist?SkuandQuantity=${_tempList.join(',')}'));
+      if (jsonDecode(response.body)['message']
+          .toString()
+          .toLowerCase()
+          .contains('successfully created')) {
+        Fluttertoast.showToast(
+            msg: jsonDecode(response.body)['message'].toString());
 
         setState(() {
           scanProducts.clear();
         });
+        if(!mounted) return;
         context.read<ShopRepienishBloc>().add(ShopRepienishLoadingEvent());
-      }else{
-
-        Fluttertoast.showToast(msg: jsonDecode(response.body)['message'].toString());
+      } else {
+        Fluttertoast.showToast(
+            msg: jsonDecode(response.body)['message'].toString());
       }
-      
-      
-    }catch(e){
+    } catch (e) {
       Fluttertoast.showToast(msg: 'Something went wrong.\nPlease try again');
     }
-    
   }
-
-
 }
 
 class ShopReplenishForMobile extends StatelessWidget {

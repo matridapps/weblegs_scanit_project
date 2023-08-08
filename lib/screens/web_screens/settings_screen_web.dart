@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
-import 'package:absolute_app/screens/switch_for_settings_screen.dart';
+import 'package:absolute_app/screens/switch_for_bundle_sku_setting.dart';
+import 'package:absolute_app/screens/switch_for_dc_split_setting.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -21,7 +22,7 @@ class SettingsScreenWeb extends StatefulWidget {
 
 class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   final RoundedLoadingButtonController saveValuesController =
-      RoundedLoadingButtonController();
+  RoundedLoadingButtonController();
 
   final TextEditingController lengthController = TextEditingController();
   final TextEditingController widthController = TextEditingController();
@@ -29,7 +30,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   final TextEditingController weightController = TextEditingController();
   final TextEditingController eanOrOrderController = TextEditingController();
   final TextEditingController selectedPicklistController =
-      TextEditingController();
+  TextEditingController();
 
   List<String> pickListTypes = ['SIW', 'SSMQW', 'MSMQW'];
   List<String> eanOrOrder = ['Barcode', 'Order Number'];
@@ -99,51 +100,121 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
       ),
       body: isLoading == true
           ? SizedBox(
-              height: size.height,
-              width: size.width,
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: appColor,
+        height: size.height,
+        width: size.width,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: appColor,
+          ),
+        ),
+      )
+          : isError == true
+          ? SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Center(
+          child: Text(
+            error,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      )
+          : Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
+        ),
+        child: Column(
+          children: [
+            _topBuilder(context, size),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _bundleSettingBuilder(context, size),
+                    _dcSplitSettingBuilder(context, size),
+                    _defaultValuesBuilder(context, size),
+                    _defaultValueForPackAndScanBuilder(context, size),
+                    _settingForSiteName(context, size),
+                  ],
                 ),
               ),
-            )
-          : isError == true
-              ? SizedBox(
-                  height: size.height,
-                  width: size.width,
-                  child: Center(
-                    child: Text(
-                      error,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                )
-              : SizedBox(
-                  height: size.height,
-                  width: size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _bundleSettingBuilder(context, size),
-                          _defaultValuesBuilder(context, size),
-                          _defaultValueForPackAndScanBuilder(context, size),
-                          _settingForSiteName(context, size),
-                          _bottomBuilder(context, size)
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   /// BUILDER METHODS FOR WEB
+
+  Widget _topBuilder(BuildContext context, Size size) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 35,
+          width: 300,
+          child: RoundedLoadingButton(
+            color: Colors.green,
+            borderRadius: 10,
+            height: 50,
+            width: 160,
+            successIcon: Icons.check_rounded,
+            failedIcon: Icons.close_rounded,
+            successColor: Colors.green,
+            controller: saveValuesController,
+            onPressed: () async {
+              await saveValues(
+                length: lengthController.text.toString(),
+                width: widthController.text.toString(),
+                height: heightController.text.toString(),
+                weight: weightController.text.toString(),
+              ).whenComplete(
+                    () async {
+                  await savePackAndScanValues(
+                    eanOrOrder: eanOrOrderSelected,
+                    picklistType: selectedPicklist,
+                  );
+                },
+              ).whenComplete(
+                    () async {
+                  await saveSiteNameList(
+                    isSelected: checkBoxValueListForSiteName
+                        .map((e) => e == true ? 'Yes' : 'No')
+                        .toList(),
+                    userId: userIdListForSiteName,
+                  );
+                },
+              ).whenComplete(() async {
+                await getDefaultValuesForSKU();
+              }).whenComplete(() async {
+                await getPackAndScanValues();
+              }).whenComplete(() async {
+                await getSiteNameList();
+              }).whenComplete(() {
+                ToastUtils.motionToastCentered1500MS(
+                  message: 'Changes Saved Successfully',
+                  context: context,
+                );
+                saveValuesController.reset();
+              });
+            },
+            child: const Text(
+              'Save Changes',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const Divider(),
+      ],
+    );
+  }
 
   Widget _bundleSettingBuilder(BuildContext context, Size size) {
     return const ListTile(
@@ -155,7 +226,21 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
         'If enabled, validating SKUs in SIW and SSMQW picklist will validate one order at a time for that SKU Bundle and If disabled, all orders in the SKU bundle will be validated.',
         style: TextStyle(fontSize: 16),
       ),
-      trailing: SwitchForSettingsScreen(),
+      trailing: SwitchForBundleSkuSetting(),
+    );
+  }
+
+  Widget _dcSplitSettingBuilder(BuildContext context, Size size) {
+    return ListTile(
+      title: const Text(
+        'Make Splitting by Distribution Center Automatic in Picklist',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      subtitle: const Text(
+        'Whenever a new request to create a SIW or SSMQW Picklist is given, If this setting is enabled, then it will automatically create separate Picklists for all Distribution Centers and If disabled, then only one Picklist will be created and there will option to Split that Picklist on Distribution Centers',
+        style: TextStyle(fontSize: 16),
+      ),
+      trailing: SwitchForDCSplitSetting(userId: widget.userId),
     );
   }
 
@@ -472,85 +557,12 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
     );
   }
 
-  Widget _bottomBuilder(BuildContext context, Size size) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 40),
-          child: Divider(),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: SizedBox(
-            height: 35,
-            width: 300,
-            child: RoundedLoadingButton(
-              color: Colors.green,
-              borderRadius: 10,
-              height: 50,
-              width: 160,
-              successIcon: Icons.check_rounded,
-              failedIcon: Icons.close_rounded,
-              successColor: Colors.green,
-              controller: saveValuesController,
-              onPressed: () async {
-                await saveValues(
-                  length: lengthController.text.toString(),
-                  width: widthController.text.toString(),
-                  height: heightController.text.toString(),
-                  weight: weightController.text.toString(),
-                ).whenComplete(
-                  () async {
-                    await savePackAndScanValues(
-                      eanOrOrder: eanOrOrderSelected,
-                      picklistType: selectedPicklist,
-                    );
-                  },
-                ).whenComplete(
-                  () async {
-                    await saveSiteNameList(
-                      isSelected: checkBoxValueListForSiteName
-                          .map((e) => e == true ? 'Yes' : 'No')
-                          .toList(),
-                      userId: userIdListForSiteName,
-                    );
-                  },
-                ).whenComplete(() async {
-                  await getDefaultValuesForSKU();
-                }).whenComplete(() async {
-                  await getPackAndScanValues();
-                }).whenComplete(() async {
-                  await getSiteNameList();
-                }).whenComplete(() {
-                  ToastUtils.motionToastCentered1500MS(
-                    message: 'Changes Saved Successfully',
-                    context: context,
-                  );
-                  saveValuesController.reset();
-                });
-              },
-              child: const Text(
-                'Save Changes',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   /// OTHER WIDGETS
 
   List<Widget> _siteNameListMaker() {
     return List.generate(
       siteNameList.length,
-      (index) => Row(
+          (index) => Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -560,7 +572,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
             onChanged: (bool? newValue) {
               setState(() {
                 checkBoxValueListForSiteName[index] =
-                    !(checkBoxValueListForSiteName[index]);
+                !(checkBoxValueListForSiteName[index]);
                 userIdListForSiteName[index] = widget.userId;
               });
               log('V checkBoxValueListForSiteName At $index >>---> ${checkBoxValueListForSiteName[index]}');
@@ -598,16 +610,16 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
         setState(() {
           lengthController.text = defaultValuesDB[defaultValuesDB
-                  .indexWhere((e) => e.get<String>('item_name') == 'Length')]
+              .indexWhere((e) => e.get<String>('item_name') == 'Length')]
               .get<String>('item_value')!;
           widthController.text = defaultValuesDB[defaultValuesDB
-                  .indexWhere((e) => e.get<String>('item_name') == 'Width')]
+              .indexWhere((e) => e.get<String>('item_name') == 'Width')]
               .get<String>('item_value')!;
           heightController.text = defaultValuesDB[defaultValuesDB
-                  .indexWhere((e) => e.get<String>('item_name') == 'Height')]
+              .indexWhere((e) => e.get<String>('item_name') == 'Height')]
               .get<String>('item_value')!;
           weightController.text = defaultValuesDB[defaultValuesDB
-                  .indexWhere((e) => e.get<String>('item_name') == 'Weight')]
+              .indexWhere((e) => e.get<String>('item_name') == 'Weight')]
               .get<String>('item_value')!;
         });
       }
@@ -681,7 +693,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
         checkBoxValueListForSiteName = [];
         checkBoxValueListForSiteName.addAll(siteNameList.map((e) =>
-            (e.get<String>('is_selected') ?? 'No') == 'Yes' ? true : false));
+        (e.get<String>('is_selected') ?? 'No') == 'Yes' ? true : false));
         log('V checkBoxValueListForSiteName >>---> $checkBoxValueListForSiteName');
 
         objectIdListForSiteName = [];

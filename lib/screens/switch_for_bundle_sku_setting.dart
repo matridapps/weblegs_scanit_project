@@ -4,15 +4,15 @@ import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SwitchForSettingsScreen extends StatefulWidget {
-  const SwitchForSettingsScreen({super.key});
+class SwitchForBundleSkuSetting extends StatefulWidget {
+  const SwitchForBundleSkuSetting({super.key});
 
   @override
-  State<SwitchForSettingsScreen> createState() =>
-      _SwitchForSettingsScreenState();
+  State<SwitchForBundleSkuSetting> createState() =>
+      _SwitchForBundleSkuSettingState();
 }
 
-class _SwitchForSettingsScreenState extends State<SwitchForSettingsScreen> {
+class _SwitchForBundleSkuSettingState extends State<SwitchForBundleSkuSetting> {
   bool light = false;
 
   @override
@@ -51,7 +51,7 @@ class _SwitchForSettingsScreenState extends State<SwitchForSettingsScreen> {
               log('is SingleSkuAtOnce >>> ${prefs.getBool('SingleSkuAtOnce')}');
             }).whenComplete(() => ToastUtils.motionToastCentered1500MS(
                 message:
-                    'Scanning One Order at once for Bundled SKUs is ${value == true ? 'Enabled' : 'Disabled'}',
+                'Scanning One Order at once for Bundled SKUs is ${value == true ? 'Enabled' : 'Disabled'}',
                 context: context));
           },
         ),

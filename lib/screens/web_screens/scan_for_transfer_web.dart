@@ -8,10 +8,8 @@ import 'package:absolute_app/core/utils/responsive_check.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:absolute_app/screens/mobile_device_screens/camera_screen.dart';
 import 'package:absolute_app/screens/web_screens/stock_transfer_web.dart';
-import 'package:absolute_app/screens/mobile_device_screens/stock_transfer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -452,14 +450,14 @@ class _ScanForTransferWebState extends State<ScanForTransferWeb> {
                                           ),
                                         );
                                       },
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             'Stock Transfer',
                                           ),
-                                          const Icon(
+                                          Icon(
                                             Icons.arrow_forward_ios_rounded,
                                             size: 26,
                                           )
@@ -917,6 +915,7 @@ class _ScanForTransferWebState extends State<ScanForTransferWeb> {
     );
   }
 
+  // ignore: unused_element
   Widget _searchBarBuilder(BuildContext context, Size size) {
     return Padding(
       padding: EdgeInsets.fromLTRB(

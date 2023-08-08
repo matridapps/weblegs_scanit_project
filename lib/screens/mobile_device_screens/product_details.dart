@@ -528,8 +528,8 @@ class _ProductDetailsState extends State<ProductDetails> {
             ),
           ),
           isQuantityVisible == false
-              ? Row(
-                  children: const [
+              ? const Row(
+                  children: [
                     Center(
                       child: CircularProgressIndicator(
                         color: appColor,
@@ -1048,6 +1048,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
+  // ignore: unused_element
   Widget _allDistCenter(BuildContext context, Size size) {
     return Padding(
       padding: EdgeInsets.fromLTRB(size.width * .05, 0, size.width * .05, 0),

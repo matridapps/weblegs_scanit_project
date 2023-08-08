@@ -42,11 +42,11 @@ class _ScannerWebForShopState extends State<ScannerWebForShop> {
           onChanged: (String value) async {
             if (value.length > 4) {
               if (widget.scanProducts
-                  .where((element) => element.productEAN == value)
+                  .where((element) => element.product.ean == value)
                   .isNotEmpty) {
                 List<ScanProductModel> list = List<ScanProductModel>.from(widget
                     .scanProducts
-                    .where((element) => element.productEAN == value)
+                    .where((element) => element.product.ean == value)
                     .map((e) => e));
 
                 ScanProductModel model = list[0];
@@ -71,7 +71,7 @@ class _ScannerWebForShopState extends State<ScannerWebForShop> {
                   }
                 });
               } else {
-                saveScannedProducts(ean: value, numberOfTimes: 1);
+                saveScannedProducts(ean: List<ShopReplenishSku>.from(widget.orignalProducts.where((element) => element.ean == value))[0], numberOfTimes: 1);
               }
 
                await Future.delayed(const Duration(milliseconds: 500))
@@ -86,12 +86,12 @@ class _ScannerWebForShopState extends State<ScannerWebForShop> {
     );
   }
 
-  void saveScannedProducts({required String ean, required int numberOfTimes}) {
+  void saveScannedProducts({required ShopReplenishSku ean, required int numberOfTimes}) {
     setState(() {
       widget.scanProducts.insert(
           0,
           ScanProductModel(
-              productEAN: ean, numberOfTimesProductScanned: numberOfTimes));
+              product: ean, numberOfTimesProductScanned: numberOfTimes));
     });
   }
 
@@ -110,11 +110,11 @@ class _ScannerWebForShopState extends State<ScannerWebForShop> {
 }
 
 class ScanProductModel {
-  final String productEAN;
+  final ShopReplenishSku product;
   int numberOfTimesProductScanned;
 
   ScanProductModel({
-    required this.productEAN,
+    required this.product,
     required this.numberOfTimesProductScanned,
   });
 }

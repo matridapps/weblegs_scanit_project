@@ -10,8 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class PicklistWlSplittingScreenWeb extends StatefulWidget {
-  const PicklistWlSplittingScreenWeb({
+class PicklistWlSplittingScreen extends StatefulWidget {
+  const PicklistWlSplittingScreen({
     Key? key,
     required this.batchId,
     required this.appBarName,
@@ -31,12 +31,11 @@ class PicklistWlSplittingScreenWeb extends StatefulWidget {
   final int picklistLength;
 
   @override
-  State<PicklistWlSplittingScreenWeb> createState() =>
-      _PicklistWlSplittingScreenWebState();
+  State<PicklistWlSplittingScreen> createState() =>
+      _PicklistWlSplittingScreenState();
 }
 
-class _PicklistWlSplittingScreenWebState
-    extends State<PicklistWlSplittingScreenWeb> {
+class _PicklistWlSplittingScreenState extends State<PicklistWlSplittingScreen> {
   final RoundedLoadingButtonController allocateController =
   RoundedLoadingButtonController();
 
@@ -144,8 +143,7 @@ class _PicklistWlSplittingScreenWebState
                           errorColor: appColor,
                           controller: allocateController,
                           onPressed: () async {
-                            if (checkBoxValueList
-                                .any((e) => e == true)) {
+                            if (checkBoxValueList.any((e) => e == true)) {
                               if (locationsList.contains(
                                   'Warehouse Location Not Available')) {
                                 if (checkBoxValueList
@@ -174,8 +172,8 @@ class _PicklistWlSplittingScreenWebState
                                   for (int i = 0;
                                   i < tempList.length;
                                   i++) {
-                                    locationsToSent.add(
-                                        locationsList[tempList[i]]);
+                                    locationsToSent
+                                        .add(locationsList[tempList[i]]);
                                   }
                                   log('V locationsToSent >>---> $locationsToSent');
 
@@ -186,17 +184,16 @@ class _PicklistWlSplittingScreenWebState
                                       .whenComplete(() => savePickListData(
                                       picklist:
                                       '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
-                                      pickListLength: widget
-                                          .picklistLength +
+                                      pickListLength:
+                                      widget.picklistLength +
                                           locationsToSent.length))
                                       .whenComplete(() async =>
                                   await Future.delayed(
-                                      const Duration(
-                                          seconds: 1), () {
-                                    allocateController.reset();
-                                    Navigator.pop(
-                                        context, true);
-                                  }));
+                                      const Duration(seconds: 1),
+                                          () {
+                                        allocateController.reset();
+                                        Navigator.pop(context, true);
+                                      }));
                                 }
                               } else {
                                 /// DOES NOT HAVE 'NA' LOCATIONS >> JUST
@@ -225,8 +222,8 @@ class _PicklistWlSplittingScreenWebState
                                   for (int i = 0;
                                   i < tempList.length;
                                   i++) {
-                                    locationsToSent.add(
-                                        locationsList[tempList[i]]);
+                                    locationsToSent
+                                        .add(locationsList[tempList[i]]);
                                   }
                                   log('V locationsToSent >>---> $locationsToSent');
 
@@ -237,17 +234,16 @@ class _PicklistWlSplittingScreenWebState
                                       .whenComplete(() => savePickListData(
                                       picklist:
                                       '${widget.picklist}-${locationsToSent[locationsToSent.length - 1]}',
-                                      pickListLength: widget
-                                          .picklistLength +
+                                      pickListLength:
+                                      widget.picklistLength +
                                           locationsToSent.length))
                                       .whenComplete(() async =>
                                   await Future.delayed(
-                                      const Duration(
-                                          seconds: 1), () {
-                                    allocateController.reset();
-                                    Navigator.pop(
-                                        context, true);
-                                  }));
+                                      const Duration(seconds: 1),
+                                          () {
+                                        allocateController.reset();
+                                        Navigator.pop(context, true);
+                                      }));
                                 }
                               }
                             } else {

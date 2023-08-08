@@ -7,6 +7,7 @@ import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/navigation_methods.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/models/get_all_picklist_response.dart';
 import 'package:absolute_app/models/get_locked_picklist_response.dart';
 import 'package:absolute_app/models/get_picklist_details_response.dart';
 import 'package:absolute_app/screens/picklist_details.dart';
@@ -47,8 +48,8 @@ class PickLists extends StatefulWidget {
   State<PickLists> createState() => _PickListsState();
 }
 
-/// Start of Adding Comments for each Variable, BUILD METHOD HELPER METHODS,
-/// API Handling Helper Methods, API Methods W.E.F. 29 JULY, 2023
+/*START OF ADDING COMMENTS FOR EACH VARIABLE, BUILD METHOD HELPER METHODS, API
+HANDLING HELPER METHODS, API METHODS W.E.F. 29 JULY, 2023*/
 
 class _PickListsState extends State<PickLists> {
   List<Batch> pickLists = <Batch>[];
@@ -72,6 +73,7 @@ class _PickListsState extends State<PickLists> {
   int endIndex = 4;
   int pickListCount = 0;
   int picklistLengthDB = 0;
+
   /*int pendingPickListNo = 0;*/
   int pickListLengthToSave = 0;
 
@@ -104,15 +106,15 @@ class _PickListsState extends State<PickLists> {
   DateFormat dateFormat = DateFormat("M/d/yyyy h:mm:ss a");
 
   final RoundedLoadingButtonController createController =
-  RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
   final RoundedLoadingButtonController cancelController =
-  RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
   final TextEditingController selectedStatusToFilterController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController selectedPicklistController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController selectedNoToShowController =
-  TextEditingController();
+      TextEditingController();
 
   @override
   void initState() {
@@ -125,7 +127,7 @@ class _PickListsState extends State<PickLists> {
     pickListApis();
   }
 
-  /// <------ START ------ BUILD METHOD HELPER METHODS --------------------> ///
+  /*<----------------------------------------- START ----------------------------------------------- BUILD METHOD HELPER METHODS -------------------------------------------------->*/
 
   /// APPBAR WIDGET WITH FILTER PICKLIST BASED ON STATUS FUNCTIONALITY FOR WEB
   /// APP AND REFRESH PICKLIST FUNCTIONALITY FOR BOTH WEB APP AND MOBILE APP
@@ -153,9 +155,9 @@ class _PickListsState extends State<PickLists> {
                 controller: selectedStatusToFilterController,
                 hintText: '',
                 selectedStyle:
-                const TextStyle(color: Colors.black, fontSize: 18),
+                    const TextStyle(color: Colors.black, fontSize: 18),
                 listItemStyle:
-                const TextStyle(color: Colors.black, fontSize: 18),
+                    const TextStyle(color: Colors.black, fontSize: 18),
                 excludeSelected: true,
                 onChanged: (_) async {
                   setState(() {
@@ -194,8 +196,9 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
-  /// <------------------- WEB BUILDER HELPER METHODS ---------------------> ///
+  /*<-------------- WEB BUILDER HELPER METHODS [WBHM] ----------------------->*/
 
+  /// [WBHM] 1 :
   /// CREATE NEW PICKLIST BUTTON BUILDER FOR WEB APP -- WORKING CURRENTLY FOR
   /// BIG SCREEN RESOLUTION ALSO
   Widget _createNewPicklistButtonBuilderWebApp(
@@ -277,10 +280,10 @@ class _PickListsState extends State<PickLists> {
                                     onPressed: () async {
                                       await Future.delayed(
                                           const Duration(milliseconds: 500),
-                                              () {
-                                            cancelController.reset();
-                                            Navigator.pop(context);
-                                          });
+                                          () {
+                                        cancelController.reset();
+                                        Navigator.pop(context);
+                                      });
                                     },
                                     child: const Text(
                                       'Cancel',
@@ -297,7 +300,7 @@ class _PickListsState extends State<PickLists> {
                                     children: [
                                       Padding(
                                         padding:
-                                        const EdgeInsets.only(right: 15),
+                                            const EdgeInsets.only(right: 15),
                                         child: RoundedLoadingButton(
                                           color: Colors.green,
                                           borderRadius: 10,
@@ -342,6 +345,7 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
+  /// [WBHM] 2 :
   /// THE BUILDER FOR ROW CONSISTING THE PREVIOUS BUTTON, NEXT BUTTON, AND THE
   /// CUSTOM DROPDOWN BAR FOR SELECTING COUNT OF PICKLIST TO SHOW IN THE`
   /// PAGINATED PICKLIST FOR WEB APP
@@ -383,9 +387,9 @@ class _PickListsState extends State<PickLists> {
                         controller: selectedNoToShowController,
                         hintText: '',
                         selectedStyle:
-                        const TextStyle(color: Colors.black, fontSize: 14),
+                            const TextStyle(color: Colors.black, fontSize: 14),
                         listItemStyle:
-                        const TextStyle(color: Colors.black, fontSize: 14),
+                            const TextStyle(color: Colors.black, fontSize: 14),
                         excludeSelected: true,
                         onChanged: (_) => onCountOfPicklistChanged(),
                       ),
@@ -411,6 +415,7 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
+  /// [WBHM] 3 :
   /// TABLE TITLE ROW BUILDER WITH SAME SIZE AS OTHER PICKLIST TABLE ROWS
   Widget _tableTitleRowBuilderWebApp(Size size) {
     return Visibility(
@@ -475,69 +480,7 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
-  /// NO PICKLIST RECEIVED FROM API CASE BUILDER
-  Widget _noPicklistToShowBuilder() {
-    return const Center(
-      child: Text('No PickList to show', style: TextStyle(fontSize: 20)),
-    );
-  }
-
-  /// WIDGET FOR WEB APP : MOUSE CURSOR CHOOSER
-  MouseCursor mouseCursorForWeb({required int index}) {
-    return lockedPicklistList.isNotEmpty
-        ? lockedPicklistList
-        .map((e) => e.batchId)
-        .toList()
-        .contains(picklistChooser()[index].batchId)
-        ? lockedPicklistList[lockedPicklistList.indexWhere((e) =>
-    e.batchId == picklistChooser()[index].batchId)]
-        .userName ==
-        widget.userName
-        ? SystemMouseCursors.click
-        : SystemMouseCursors.basic
-        : SystemMouseCursors.click
-        : SystemMouseCursors.click;
-  }
-
-  /// WIDGET FOR WEB APP : HEIGHT CHECKER CHOOSER
-  /// Optimization required. // isDc field
-  double? heightCheckerForWeb(int index) {
-    bool check1 = picklistChooser()[index].status.contains('In Progress') ||
-        picklistChooser()[index].status.contains('Not Started');
-    bool check2 = picklistChooser()[index].status.contains('Complete');
-    bool check3 = picklistChooser()[index].requestType == 'MSMQW';
-    bool check4 = picklistChooser()[index].pickedorder.isNotEmpty &&
-        picklistChooser()[index].pickedorder != '0';
-    bool check5 = picklistChooser()[index].totalsku.isEmpty;
-    bool check6 = picklistChooser()[index].pickedsku.isNotEmpty &&
-        picklistChooser()[index].pickedsku != '0';
-    bool check7 = splitOnWarehouseLocationVisible(index) &&
-        splitOnDistributionCenterVisible(index);
-    bool check8 = splitOnWarehouseLocationVisible(index) ||
-        splitOnDistributionCenterVisible(index);
-    return check1
-        ? check3
-        ? check4
-        ? 130
-        : 105
-        : check5
-        ? 105
-        : check6
-        ? check7
-        ? 180
-        : check8
-        ? 155
-        : 130
-        : check7
-        ? 155
-        : check8
-        ? 130
-        : 105
-        : check2
-        ? 105
-        : 80;
-  }
-
+  /// [WBHM] 4 :
   /// PICKLIST TABLE DATA BUILDER FOR WEB APP, WHICH WILL SHOW ALL THE PICKLIST
   /// DATA, PICKLIST TYPE AND VALIDATE PICKLIST BUTTON IN EACH ROW RESPECTIVELY
   Widget _tableDataBuilderWebApp(Size size) {
@@ -545,7 +488,7 @@ class _PickListsState extends State<PickLists> {
       child: isPicklistVisible == false || shiftLoading == true
           ? loader()
           : pickLists.isEmpty
-          ? _noPicklistToShowBuilder()
+          ? _noPicklistToShowBuilder(20)
           : ListView.builder(
           itemCount: picklistChooser().length,
           itemBuilder: (BuildContext ctx, index) {
@@ -1229,6 +1172,65 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
+  /*<---------- HELPER FOR _tableDataBuilderWebApp [HFTDBWA] ---------------->*/
+
+  /// [HFTDBWA] 1 :
+  /// WIDGET FOR WEB APP : MOUSE CURSOR CHOOSER
+  MouseCursor mouseCursorForWeb({required int index}) {
+    return lockedPicklistList.isNotEmpty
+        ? lockedPicklistList
+                .map((e) => e.batchId)
+                .toList()
+                .contains(picklistChooser()[index].batchId)
+            ? lockedPicklistList[lockedPicklistList.indexWhere((e) =>
+                            e.batchId == picklistChooser()[index].batchId)]
+                        .userName ==
+                    widget.userName
+                ? SystemMouseCursors.click
+                : SystemMouseCursors.basic
+            : SystemMouseCursors.click
+        : SystemMouseCursors.click;
+  }
+
+  /// [HFTDBWA] 2 :
+  /// WIDGET FOR WEB APP : HEIGHT CHECKER CHOOSER
+  double? heightCheckerForWeb(int index) {
+    bool check1 = picklistChooser()[index].status.contains('In Progress') ||
+        picklistChooser()[index].status.contains('Not Started');
+    bool check2 = picklistChooser()[index].status.contains('Complete');
+    bool check3 = picklistChooser()[index].requestType == 'MSMQW';
+    bool check4 = picklistChooser()[index].pickedorder.isNotEmpty &&
+        picklistChooser()[index].pickedorder != '0';
+    bool check5 = picklistChooser()[index].totalsku.isEmpty;
+    bool check6 = picklistChooser()[index].pickedsku.isNotEmpty &&
+        picklistChooser()[index].pickedsku != '0';
+    bool check7 = splitOnWarehouseLocationVisible(index) &&
+        splitOnDistributionCenterVisible(index);
+    bool check8 = splitOnWarehouseLocationVisible(index) ||
+        splitOnDistributionCenterVisible(index);
+    return check1
+        ? check3
+            ? check4
+                ? 130
+                : 105
+            : check5
+                ? 105
+                : check6
+                    ? check7
+                        ? 180
+                        : check8
+                            ? 155
+                            : 130
+                    : check7
+                        ? 155
+                        : check8
+                            ? 130
+                            : 105
+        : check2
+            ? 105
+            : 80;
+  }
+
   /// WEB BUILDER WIDGET FOR WEB APP SCREEN BODY BUILDER
   Widget _webBuilder(BuildContext context, Size size) {
     return Padding(
@@ -1245,8 +1247,146 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
-  /// <------------------ MOBILE BUILDER HELPER METHODS -------------------> ///
+  /*MOBILE BUILDER PROPER COMMENTING PENDING*/
 
+  /*<-------------- MOBILE BUILDER HELPER METHODS [MBHM] -------------------->*/
+
+  /// [MBHM] 1 :
+  /// CREATE NEW PICKLIST BUTTON BUILDER FOR MOBILE APP
+  Widget _createNewPicklistButtonBuilder(Size size) {
+    return Visibility(
+      visible: isPicklistVisible == true,
+      child: SizedBox(
+        height: size.height * .08,
+        width: size.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      builder: (context, setStateSB) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          elevation: 5,
+                          titleTextStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: size.width * .042,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          title: Text(
+                            'Select a Picklist Type',
+                            style: TextStyle(fontSize: size.width * .05),
+                          ),
+                          content: SizedBox(
+                              height: size.height * .07,
+                              width: size.width * .7,
+                              child: CustomDropdown(
+                                items: pickListTypes,
+                                controller: selectedPicklistController,
+                                hintText: '',
+                                selectedStyle: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                  color: Colors.grey[700]!,
+                                  width: 1,
+                                ),
+                                excludeSelected: true,
+                                onChanged: (_) {
+                                  setState(() {
+                                    selectedPicklist =
+                                        selectedPicklistController.text;
+                                  });
+                                  log('V selectedPicklistController.text >>---> ${selectedPicklistController.text}');
+                                  log('V selectedPicklistT >>---> $selectedPicklist');
+                                },
+                              )),
+                          actions: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: RoundedLoadingButton(
+                                    color: Colors.red,
+                                    borderRadius: 10,
+                                    height: size.width * .1,
+                                    width: size.width * .25,
+                                    successIcon: Icons.check_rounded,
+                                    failedIcon: Icons.close_rounded,
+                                    successColor: Colors.green,
+                                    controller: cancelController,
+                                    onPressed: () async {
+                                      cancelController.error();
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                        cancelController.reset();
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: RoundedLoadingButton(
+                                          color: Colors.green,
+                                          borderRadius: 10,
+                                          height: size.width * .1,
+                                          width: size.width * .25,
+                                          successIcon: Icons.check_rounded,
+                                          failedIcon: Icons.close_rounded,
+                                          successColor: Colors.green,
+                                          controller: createController,
+                                          onPressed: () async {
+                                            createNewPicklistMethod(context);
+                                          },
+                                          child: const Text('Create'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+              child: Text(
+                'Create New PickList',
+                style: TextStyle(
+                  fontSize: size.height * .025,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// [MBHM] 3 :
   /// THE BUILDER FOR ROW CONSISTING THE PREVIOUS BUTTON, NEXT BUTTON, AND THE
   /// CUSTOM DROPDOWN BAR FOR SELECTING COUNT OF PICKLIST TO SHOW IN THE`
   /// PAGINATED PICKLIST FOR MOBILE APP
@@ -1282,9 +1422,9 @@ class _PickListsState extends State<PickLists> {
                     controller: selectedNoToShowController,
                     hintText: '',
                     selectedStyle:
-                    const TextStyle(color: Colors.black, fontSize: 14),
+                        const TextStyle(color: Colors.black, fontSize: 14),
                     listItemStyle:
-                    const TextStyle(color: Colors.black, fontSize: 14),
+                        const TextStyle(color: Colors.black, fontSize: 14),
                     excludeSelected: true,
                     onChanged: (_) => onCountOfPicklistChanged(),
                   ),
@@ -1317,140 +1457,7 @@ class _PickListsState extends State<PickLists> {
       ),
       child: Column(
         children: [
-          Visibility(
-            visible: isPicklistVisible == true,
-            child: SizedBox(
-              height: size.height * .08,
-              width: size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            builder: (context, setStateSB) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                elevation: 5,
-                                titleTextStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * .042,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                title: Text(
-                                  'Select a Picklist Type',
-                                  style: TextStyle(fontSize: size.width * .05),
-                                ),
-                                content: SizedBox(
-                                    height: size.height * .07,
-                                    width: size.width * .7,
-                                    child: CustomDropdown(
-                                      items: pickListTypes,
-                                      controller: selectedPicklistController,
-                                      hintText: '',
-                                      selectedStyle: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey[700]!,
-                                        width: 1,
-                                      ),
-                                      excludeSelected: true,
-                                      onChanged: (_) {
-                                        setState(() {
-                                          selectedPicklist =
-                                              selectedPicklistController.text;
-                                        });
-                                        log('V selectedPicklistController.text >>---> ${selectedPicklistController.text}');
-                                        log('V selectedPicklistT >>---> $selectedPicklist');
-                                      },
-                                    )),
-                                actions: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.only(left: 10),
-                                        child: RoundedLoadingButton(
-                                          color: Colors.red,
-                                          borderRadius: 10,
-                                          height: size.width * .1,
-                                          width: size.width * .25,
-                                          successIcon: Icons.check_rounded,
-                                          failedIcon: Icons.close_rounded,
-                                          successColor: Colors.green,
-                                          controller: cancelController,
-                                          onPressed: () async {
-                                            cancelController.error();
-                                            await Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 500), () {
-                                              cancelController.reset();
-                                              Navigator.pop(context);
-                                            });
-                                          },
-                                          child: const Text('Cancel'),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.end,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10),
-                                              child: RoundedLoadingButton(
-                                                color: Colors.green,
-                                                borderRadius: 10,
-                                                height: size.width * .1,
-                                                width: size.width * .25,
-                                                successIcon:
-                                                Icons.check_rounded,
-                                                failedIcon: Icons.close_rounded,
-                                                successColor: Colors.green,
-                                                controller: createController,
-                                                onPressed: () async {
-                                                  createNewPicklistMethod(
-                                                      context);
-                                                },
-                                                child: const Text('Create'),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Text(
-                      'Create New PickList',
-                      style: TextStyle(
-                        fontSize: size.height * .025,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _createNewPicklistButtonBuilder(size),
           Visibility(
             visible: isPicklistVisible == true && kIsWeb != true,
             child: Padding(
@@ -1568,493 +1575,493 @@ class _PickListsState extends State<PickLists> {
           ),
           SizedBox(
             height:
-            pickLists.length > 10 ? size.height * .62 : size.height * .65,
+                pickLists.length > 10 ? size.height * .62 : size.height * .65,
             width: size.width,
             child: isPicklistVisible == false
                 ? const Center(
-              child: CircularProgressIndicator(
-                color: appColor,
-              ),
-            )
+                    child: CircularProgressIndicator(
+                      color: appColor,
+                    ),
+                  )
                 : pickLists.isEmpty
-                ? Center(
-              child: Text(
-                'No PickList to show',
-                style: TextStyle(
-                  fontSize: size.width * .045,
-                ),
-              ),
-            )
-                : shiftLoading == true
-                ? const Center(
-              child: CircularProgressIndicator(
-                color: appColor,
-              ),
-            )
-                : ListView.builder(
-                itemCount: picklistChooser().length,
-                itemBuilder: (BuildContext context, index) {
-                  return Container(
-                    alignment: Alignment.center,
-                    foregroundDecoration:
-                    outerContainerDecoration(index),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: heightCheckerForMobile(index),
-                              width: size.width * .7,
-                              alignment: Alignment.center,
-                              decoration: innerContainer1(index),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      moveToPicklistDetailsOrAllocationScreenWeb(
-                                        index: index,
-                                        showPickedOrders: false,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding:
-                                      const EdgeInsets.only(
-                                          top: 5, left: 10),
-                                      child: Text(
-                                        picklistChooser()[index]
-                                            .picklist,
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight:
-                                          FontWeight.bold,
-                                          color: Colors.lightBlue,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, left: 10),
-                                    child: Text(
-                                      picklistChooser()[index]
-                                          .createdOn,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, left: 10),
-                                    child: Row(
+                    ? Center(
+                        child: Text(
+                          'No PickList to show',
+                          style: TextStyle(
+                            fontSize: size.width * .045,
+                          ),
+                        ),
+                      )
+                    : shiftLoading == true
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: appColor,
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: picklistChooser().length,
+                            itemBuilder: (BuildContext context, index) {
+                              return Container(
+                                alignment: Alignment.center,
+                                foregroundDecoration:
+                                    outerContainerDecoration(index),
+                                child: Column(
+                                  children: [
+                                    Row(
                                       children: [
-                                        const Text(
-                                          'Status : ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight:
-                                            FontWeight.bold,
+                                        Container(
+                                          height: heightCheckerForMobile(index),
+                                          width: size.width * .7,
+                                          alignment: Alignment.center,
+                                          decoration: innerContainer1(index),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  moveToPicklistDetailsOrAllocationScreenWeb(
+                                                    index: index,
+                                                    showPickedOrders: false,
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5, left: 10),
+                                                  child: Text(
+                                                    picklistChooser()[index]
+                                                        .picklist,
+                                                    style: const TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.lightBlue,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5, left: 10),
+                                                child: Text(
+                                                  picklistChooser()[index]
+                                                      .createdOn,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5, left: 10),
+                                                child: Row(
+                                                  children: [
+                                                    const Text(
+                                                      'Status : ',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      picklistChooser()[index]
+                                                          .status,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            colorChooserForStatus(
+                                                                index: index),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: picklistChooser()[
+                                                            index]
+                                                        .status
+                                                        .contains(
+                                                            'In Progress') ||
+                                                    picklistChooser()[index]
+                                                        .status
+                                                        .contains(
+                                                            'Not Started'),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    moveToPicklistDetailsOrAllocationScreenWeb(
+                                                      index: index,
+                                                      showPickedOrders: false,
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 5, left: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        Visibility(
+                                                          visible:
+                                                              leftOrderOrSkuVisible(
+                                                                  index),
+                                                          child: Text(
+                                                            picklistChooser()[
+                                                                            index]
+                                                                        .requestType ==
+                                                                    'MSMQW'
+                                                                ? '${parseToInt(picklistChooser()[index].totalorder) - parseToInt(picklistChooser()[index].pickedorder)} ${(parseToInt(picklistChooser()[index].totalorder) - parseToInt(picklistChooser()[index].pickedorder) > 1 ? 'Orders' : 'Order')} '
+                                                                : '${parseToInt(picklistChooser()[index].totalsku) - parseToInt(picklistChooser()[index].pickedsku)} ${(parseToInt(picklistChooser()[index].totalsku) - parseToInt(picklistChooser()[index].pickedsku) > 1 ? 'SKUs' : 'SKU')} ',
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible:
+                                                              leftOrderOrSkuVisible(
+                                                                  index),
+                                                          child: const Text(
+                                                            'Left to be Picked',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible:
+                                                              leftOrderOrSkuVisible(
+                                                                      index) &&
+                                                                  leftPartialOrderOrSkuVisible(
+                                                                      index),
+                                                          child: const Text(
+                                                            ' & ',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible:
+                                                              leftPartialOrderOrSkuVisible(
+                                                                  index),
+                                                          child: Text(
+                                                            picklistChooser()[
+                                                                            index]
+                                                                        .requestType ==
+                                                                    'MSMQW'
+                                                                ? '${picklistChooser()[index].partialOrders} ${parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
+                                                                : '${picklistChooser()[index].partialSkus} ${parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible:
+                                                              leftPartialOrderOrSkuVisible(
+                                                                  index),
+                                                          child: const Text(
+                                                            'Partially Left to be Picked',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible:
+                                                              leftOrderOrSkuVisible(
+                                                                      index) ||
+                                                                  leftPartialOrderOrSkuVisible(
+                                                                      index),
+                                                          child: const Icon(
+                                                            Icons.navigate_next,
+                                                            size: 20,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: (picklistChooser()[
+                                                                        index]
+                                                                    .requestType ==
+                                                                'MSMQW'
+                                                            ? picklistChooser()[
+                                                                    index]
+                                                                .pickedorder
+                                                            : picklistChooser()[
+                                                                    index]
+                                                                .pickedsku) !=
+                                                        '0' &&
+                                                    (picklistChooser()[index]
+                                                                    .requestType ==
+                                                                'MSMQW'
+                                                            ? picklistChooser()[
+                                                                    index]
+                                                                .pickedorder
+                                                            : picklistChooser()[
+                                                                    index]
+                                                                .pickedsku) !=
+                                                        '',
+                                                child: Visibility(
+                                                  visible: picklistChooser()[
+                                                              index]
+                                                          .status
+                                                          .contains(
+                                                              'Complete') ||
+                                                      picklistChooser()[index]
+                                                          .status
+                                                          .contains(
+                                                              'In Progress') ||
+                                                      picklistChooser()[index]
+                                                          .status
+                                                          .contains(
+                                                              'Not Started'),
+                                                  child: GestureDetector(
+                                                    onTap: () async {
+                                                      moveToPicklistDetailsOrAllocationScreenWeb(
+                                                        index: index,
+                                                        showPickedOrders: true,
+                                                      );
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5, left: 10),
+                                                      child: Row(
+                                                        children: [
+                                                          Visibility(
+                                                            visible:
+                                                                validatedOrderOrSkuVisible(
+                                                                    index),
+                                                            child: Text(
+                                                              picklistChooser()[
+                                                                              index]
+                                                                          .requestType ==
+                                                                      'MSMQW'
+                                                                  ? '${parseToInt(picklistChooser()[index].pickedorder) - parseToInt(picklistChooser()[index].partialOrders)} ${parseToInt(picklistChooser()[index].pickedorder) - parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
+                                                                  : '${parseToInt(picklistChooser()[index].pickedsku) - parseToInt(picklistChooser()[index].partialSkus)} ${parseToInt(picklistChooser()[index].pickedsku) - parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Visibility(
+                                                            visible:
+                                                                validatedOrderOrSkuVisible(
+                                                                    index),
+                                                            child: const Text(
+                                                              'Picked',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Visibility(
+                                                            visible: validatedOrderOrSkuVisible(
+                                                                    index) &&
+                                                                validatedPartialOrderOrSkuVisible(
+                                                                    index),
+                                                            child: const Text(
+                                                              ' & ',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Visibility(
+                                                            visible:
+                                                                validatedPartialOrderOrSkuVisible(
+                                                                    index),
+                                                            child: Text(
+                                                              picklistChooser()[
+                                                                              index]
+                                                                          .requestType ==
+                                                                      'MSMQW'
+                                                                  ? '${picklistChooser()[index].partialOrders} ${parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
+                                                                  : '${picklistChooser()[index].partialSkus} ${parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Visibility(
+                                                            visible:
+                                                                validatedPartialOrderOrSkuVisible(
+                                                                    index),
+                                                            child: const Text(
+                                                              'Partially Picked',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Icon(
+                                                            Icons.navigate_next,
+                                                            size: 20,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Text(
-                                          picklistChooser()[index]
-                                              .status,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            color:
-                                            colorChooserForStatus(
-                                                index: index),
+                                        Container(
+                                          height: heightCheckerForMobile(index),
+                                          width: size.width * .25,
+                                          alignment: Alignment.center,
+                                          decoration: innerContainer2(index),
+                                          child: Center(
+                                            child: Text(
+                                              picklistChooser()[index]
+                                                  .requestType,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Visibility(
-                                    visible: picklistChooser()[
-                                    index]
-                                        .status
-                                        .contains(
-                                        'In Progress') ||
-                                        picklistChooser()[index]
-                                            .status
-                                            .contains(
-                                            'Not Started'),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        moveToPicklistDetailsOrAllocationScreenWeb(
-                                          index: index,
-                                          showPickedOrders: false,
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding:
-                                        const EdgeInsets.only(
-                                            top: 5, left: 10),
-                                        child: Row(
-                                          children: [
-                                            Visibility(
-                                              visible:
-                                              leftOrderOrSkuVisible(
-                                                  index),
-                                              child: Text(
-                                                picklistChooser()[
-                                                index]
-                                                    .requestType ==
-                                                    'MSMQW'
-                                                    ? '${parseToInt(picklistChooser()[index].totalorder) - parseToInt(picklistChooser()[index].pickedorder)} ${(parseToInt(picklistChooser()[index].totalorder) - parseToInt(picklistChooser()[index].pickedorder) > 1 ? 'Orders' : 'Order')} '
-                                                    : '${parseToInt(picklistChooser()[index].totalsku) - parseToInt(picklistChooser()[index].pickedsku)} ${(parseToInt(picklistChooser()[index].totalsku) - parseToInt(picklistChooser()[index].pickedsku) > 1 ? 'SKUs' : 'SKU')} ',
-                                                style:
-                                                const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                ),
-                                              ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: size.width * .95,
+                                          height: size.height * .08,
+                                          decoration: innerContainer2(index),
+                                          child: Visibility(
+                                            visible: picklistChooser()[index]
+                                                .status
+                                                .isNotEmpty,
+                                            child: Center(
+                                              child: picklistChooser()[index]
+                                                              .status ==
+                                                          'Complete' ||
+                                                      picklistChooser()[index]
+                                                              .status ==
+                                                          'Processing.......' ||
+                                                      picklistChooser()[index]
+                                                          .status
+                                                          .contains(
+                                                              'No Ean to be picked')
+                                                  ? Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          picklistChooser()[
+                                                                          index]
+                                                                      .status ==
+                                                                  'Complete'
+                                                              ? '${picklistChooser()[index].picklist} Validated'
+                                                              : picklistChooser()[
+                                                                              index]
+                                                                          .status ==
+                                                                      'Processing.......'
+                                                                  ? 'Processing.......'
+                                                                  : 'No Ean to be Picked',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : SizedBox(
+                                                      height: size.height * .05,
+                                                      width: size.width * .8,
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .green),
+                                                        onPressed: () async {
+                                                          lockedPicklistList
+                                                                  .isNotEmpty
+                                                              ? lockedPicklistList
+                                                                      .map((e) => e
+                                                                          .batchId)
+                                                                      .toList()
+                                                                      .contains(
+                                                                          picklistChooser()[index]
+                                                                              .batchId)
+                                                                  ? lockedPicklistList[lockedPicklistList.indexWhere((e) => e.batchId == picklistChooser()[index].batchId)]
+                                                                              .userName ==
+                                                                          widget
+                                                                              .userName
+                                                                      ? validateAllPicklist(
+                                                                          index)
+                                                                      : ToastUtils.showCenteredLongToast(
+                                                                          message:
+                                                                              '${picklistChooser()[index].picklist} Locked as another user is working on this picklist.')
+                                                                  : validateAllPicklist(
+                                                                      index)
+                                                              : validateAllPicklist(
+                                                                  index);
+                                                        },
+                                                        child: Center(
+                                                          child: Text(
+                                                            'Validate ${picklistChooser()[index].picklist}',
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
                                             ),
-                                            Visibility(
-                                              visible:
-                                              leftOrderOrSkuVisible(
-                                                  index),
-                                              child: const Text(
-                                                'Left to be Picked',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            Visibility(
-                                              visible:
-                                              leftOrderOrSkuVisible(
-                                                  index) &&
-                                                  leftPartialOrderOrSkuVisible(
-                                                      index),
-                                              child: const Text(
-                                                ' & ',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            Visibility(
-                                              visible:
-                                              leftPartialOrderOrSkuVisible(
-                                                  index),
-                                              child: Text(
-                                                picklistChooser()[
-                                                index]
-                                                    .requestType ==
-                                                    'MSMQW'
-                                                    ? '${picklistChooser()[index].partialOrders} ${parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
-                                                    : '${picklistChooser()[index].partialSkus} ${parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
-                                                style:
-                                                const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Visibility(
-                                              visible:
-                                              leftPartialOrderOrSkuVisible(
-                                                  index),
-                                              child: const Text(
-                                                'Partially Left to be Picked',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            Visibility(
-                                              visible:
-                                              leftOrderOrSkuVisible(
-                                                  index) ||
-                                                  leftPartialOrderOrSkuVisible(
-                                                      index),
-                                              child: const Icon(
-                                                Icons.navigate_next,
-                                                size: 20,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: (picklistChooser()[
-                                    index]
-                                        .requestType ==
-                                        'MSMQW'
-                                        ? picklistChooser()[
-                                    index]
-                                        .pickedorder
-                                        : picklistChooser()[
-                                    index]
-                                        .pickedsku) !=
-                                        '0' &&
-                                        (picklistChooser()[index]
-                                            .requestType ==
-                                            'MSMQW'
-                                            ? picklistChooser()[
-                                        index]
-                                            .pickedorder
-                                            : picklistChooser()[
-                                        index]
-                                            .pickedsku) !=
-                                            '',
-                                    child: Visibility(
-                                      visible: picklistChooser()[
-                                      index]
-                                          .status
-                                          .contains(
-                                          'Complete') ||
-                                          picklistChooser()[index]
-                                              .status
-                                              .contains(
-                                              'In Progress') ||
-                                          picklistChooser()[index]
-                                              .status
-                                              .contains(
-                                              'Not Started'),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          moveToPicklistDetailsOrAllocationScreenWeb(
-                                            index: index,
-                                            showPickedOrders: true,
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets.only(
-                                              top: 5, left: 10),
-                                          child: Row(
-                                            children: [
-                                              Visibility(
-                                                visible:
-                                                validatedOrderOrSkuVisible(
-                                                    index),
-                                                child: Text(
-                                                  picklistChooser()[
-                                                  index]
-                                                      .requestType ==
-                                                      'MSMQW'
-                                                      ? '${parseToInt(picklistChooser()[index].pickedorder) - parseToInt(picklistChooser()[index].partialOrders)} ${parseToInt(picklistChooser()[index].pickedorder) - parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
-                                                      : '${parseToInt(picklistChooser()[index].pickedsku) - parseToInt(picklistChooser()[index].partialSkus)} ${parseToInt(picklistChooser()[index].pickedsku) - parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
-                                                  style:
-                                                  const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Visibility(
-                                                visible:
-                                                validatedOrderOrSkuVisible(
-                                                    index),
-                                                child: const Text(
-                                                  'Picked',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Visibility(
-                                                visible: validatedOrderOrSkuVisible(
-                                                    index) &&
-                                                    validatedPartialOrderOrSkuVisible(
-                                                        index),
-                                                child: const Text(
-                                                  ' & ',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Visibility(
-                                                visible:
-                                                validatedPartialOrderOrSkuVisible(
-                                                    index),
-                                                child: Text(
-                                                  picklistChooser()[
-                                                  index]
-                                                      .requestType ==
-                                                      'MSMQW'
-                                                      ? '${picklistChooser()[index].partialOrders} ${parseToInt(picklistChooser()[index].partialOrders) > 1 ? 'Orders' : 'Order'} '
-                                                      : '${picklistChooser()[index].partialSkus} ${parseToInt(picklistChooser()[index].partialSkus) > 1 ? 'SKUs' : 'SKU'} ',
-                                                  style:
-                                                  const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Visibility(
-                                                visible:
-                                                validatedPartialOrderOrSkuVisible(
-                                                    index),
-                                                child: const Text(
-                                                  'Partially Picked',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              const Icon(
-                                                Icons.navigate_next,
-                                                size: 20,
-                                              )
-                                            ],
                                           ),
-                                        ),
-                                      ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: heightCheckerForMobile(index),
-                              width: size.width * .25,
-                              alignment: Alignment.center,
-                              decoration: innerContainer2(index),
-                              child: Center(
-                                child: Text(
-                                  picklistChooser()[index]
-                                      .requestType,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  ],
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: size.width * .95,
-                              height: size.height * .08,
-                              decoration: innerContainer2(index),
-                              child: Visibility(
-                                visible: picklistChooser()[index]
-                                    .status
-                                    .isNotEmpty,
-                                child: Center(
-                                  child: picklistChooser()[index]
-                                      .status ==
-                                      'Complete' ||
-                                      picklistChooser()[index]
-                                          .status ==
-                                          'Processing.......' ||
-                                      picklistChooser()[index]
-                                          .status
-                                          .contains(
-                                          'No Ean to be picked')
-                                      ? Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .center,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .center,
-                                    children: [
-                                      Text(
-                                        picklistChooser()[
-                                        index]
-                                            .status ==
-                                            'Complete'
-                                            ? '${picklistChooser()[index].picklist} Validated'
-                                            : picklistChooser()[
-                                        index]
-                                            .status ==
-                                            'Processing.......'
-                                            ? 'Processing.......'
-                                            : 'No Ean to be Picked',
-                                        style:
-                                        const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight:
-                                          FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                      : SizedBox(
-                                    height: size.height * .05,
-                                    width: size.width * .8,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton
-                                          .styleFrom(
-                                          backgroundColor:
-                                          Colors
-                                              .green),
-                                      onPressed: () async {
-                                        lockedPicklistList
-                                            .isNotEmpty
-                                            ? lockedPicklistList
-                                            .map((e) => e
-                                            .batchId)
-                                            .toList()
-                                            .contains(
-                                            picklistChooser()[index]
-                                                .batchId)
-                                            ? lockedPicklistList[lockedPicklistList.indexWhere((e) => e.batchId == picklistChooser()[index].batchId)]
-                                            .userName ==
-                                            widget
-                                                .userName
-                                            ? validateAllPicklist(
-                                            index)
-                                            : ToastUtils.showCenteredLongToast(
-                                            message:
-                                            '${picklistChooser()[index].picklist} Locked as another user is working on this picklist.')
-                                            : validateAllPicklist(
-                                            index)
-                                            : validateAllPicklist(
-                                            index);
-                                      },
-                                      child: Center(
-                                        child: Text(
-                                          'Validate ${picklistChooser()[index].picklist}',
-                                          style:
-                                          const TextStyle(
-                                            fontSize: 14,
-                                            color:
-                                            Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                              );
+                            }),
           ),
         ],
       ),
     );
   }
 
-  /// <------- END ------- BUILD METHOD HELPER METHODS --------------------> ///
+  /// <--------------------------------------- END --------------------------------------- BUILD METHOD HELPER METHODS -----------------------------------------------------------> ///
 
   @override
   Widget build(BuildContext context) {
@@ -2069,25 +2076,25 @@ class _PickListsState extends State<PickLists> {
     );
   }
 
-  /// <--- START --- COMMON WIDGETS FOR BOTH WEB APP AND MOBILE APP -------> ///
+  /// <--------------------------------- START ----------------------------------------- COMMON WIDGETS FOR BOTH WEB APP AND MOBILE APP ------------------------------------------> ///
 
   /// OUTER CONTAINER DECORATION HANDLING
   Decoration? outerContainerDecoration(int index) {
     return lockedPicklistList.isNotEmpty
         ? lockedPicklistList
-        .map((e) => e.batchId)
-        .toList()
-        .contains(picklistChooser()[index].batchId)
-        ? lockedPicklistList[lockedPicklistList.indexWhere((e) =>
-    e.batchId == picklistChooser()[index].batchId)]
-        .userName ==
-        widget.userName
-        ? null
-        : const BoxDecoration(
-      color: Colors.grey,
-      backgroundBlendMode: BlendMode.saturation,
-    )
-        : null
+                .map((e) => e.batchId)
+                .toList()
+                .contains(picklistChooser()[index].batchId)
+            ? lockedPicklistList[lockedPicklistList.indexWhere((e) =>
+                            e.batchId == picklistChooser()[index].batchId)]
+                        .userName ==
+                    widget.userName
+                ? null
+                : const BoxDecoration(
+                    color: Colors.grey,
+                    backgroundBlendMode: BlendMode.saturation,
+                  )
+            : null
         : null;
   }
 
@@ -2119,16 +2126,16 @@ class _PickListsState extends State<PickLists> {
   /// BUTTON (FOR BOTH WEB AND MOBILE APP)
   bool splitOnWarehouseLocationVisible(int index) {
     return picklistChooser()[index].requestType == 'SIW' ||
-        picklistChooser()[index].requestType == 'SSMQW'
+            picklistChooser()[index].requestType == 'SSMQW'
         ? picklistChooser()[index].status == 'Not Started' ||
-        picklistChooser()[index].status == 'In Progress'
-        ? picklistChooser()[index].totalsku != ''
-        ? parseToInt(picklistChooser()[index].totalWarehouseLocation) >
-        1
-        ? true
-        : false
-        : false
-        : false
+                picklistChooser()[index].status == 'In Progress'
+            ? picklistChooser()[index].totalsku != ''
+                ? parseToInt(picklistChooser()[index].totalWarehouseLocation) >
+                        1
+                    ? true
+                    : false
+                : false
+            : false
         : false;
   }
 
@@ -2136,23 +2143,30 @@ class _PickListsState extends State<PickLists> {
   /// BUTTON (FOR BOTH WEB AND MOBILE APP)
   bool splitOnDistributionCenterVisible(int index) {
     return picklistChooser()[index].requestType == 'SIW' ||
-        picklistChooser()[index].requestType == 'SSMQW'
+            picklistChooser()[index].requestType == 'SSMQW'
         ? picklistChooser()[index].status == 'Not Started' ||
-        picklistChooser()[index].status == 'In Progress'
-        ? picklistChooser()[index].totalsku != ''
-        ? parseToInt(picklistChooser()[index].totalDC) > 1
-        ? widget.isDCSplitAutomatic
-        ? false
-        : true
-        : false
-        : false
-        : false
+                picklistChooser()[index].status == 'In Progress'
+            ? picklistChooser()[index].totalsku != ''
+                ? parseToInt(picklistChooser()[index].totalDC) > 1
+                    ? widget.isDCSplitAutomatic
+                        ? false
+                        : true
+                    : false
+                : false
+            : false
         : false;
   }
 
-  /// <---- END ---- COMMON WIDGETS FOR BOTH WEB APP AND MOBILE APP -------> ///
+  /// NO PICKLIST RECEIVED FROM API CASE BUILDER
+  Widget _noPicklistToShowBuilder(double font) {
+    return Center(
+      child: Text('No PickList to show', style: TextStyle(fontSize: font)),
+    );
+  }
 
-  /// <------- START ------- API HANDLING HELPER METHODS ------------------> ///
+  /// <----------------------------------- END ----------------------------------------- COMMON WIDGETS FOR BOTH WEB APP AND MOBILE APP ------------------------------------------> ///
+
+  /// <---------------------------------- START --------------------------------------- API HANDLING HELPER METHODS --------------------------------------------------------------> ///
 
   /// ON-TAP METHOD HANDLERS --- (COMMON TO BOTH MOBILE AND WEB APP)
 
@@ -2258,7 +2272,7 @@ class _PickListsState extends State<PickLists> {
           });
           paginatedPickList = [];
           paginatedPickList.addAll(pickLists.where((e) =>
-          pickLists.indexOf(e) <= endIndex &&
+              pickLists.indexOf(e) <= endIndex &&
               pickLists.indexOf(e) >= startIndex));
         } else {
           setState(() {
@@ -2275,7 +2289,7 @@ class _PickListsState extends State<PickLists> {
           }
           paginatedPickList = [];
           paginatedPickList.addAll(pickLists.where((e) =>
-          pickLists.indexOf(e) <= endIndex &&
+              pickLists.indexOf(e) <= endIndex &&
               pickLists.indexOf(e) >= startIndex));
         }
       }
@@ -2313,7 +2327,7 @@ class _PickListsState extends State<PickLists> {
       });
       paginatedPickList = [];
       paginatedPickList.addAll(pickLists.where((e) =>
-      pickLists.indexOf(e) <= endIndex &&
+          pickLists.indexOf(e) <= endIndex &&
           pickLists.indexOf(e) >= startIndex));
       setState(() {
         shiftLoading = false;
@@ -2337,7 +2351,7 @@ class _PickListsState extends State<PickLists> {
         });
         paginatedPickList = [];
         paginatedPickList.addAll(pickLists.where((e) =>
-        pickLists.indexOf(e) <= endIndex &&
+            pickLists.indexOf(e) <= endIndex &&
             pickLists.indexOf(e) >= startIndex));
       } else {
         if (pickLists.length - startIndex > selectedNoToShow) {
@@ -2348,7 +2362,7 @@ class _PickListsState extends State<PickLists> {
           });
           paginatedPickList = [];
           paginatedPickList.addAll(pickLists.where((e) =>
-          pickLists.indexOf(e) <= endIndex &&
+              pickLists.indexOf(e) <= endIndex &&
               pickLists.indexOf(e) >= startIndex));
         }
       }
@@ -2358,11 +2372,11 @@ class _PickListsState extends State<PickLists> {
     });
   }
 
-  /// <-------- END -------- API HANDLING HELPER METHODS ------------------> ///
+  /// <--------------------------------- END ------------------------------------------ API HANDLING HELPER METHODS --------------------------------------------------------------> ///
 
-  /// <------- START ------- API METHODS ----------------------------------> ///
+  /// <-------------------------------- START ----------------------------------------- API METHODS ------------------------------------------------------------------------------> ///
 
-  /// <-------- END -------- API METHODS ----------------------------------> ///
+  /// <--------------------------------- END ------------------------------------------ API METHODS ------------------------------------------------------------------------------> ///
 
   void validateAllPicklist(int index) async {
     await getPickListDetails(
@@ -2400,12 +2414,12 @@ class _PickListsState extends State<PickLists> {
               .toList()
               .contains(picklistChooser()[index].batchId)) {
             if (lockedPicklistList[lockedPicklistList.indexWhere(
-                    (e) => e.batchId == picklistChooser()[index].batchId)]
-                .userName !=
+                        (e) => e.batchId == picklistChooser()[index].batchId)]
+                    .userName !=
                 widget.userName) {
               ToastUtils.motionToastCentered1500MS(
                   message:
-                  '${picklistChooser()[index].picklist} is Locked as another user is working on this picklist.',
+                      '${picklistChooser()[index].picklist} is Locked as another user is working on this picklist.',
                   context: context);
               pickListApis();
             } else {
@@ -2438,12 +2452,12 @@ class _PickListsState extends State<PickLists> {
               .toList()
               .contains(picklistChooser()[index].batchId)) {
             if (lockedPicklistList[lockedPicklistList.indexWhere(
-                    (e) => e.batchId == picklistChooser()[index].batchId)]
-                .userName !=
+                        (e) => e.batchId == picklistChooser()[index].batchId)]
+                    .userName !=
                 widget.userName) {
               ToastUtils.motionToastCentered1500MS(
                   message:
-                  '${picklistChooser()[index].picklist} is Locked as another user is working on this picklist.',
+                      '${picklistChooser()[index].picklist} is Locked as another user is working on this picklist.',
                   context: context);
               pickListApis();
             } else {
@@ -2476,30 +2490,30 @@ class _PickListsState extends State<PickLists> {
       userName: widget.userName,
       batchId: picklistChooser()[index].batchId,
     ).whenComplete(() async => await NavigationMethods.push(
-      context,
-      PickListDetails(
-        batchId: picklistChooser()[index].batchId,
-        requestType: picklistChooser()[index].requestType,
-        appBarName:
-        '${picklistChooser()[index].picklist} (${picklistChooser()[index].requestType})',
-        isSKUAvailable: parseToInt(picklistChooser()[index].totalsku) > 0
-            ? true
-            : false,
-        status: picklistChooser()[index].status,
-        isStatusComplete:
-        picklistChooser()[index].status == 'Complete' ? true : false,
-        orderPicked: picklistChooser()[index].pickedorder,
-        partialOrders: picklistChooser()[index].partialOrders,
-        totalOrders: picklistChooser()[index].totalorder,
-        accType: widget.accType,
-        authorization: widget.authorization,
-        refreshToken: widget.refreshToken,
-        profileId: widget.profileId,
-        distCenterName: widget.distCenterName,
-        distCenterId: widget.distCenterId,
-        showPickedOrders: showPickedOrders,
-      ),
-    ).whenComplete(() => pickListApis()));
+          context,
+          PickListDetails(
+            batchId: picklistChooser()[index].batchId,
+            requestType: picklistChooser()[index].requestType,
+            appBarName:
+                '${picklistChooser()[index].picklist} (${picklistChooser()[index].requestType})',
+            isSKUAvailable: parseToInt(picklistChooser()[index].totalsku) > 0
+                ? true
+                : false,
+            status: picklistChooser()[index].status,
+            isStatusComplete:
+                picklistChooser()[index].status == 'Complete' ? true : false,
+            orderPicked: picklistChooser()[index].pickedorder,
+            partialOrders: picklistChooser()[index].partialOrders,
+            totalOrders: picklistChooser()[index].totalorder,
+            accType: widget.accType,
+            authorization: widget.authorization,
+            refreshToken: widget.refreshToken,
+            profileId: widget.profileId,
+            distCenterName: widget.distCenterName,
+            distCenterId: widget.distCenterId,
+            showPickedOrders: showPickedOrders,
+          ),
+        ).whenComplete(() => pickListApis()));
   }
 
   List<Batch> picklistChooser() {
@@ -2526,8 +2540,8 @@ class _PickListsState extends State<PickLists> {
     if (picklistChooser()[index].status.contains('In Progress') ||
         picklistChooser()[index].status.contains('Not Started')) {
       if ((picklistChooser()[index].requestType == 'MSMQW'
-          ? picklistChooser()[index].pickedorder
-          : picklistChooser()[index].pickedsku) !=
+              ? picklistChooser()[index].pickedorder
+              : picklistChooser()[index].pickedsku) !=
           '0') {
         return 150;
       } else {
@@ -2543,49 +2557,49 @@ class _PickListsState extends State<PickLists> {
   bool leftOrderOrSkuVisible(int index) {
     return picklistChooser()[index].requestType == 'MSMQW'
         ? (parseToInt(picklistChooser()[index].totalorder) -
-        parseToInt(picklistChooser()[index].pickedorder)) >
-        0
-        ? true
-        : false
+                    parseToInt(picklistChooser()[index].pickedorder)) >
+                0
+            ? true
+            : false
         : (parseToInt(picklistChooser()[index].totalsku) -
-        parseToInt(picklistChooser()[index].pickedsku)) >
-        0
-        ? true
-        : false;
+                    parseToInt(picklistChooser()[index].pickedsku)) >
+                0
+            ? true
+            : false;
   }
 
   bool leftPartialOrderOrSkuVisible(int index) {
     return picklistChooser()[index].requestType == 'MSMQW'
         ? parseToInt(picklistChooser()[index].partialOrders) > 0
-        ? true
-        : false
+            ? true
+            : false
         : parseToInt(picklistChooser()[index].partialSkus) > 0
-        ? true
-        : false;
+            ? true
+            : false;
   }
 
   bool validatedOrderOrSkuVisible(int index) {
     return picklistChooser()[index].requestType == 'MSMQW'
         ? parseToInt(picklistChooser()[index].pickedorder) -
-        parseToInt(picklistChooser()[index].partialOrders) >
-        0
-        ? true
-        : false
+                    parseToInt(picklistChooser()[index].partialOrders) >
+                0
+            ? true
+            : false
         : parseToInt(picklistChooser()[index].pickedsku) -
-        parseToInt(picklistChooser()[index].partialSkus) >
-        0
-        ? true
-        : false;
+                    parseToInt(picklistChooser()[index].partialSkus) >
+                0
+            ? true
+            : false;
   }
 
   bool validatedPartialOrderOrSkuVisible(int index) {
     return picklistChooser()[index].requestType == 'MSMQW'
         ? parseToInt(picklistChooser()[index].partialOrders) > 0
-        ? true
-        : false
+            ? true
+            : false
         : parseToInt(picklistChooser()[index].partialSkus) > 0
-        ? true
-        : false;
+            ? true
+            : false;
   }
 
   void pickListApis() async {
@@ -2663,7 +2677,7 @@ class _PickListsState extends State<PickLists> {
         log('gP resp > ${jsonDecode(response.body)}');
 
         GetAllPicklistResponse getAllPicklistResponse =
-        GetAllPicklistResponse.fromJson(jsonDecode(response.body));
+            GetAllPicklistResponse.fromJson(jsonDecode(response.body));
         log('getAllPicklistResponse >>>>> ${jsonEncode(getAllPicklistResponse)}');
 
         pickLists = <Batch>[];
@@ -2718,7 +2732,7 @@ class _PickListsState extends State<PickLists> {
               pickLists.insert(
                   0,
                   Batch(
-                    picklist: 'Picklist'/*pickDB*/,
+                    picklist: 'Picklist' /*pickDB*/,
                     batchId: pickLists[0].batchId,
                     createdOn: pickLists[0].createdOn,
                     requestType: pickLists[0].requestType,
@@ -2741,19 +2755,19 @@ class _PickListsState extends State<PickLists> {
               });
 
               pickLists.removeWhere(
-                      (e) => pickLists.indexOf(e) > 0 && e.picklist == 'null');
+                  (e) => pickLists.indexOf(e) > 0 && e.picklist == 'null');
 
               if (selectedStatusToFilter != 'All Picklists') {
                 pickLists.removeWhere((e) =>
-                (e.status != selectedStatusToFilter &&
-                    e.status.contains('Processing') == false &&
-                    e.status.contains('No Ean to be picked') == false));
+                    (e.status != selectedStatusToFilter &&
+                        e.status.contains('Processing') == false &&
+                        e.status.contains('No Ean to be picked') == false));
               }
 
               if (pickLists.length > 10) {
                 paginatedPickList = [];
                 paginatedPickList.addAll(pickLists.where((e) =>
-                pickLists.indexOf(e) <= endIndex &&
+                    pickLists.indexOf(e) <= endIndex &&
                     pickLists.indexOf(e) >= startIndex));
               }
 
@@ -2779,15 +2793,15 @@ class _PickListsState extends State<PickLists> {
 
               if (selectedStatusToFilter != 'All Picklists') {
                 pickLists.removeWhere((e) =>
-                (e.status != selectedStatusToFilter &&
-                    e.status.contains('Processing') == false &&
-                    e.status.contains('No Ean to be picked') == false));
+                    (e.status != selectedStatusToFilter &&
+                        e.status.contains('Processing') == false &&
+                        e.status.contains('No Ean to be picked') == false));
               }
 
               if (pickLists.length > 10) {
                 paginatedPickList = [];
                 paginatedPickList.addAll(pickLists.where((e) =>
-                pickLists.indexOf(e) <= endIndex &&
+                    pickLists.indexOf(e) <= endIndex &&
                     pickLists.indexOf(e) >= startIndex));
               }
 
@@ -2815,15 +2829,15 @@ class _PickListsState extends State<PickLists> {
 
             if (selectedStatusToFilter != 'All Picklists') {
               pickLists.removeWhere((e) =>
-              (e.status != selectedStatusToFilter &&
-                  e.status.contains('Processing') == false &&
-                  e.status.contains('No Ean to be picked') == false));
+                  (e.status != selectedStatusToFilter &&
+                      e.status.contains('Processing') == false &&
+                      e.status.contains('No Ean to be picked') == false));
             }
 
             if (pickLists.length > 10) {
               paginatedPickList = [];
               paginatedPickList.addAll(pickLists.where((e) =>
-              pickLists.indexOf(e) <= endIndex &&
+                  pickLists.indexOf(e) <= endIndex &&
                   pickLists.indexOf(e) >= startIndex));
             }
 
@@ -2862,7 +2876,7 @@ class _PickListsState extends State<PickLists> {
           if (pickLists.length > 10) {
             paginatedPickList = [];
             paginatedPickList.addAll(pickLists.where((e) =>
-            pickLists.indexOf(e) <= endIndex &&
+                pickLists.indexOf(e) <= endIndex &&
                 pickLists.indexOf(e) >= startIndex));
           }
 
@@ -2921,7 +2935,7 @@ class _PickListsState extends State<PickLists> {
       ..set('date_created', DateTime.now())
       ..set('picklist_length', length)
       ..set('isErrorShown', 'No')
-    /* ..set('pending_picklist_number', pendingPicklistNo)*/
+      /* ..set('pending_picklist_number', pendingPicklistNo)*/
       ..set('pending_picklist_request_type', pendingPicklistRequestType);
     await picklistData.save();
     log('saving picklist >> $picklist');
@@ -2968,15 +2982,15 @@ class _PickListsState extends State<PickLists> {
   }) async {
     /// IF PICKLIST CREATED TIME IS LESS THAN 10 MINUTES OLD : SHOW PENDING PICKLIST
     if (DateTime.now()
-        .toUtc()
-        .difference(savedTime.subtract(const Duration(hours: 1)))
-        .compareTo(const Duration(minutes: 10)) ==
+            .toUtc()
+            .difference(savedTime.subtract(const Duration(hours: 1)))
+            .compareTo(const Duration(minutes: 10)) ==
         -1) {
       if (isCreatingPicklist == true) {
         pickLists.insert(
           0,
           Batch(
-            picklist: 'Picklist'/*-$picklistNo'*/,
+            picklist: 'Picklist' /*-$picklistNo'*/,
             batchId: '',
             createdOn: dateFormat.format(savedTime),
             requestType: requestType,
@@ -2997,7 +3011,7 @@ class _PickListsState extends State<PickLists> {
 
         paginatedPickList = [];
         paginatedPickList.addAll(pickLists.where((e) =>
-        pickLists.indexOf(e) <= endIndex &&
+            pickLists.indexOf(e) <= endIndex &&
             pickLists.indexOf(e) >= startIndex));
 
         log('pending case - picklist length to show >> ${picklistChooser().length}');
@@ -3041,7 +3055,7 @@ class _PickListsState extends State<PickLists> {
         log('GET SAVED LOCKED PICKLIST DATA RESPONSE >>---> ${jsonDecode(response.body)}');
 
         GetLockedPicklistResponse getLockedPicklistResponse =
-        GetLockedPicklistResponse.fromJson(jsonDecode(response.body));
+            GetLockedPicklistResponse.fromJson(jsonDecode(response.body));
         log('V getLockedPicklistResponse >>---> ${jsonEncode(getLockedPicklistResponse)}');
 
         lockedPicklistList = [];
@@ -3077,24 +3091,24 @@ class _PickListsState extends State<PickLists> {
   ///THE LIST OF LOCKED PICKLISTS.
   void deleteOlderLockedPicklists() async {
     DateTime britishTimeNow =
-    DateTime.now().toUtc().add(const Duration(hours: 1));
+        DateTime.now().toUtc().add(const Duration(hours: 1));
     log('V britishTimeNow >>---> $britishTimeNow');
 
     List<MessageXX> picklistsToDelete = [];
     if (lockedPicklistList
         .where((e) =>
-    (britishTimeNow
-        .difference(dateFormat.parse(e.createdDate))
-        .compareTo(const Duration(minutes: 30))) ==
-        1)
+            (britishTimeNow
+                .difference(dateFormat.parse(e.createdDate))
+                .compareTo(const Duration(minutes: 30))) ==
+            1)
         .toList()
         .isNotEmpty) {
       picklistsToDelete.addAll(lockedPicklistList
           .where((e) =>
-      (britishTimeNow
-          .difference(dateFormat.parse(e.createdDate))
-          .compareTo(const Duration(minutes: 30))) ==
-          1)
+              (britishTimeNow
+                  .difference(dateFormat.parse(e.createdDate))
+                  .compareTo(const Duration(minutes: 30))) ==
+              1)
           .map((e) => e));
       for (int i = 0; i < picklistsToDelete.length; i++) {
         deleteLockedPicklistData(id: picklistsToDelete[i].id);
@@ -3263,7 +3277,7 @@ class _PickListsState extends State<PickLists> {
         log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
 
         GetPicklistDetailsResponse getPicklistDetailsResponse =
-        GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
+            GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
         log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
@@ -3286,99 +3300,4 @@ class _PickListsState extends State<PickLists> {
       ToastUtils.showCenteredLongToast(message: e.toString());
     }
   }
-}
-
-GetAllPicklistResponse getAllPicklistResponseFromJson(String str) =>
-    GetAllPicklistResponse.fromJson(json.decode(str));
-
-String getAllPicklistResponseToJson(GetAllPicklistResponse data) =>
-    json.encode(data.toJson());
-
-class GetAllPicklistResponse {
-  List<Batch> batch;
-  dynamic sku;
-
-  GetAllPicklistResponse({
-    required this.batch,
-    this.sku,
-  });
-
-  factory GetAllPicklistResponse.fromJson(Map<String, dynamic> json) =>
-      GetAllPicklistResponse(
-        batch: List<Batch>.from(json["Batch"].map((x) => Batch.fromJson(x))),
-        sku: json["Sku"],
-      );
-
-  Map<String, dynamic> toJson() => {
-    "Batch": List<dynamic>.from(batch.map((x) => x.toJson())),
-    "Sku": sku,
-  };
-}
-
-class Batch {
-  String picklist;
-  String batchId;
-  String createdOn;
-  String requestType;
-  String status;
-  String pickedsku;
-  String totalsku;
-  String pickedorder;
-  String totalorder;
-  String partialSkus;
-  String partialOrders;
-  String isAlreadyOpened;
-  String totalWarehouseLocation;
-  String totalDC;
-
-  Batch({
-    required this.picklist,
-    required this.batchId,
-    required this.createdOn,
-    required this.requestType,
-    required this.status,
-    required this.pickedsku,
-    required this.totalsku,
-    required this.pickedorder,
-    required this.totalorder,
-    required this.partialSkus,
-    required this.partialOrders,
-    required this.isAlreadyOpened,
-    required this.totalWarehouseLocation,
-    required this.totalDC,
-  });
-
-  factory Batch.fromJson(Map<String, dynamic> json) => Batch(
-    picklist: json["Picklist"] ?? 'null',
-    batchId: json["BatchId"],
-    createdOn: json["CreatedOn"],
-    requestType: json["Request_Type"],
-    status: json["status"],
-    pickedsku: json["pickedsku"],
-    totalsku: json["totalsku"],
-    pickedorder: json["pickedorder"],
-    totalorder: json["totalorder"],
-    partialSkus: json["partialSkus"],
-    partialOrders: json["partialOrders"],
-    isAlreadyOpened: json["IsAlreadyOpened"],
-    totalWarehouseLocation: json["TotalWarehouseLocation"],
-    totalDC: json["TotalDCs"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "Picklist": picklist,
-    "BatchId": batchId,
-    "CreatedOn": createdOn,
-    "Request_Type": requestType,
-    "status": status,
-    "pickedsku": pickedsku,
-    "totalsku": totalsku,
-    "pickedorder": pickedorder,
-    "totalorder": totalorder,
-    "partialSkus": partialSkus,
-    "partialOrders": partialOrders,
-    "IsAlreadyOpened": isAlreadyOpened,
-    "TotalWarehouseLocation": totalWarehouseLocation,
-    "TotalDCs": totalDC,
-  };
 }

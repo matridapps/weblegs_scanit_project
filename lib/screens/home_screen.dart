@@ -54,14 +54,22 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<bool> isTapped = [false, false, false, false, false, false, false,false];
+  List<bool> isTapped = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
   List<ParseObject> printNodeData = [];
 
   bool isFirstTimeScanCamera = true;
   bool crossVisible = false;
   bool isLoggingOut = false;
   bool isError = false;
-
   bool isLoading = false;
   bool isDCSplitAutomatic = false;
 
@@ -69,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String scanBarcodeResult = '';
   String controllerText = '';
   String apiKey = '';
-  String webAppLastUpdatedLocal = 'Last Updated at 07 August, 2023 02:12 PM';
+  String webAppLastUpdatedLocal = 'Last Updated at 08 August, 2023 11:57 PM';
   String webAppLastUpdated = '';
 
   LinearGradient linearGradient1 = const LinearGradient(
@@ -1092,7 +1100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                     Padding(
+                    Padding(
                       padding: const EdgeInsets.only(left: 100),
                       child: GestureDetector(
                         onTap: () async {
@@ -1108,13 +1116,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               true
                             ];
                           });
-                          // await Future.delayed(const Duration(milliseconds: 400),
-                          //         () async {
-                          //       await NavigationMethods.push(
-                          //         context,
-                          //         const PreOrderScreenWeb(),
-                          //       );
-                          //     });
+                          await Future.delayed(
+                              const Duration(milliseconds: 400), () async {
+                            await NavigationMethods.push(
+                              context,
+                              const ShopScreen(),
+                            );
+                          });
                         },
                         child: Card(
                           elevation: isTapped[7] ? 20 : 5,
@@ -1168,7 +1176,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-/*My Work: Vishal*/
+
   Widget _screenSmallerThan24InchBuilder(BuildContext context, Size size) {
     return SingleChildScrollView(
       child: SizedBox(
@@ -1195,7 +1203,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         false,
                         false,
                         false,
-
                       ];
                     });
                     await Future.delayed(const Duration(milliseconds: 400),
@@ -1702,13 +1709,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ];
                       });
                       await Future.delayed(const Duration(milliseconds: 400),
-                              () async {
-                            await NavigationMethods.push(
-                              context,
-                              const ShopScreen(),
-
-                            );
-                          });
+                          () async {
+                        await NavigationMethods.push(
+                          context,
+                          const ShopScreen(),
+                        );
+                      });
                     },
                     child: Card(
                       elevation: isTapped[7] ? 20 : 5,
@@ -1762,310 +1768,52 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _mobileScreenBuilder(BuildContext context, Size size) {
-    return SizedBox(
-      height: size.height,
-      width: size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: widget.accType == 'Jadlam'
-                ? MainAxisAlignment.spaceEvenly
-                : MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  setState(() {
-                    isTapped = [true, false, false, false, false, false,false,];
-                  });
-                  await Future.delayed(const Duration(milliseconds: 400),
-                      () async {
-                    await NavigationMethods.push(
-                      context,
-                      BarcodeCameraScreen(
-                        accType: widget.accType,
-                        authorization: widget.authorization,
-                        refreshToken: widget.refreshToken,
-                        crossVisible: crossVisible,
-                        screenType: 'product',
-                        profileId: widget.profileId,
-                        distCenterName: widget.distCenterName,
-                        distCenterId: widget.distCenterId,
-                        barcodeToCheck: 0,
-                      ),
-                    );
-                  });
-                },
-                child: Card(
-                  elevation: isTapped[0] ? 10 : 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                    height: size.width * .4,
-                    width: size.width * .4,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: isTapped[0] == true
-                          ? linearGradient1
-                          : linearGradient2,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: size.width * .25,
-                          width: size.width * .25,
-                          child: Image.asset(isTapped[0] == true
-                              ? 'assets/home_screen_assets/multi_color/products_02.png'
-                              : 'assets/home_screen_assets/multi_color/products_01.png'),
-                        ),
-                        Text(
-                          'Product',
-                          style: TextStyle(
-                            color: isTapped[0] == true
-                                ? Colors.white
-                                : Colors.black,
-                            fontSize: 16,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: widget.accType == 'Jadlam',
-                child: GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      isTapped = [false, true, false, false, false, false,false];
-                    });
-                    await Future.delayed(const Duration(milliseconds: 400), () {
-                      NavigationMethods.push(
-                        context,
-                        BarcodeCameraScreen(
-                          accType: widget.accType,
-                          authorization: widget.authorization,
-                          refreshToken: widget.refreshToken,
-                          crossVisible: crossVisible,
-                          screenType: 'pack and scan',
-                          profileId: widget.profileId,
-                          distCenterName: widget.distCenterName,
-                          distCenterId: widget.distCenterId,
-                          barcodeToCheck: 0,
-                        ),
-                      );
-                    });
-                  },
-                  child: Card(
-                    elevation: isTapped[1] ? 10 : 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                      height: size.width * .4,
-                      width: size.width * .4,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: isTapped[1] == true
-                            ? linearGradient1
-                            : linearGradient2,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.width * .25,
-                            width: size.width * .25,
-                            child: Image.asset(
-                              'assets/home_screen_assets/single_color/pack_and_scan_01.png',
-                              color:
-                                  isTapped[1] == true ? Colors.white : appColor,
-                            ),
-                          ),
-                          Text(
-                            'Pack & Scan',
-                            style: TextStyle(
-                              color: isTapped[1] == true
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 16,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Visibility(
-            visible: widget.accType == 'Jadlam',
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: size.height,
+        width: size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: widget.accType == 'Jadlam'
+                  ? MainAxisAlignment.spaceEvenly
+                  : MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      isTapped = [false, false, true, false, false, false,false];
+                      isTapped = [
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                      ];
                     });
-                    await Future.delayed(const Duration(milliseconds: 400), () {
-                      NavigationMethods.push(
-                        context,
-                        BarcodeCameraScreen(
-                          accType: widget.accType,
-                          authorization: widget.authorization,
-                          refreshToken: widget.refreshToken,
-                          crossVisible: crossVisible,
-                          screenType: 'transfer',
-                          profileId: widget.profileId,
-                          distCenterName: widget.distCenterName,
-                          distCenterId: widget.distCenterId,
-                          barcodeToCheck: 0,
-                        ),
-                      );
-                    });
-                  },
-                  child: Card(
-                    elevation: isTapped[2] ? 20 : 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                      height: size.width * .4,
-                      width: size.width * .4,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: isTapped[2] == true
-                            ? linearGradient1
-                            : linearGradient2,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.width * .25,
-                            width: size.width * .25,
-                            child: Image.asset(
-                              isTapped[2] == true
-                                  ? 'assets/home_screen_assets/multi_color/stock_transfer_02.png'
-                                  : 'assets/home_screen_assets/multi_color/stock_transfer_01.png',
-                            ),
-                          ),
-                          Text(
-                            'Stock Transfer',
-                            style: TextStyle(
-                              color: isTapped[2] == true
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 16,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      isTapped = [false, false, false, true, false, false,false];
-                    });
-                    await Future.delayed(const Duration(milliseconds: 400), () {
-                      NavigationMethods.push(
-                        context,
-                        BarcodeCameraScreen(
-                          accType: widget.accType,
-                          authorization: widget.authorization,
-                          refreshToken: widget.refreshToken,
-                          crossVisible: crossVisible,
-                          screenType: 'jit order',
-                          profileId: widget.profileId,
-                          distCenterName: widget.distCenterName,
-                          distCenterId: widget.distCenterId,
-                          barcodeToCheck: 0,
-                        ),
-                      );
-                    });
-                  },
-                  child: Card(
-                    elevation: isTapped[3] ? 20 : 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                      height: size.width * .4,
-                      width: size.width * .4,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: isTapped[3] == true
-                            ? linearGradient1
-                            : linearGradient2,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.width * .25,
-                            width: size.width * .25,
-                            child: Image.asset(
-                              isTapped[3] == true
-                                  ? 'assets/home_screen_assets/multi_color/jit_orders_02.png'
-                                  : 'assets/home_screen_assets/multi_color/jit_orders_01.png',
-                            ),
-                          ),
-                          Text(
-                            'JIT Orders',
-                            style: TextStyle(
-                              color: isTapped[3] == true
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 16,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: widget.accType == 'Jadlam',
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      isTapped = [false, false, false, false, true, false,false];
-                    });
-                    await getPrintNodeData().whenComplete(() async {
+                    await Future.delayed(const Duration(milliseconds: 400),
+                        () async {
                       await NavigationMethods.push(
                         context,
-                        PickLists(
+                        BarcodeCameraScreen(
                           accType: widget.accType,
                           authorization: widget.authorization,
                           refreshToken: widget.refreshToken,
+                          crossVisible: crossVisible,
+                          screenType: 'product',
                           profileId: widget.profileId,
-                          distCenterId: widget.distCenterId,
                           distCenterName: widget.distCenterName,
-                          userName: widget.userId,
-                          isDCSplitAutomatic: isDCSplitAutomatic,
+                          distCenterId: widget.distCenterId,
+                          barcodeToCheck: 0,
                         ),
                       );
                     });
                   },
                   child: Card(
-                    elevation: isTapped[4] ? 20 : 5,
+                    elevation: isTapped[0] ? 10 : 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -2074,7 +1822,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: size.width * .4,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        gradient: isTapped[4] == true
+                        gradient: isTapped[0] == true
                             ? linearGradient1
                             : linearGradient2,
                       ),
@@ -2085,149 +1833,473 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(
                             height: size.width * .25,
                             width: size.width * .25,
-                            child: Image.asset(
-                              'assets/home_screen_assets/single_color/picklist_01.png',
-                              color:
-                                  isTapped[4] == true ? Colors.white : appColor,
-                            ),
+                            child: Image.asset(isTapped[0] == true
+                                ? 'assets/home_screen_assets/multi_color/products_02.png'
+                                : 'assets/home_screen_assets/multi_color/products_01.png'),
                           ),
                           Text(
-                            'Picklist',
+                            'Product',
                             style: TextStyle(
-                              color: isTapped[4] == true
+                              color: isTapped[0] == true
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 16,
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      isTapped = [false, false, false, false, false, true,false,];
-                    });
-                    await Future.delayed(const Duration(milliseconds: 400), () {
-                      NavigationMethods.push(
-                        context,
-                        const PreOrderScreen(),
-                      );
-                    });
-                  },
-                  child: Card(
-                    elevation: isTapped[5] ? 20 : 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                      height: size.width * .4,
-                      width: size.width * .4,
-                      decoration: BoxDecoration(
+                Visibility(
+                  visible: widget.accType == 'Jadlam',
+                  child: GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          true,
+                          false,
+                          false,
+                          false,
+                          false,
+                          false
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                          () {
+                        NavigationMethods.push(
+                          context,
+                          BarcodeCameraScreen(
+                            accType: widget.accType,
+                            authorization: widget.authorization,
+                            refreshToken: widget.refreshToken,
+                            crossVisible: crossVisible,
+                            screenType: 'pack and scan',
+                            profileId: widget.profileId,
+                            distCenterName: widget.distCenterName,
+                            distCenterId: widget.distCenterId,
+                            barcodeToCheck: 0,
+                          ),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[1] ? 10 : 5,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
-                        gradient: isTapped[5] == true
-                            ? linearGradient1
-                            : linearGradient2,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: size.width * .25,
-                            width: size.width * .25,
-                            child: Image.asset(
-                              'assets/home_screen_assets/single_color/pre_order_01.png',
-                              color:
-                                  isTapped[5] == true ? Colors.white : appColor,
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[1] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                'assets/home_screen_assets/single_color/pack_and_scan_01.png',
+                                color: isTapped[1] == true
+                                    ? Colors.white
+                                    : appColor,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Pre-Orders',
-                            style: TextStyle(
-                              color: isTapped[5] == true
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+                            Text(
+                              'Pack & Scan',
+                              style: TextStyle(
+                                color: isTapped[1] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-
               ],
             ),
-          ),
-          GestureDetector(
-            onTap: () async {
-              setState(() {
-                isTapped = [
-                  false,
-                  false,
-                  false,
-                  false,
-                  false,
-                  false,
-
-                  true
-                ];
-              });
-              await Future.delayed(const Duration(milliseconds: 400),
-                      () async {
-                    await NavigationMethods.push(
-                      context,
-                      const ShopScreen(),
-
-                    );
-                  });
-            },
-            child: Card(
-              elevation: isTapped[6] ? 20 : 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                height: size.width * .4,
-                width: size.width * .4,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: isTapped[6] == true
-                      ? linearGradient1
-                      : linearGradient2,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: size.width * .25,
-                      width: size.width * .25,
-                      child: Image.asset(
-                        'assets/home_screen_assets/single_color/store.png',
-                        color: isTapped[6] == true
-                            ? Colors.white
-                            : appColor,
+            Visibility(
+              visible: widget.accType == 'Jadlam',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          true,
+                          false,
+                          false,
+                          false,
+                          false
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                          () {
+                        NavigationMethods.push(
+                          context,
+                          BarcodeCameraScreen(
+                            accType: widget.accType,
+                            authorization: widget.authorization,
+                            refreshToken: widget.refreshToken,
+                            crossVisible: crossVisible,
+                            screenType: 'transfer',
+                            profileId: widget.profileId,
+                            distCenterName: widget.distCenterName,
+                            distCenterId: widget.distCenterId,
+                            barcodeToCheck: 0,
+                          ),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[2] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[2] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                isTapped[2] == true
+                                    ? 'assets/home_screen_assets/multi_color/stock_transfer_02.png'
+                                    : 'assets/home_screen_assets/multi_color/stock_transfer_01.png',
+                              ),
+                            ),
+                            Text(
+                              'Stock Transfer',
+                              style: TextStyle(
+                                color: isTapped[2] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    Text(
-                      'Shops',
-                      style: TextStyle(
-                        color: isTapped[6] == true
-                            ? Colors.white
-                            : Colors.black,
-                        fontSize: 16,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          false,
+                          true,
+                          false,
+                          false,
+                          false
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                          () {
+                        NavigationMethods.push(
+                          context,
+                          BarcodeCameraScreen(
+                            accType: widget.accType,
+                            authorization: widget.authorization,
+                            refreshToken: widget.refreshToken,
+                            crossVisible: crossVisible,
+                            screenType: 'jit order',
+                            profileId: widget.profileId,
+                            distCenterName: widget.distCenterName,
+                            distCenterId: widget.distCenterId,
+                            barcodeToCheck: 0,
+                          ),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[3] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    )
-                  ],
-                ),
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[3] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                isTapped[3] == true
+                                    ? 'assets/home_screen_assets/multi_color/jit_orders_02.png'
+                                    : 'assets/home_screen_assets/multi_color/jit_orders_01.png',
+                              ),
+                            ),
+                            Text(
+                              'JIT Orders',
+                              style: TextStyle(
+                                color: isTapped[3] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Visibility(
+              visible: widget.accType == 'Jadlam',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          false,
+                          false,
+                          true,
+                          false,
+                          false
+                        ];
+                      });
+                      await getPrintNodeData().whenComplete(() async {
+                        await NavigationMethods.push(
+                          context,
+                          PickLists(
+                            accType: widget.accType,
+                            authorization: widget.authorization,
+                            refreshToken: widget.refreshToken,
+                            profileId: widget.profileId,
+                            distCenterId: widget.distCenterId,
+                            distCenterName: widget.distCenterName,
+                            userName: widget.userId,
+                            isDCSplitAutomatic: isDCSplitAutomatic,
+                          ),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[4] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[4] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                'assets/home_screen_assets/single_color/picklist_01.png',
+                                color: isTapped[4] == true
+                                    ? Colors.white
+                                    : appColor,
+                              ),
+                            ),
+                            Text(
+                              'Picklist',
+                              style: TextStyle(
+                                color: isTapped[4] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          true,
+                          false,
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                          () {
+                        NavigationMethods.push(
+                          context,
+                          const PreOrderScreen(),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[5] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[5] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                'assets/home_screen_assets/single_color/pre_order_01.png',
+                                color: isTapped[5] == true
+                                    ? Colors.white
+                                    : appColor,
+                              ),
+                            ),
+                            Text(
+                              'Pre-Orders',
+                              style: TextStyle(
+                                color: isTapped[5] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Visibility(
+              visible: widget.accType == 'Jadlam',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        isTapped = [
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          false,
+                          true
+                        ];
+                      });
+                      await Future.delayed(const Duration(milliseconds: 400),
+                          () async {
+                        await NavigationMethods.push(
+                          context,
+                          const ShopScreen(),
+                        );
+                      });
+                    },
+                    child: Card(
+                      elevation: isTapped[6] ? 20 : 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        height: size.width * .4,
+                        width: size.width * .4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: isTapped[6] == true
+                              ? linearGradient1
+                              : linearGradient2,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.width * .25,
+                              width: size.width * .25,
+                              child: Image.asset(
+                                'assets/home_screen_assets/single_color/store.png',
+                                color: isTapped[6] == true
+                                    ? Colors.white
+                                    : appColor,
+                              ),
+                            ),
+                            Text(
+                              'Shops',
+                              style: TextStyle(
+                                color: isTapped[6] == true
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * .4,
+                    width: size.width * .4,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -2250,7 +2322,11 @@ class _HomeScreenState extends State<HomeScreen> {
           apiKey = printNodeData[0].get<String>('api_key') ?? '';
           webAppLastUpdated =
               printNodeData[0].get<String>('web_app_last_updated') ?? '';
-          isDCSplitAutomatic = (printNodeData[0].get<String>('is_dc_split_automatic') ?? '') == 'Yes' ? true : false;
+          isDCSplitAutomatic =
+              (printNodeData[0].get<String>('is_dc_split_automatic') ?? '') ==
+                      'Yes'
+                  ? true
+                  : false;
         });
         log('V apiKey >>---> $apiKey');
         log('V webAppLastUpdated >>---> $webAppLastUpdated');

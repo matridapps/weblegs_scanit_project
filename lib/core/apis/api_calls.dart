@@ -324,18 +324,10 @@ class ApiCalls {
     }
   }
 
-
+  /// Api Methods by Vishal
   static Future<List<ShopReplenishSku>> returnShopReplenishList() async {
-
     Uri uri = Uri.parse('https://weblegs.info/JadlamApp/api/GetShopReplenishSKU');
-
-
     final response = await http.get(uri);
-
-
     return shopReplenishModelFromJson(response.body).sku;
-
   }
-
-
 }
