@@ -18,6 +18,12 @@ const kUnshipped = '\'Unshipped\'';
 const kRetail = '\'RetailStore\'';
 const kAmazon = '\'Amazon UK\'';
 const kSStorePrice = '\'ShopifyStorePrice\'';
+const kLock = ' is Locked as another user is working on this picklist';
 
 /// NEW CONSTANTS ADDED ON 22 JUNE, 2023 FOR OPTIMIZATION OF THE APP CODE
 const kTimeOut = 'The connection has timed out.\nPlease try again later!';
+
+/// BACK 4 APP CONSTANTS
+const keyApplicationId = 'uc9gqlNy0ykz3ws8X1Kcf69k8kgIDLYYkZOv0RMa';
+const keyClientKey = 'kOE90HhFp0VKOKspT8eRlZaPzobHnK7xkp8rJYSh';
+const keyParseServerUrl = 'https://parseapi.back4app.com';

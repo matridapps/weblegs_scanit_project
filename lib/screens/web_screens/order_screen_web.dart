@@ -15,6 +15,7 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:photo_view/photo_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderScreenWeb extends StatefulWidget {
@@ -55,7 +56,6 @@ class _OrderScreenWebState extends State<OrderScreenWeb> {
   @override
   void initState() {
     hitScreenApi();
-
     super.initState();
   }
 
@@ -73,543 +73,545 @@ class _OrderScreenWebState extends State<OrderScreenWeb> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
+    return SelectionArea(
+      child: Scaffold(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        toolbarHeight: size.height * .08,
-        elevation: 5,
-        title: Text(
-          'Orders',
-          style: TextStyle(
-              fontSize: ResponsiveCheck.isLargeScreen(context)
-                  ? size.width * .02
-                  : ResponsiveCheck.isMediumScreen(context)
-                      ? size.width * .025
-                      : size.width * .03,
-              color: Colors.black),
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: true,
+          iconTheme: const IconThemeData(color: Colors.black),
+          centerTitle: true,
+          toolbarHeight: size.height * .08,
+          elevation: 5,
+          title: Text(
+            'Orders',
+            style: TextStyle(
+                fontSize: ResponsiveCheck.isLargeScreen(context)
+                    ? size.width * .02
+                    : ResponsiveCheck.isMediumScreen(context)
+                        ? size.width * .025
+                        : size.width * .03,
+                color: Colors.black),
+          ),
         ),
-      ),
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: size.width * .05),
-                child: Container(
-                  height: size.height * .07,
-                  width: size.width * .95,
-                  color: Colors.grey.shade200,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: size.width * .05),
-                            child: const Text('Barcode(EAN) : '),
-                          ),
-                          Text(
-                            widget.ean,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: size.width * .05,
-                width: size.width,
-              ),
-              isLoading == true
-                  ? SizedBox(
-                      height:
-                          size.height - size.width * .05 - size.height * .07,
-                      width: size.width * .95,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: appColor,
+        body: SizedBox(
+          height: size.height,
+          width: size.width,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              child: Column(
+                children: [
+                  Container(
+                    height: 45,
+                    width: size.width - 40,
+                    color: Colors.grey.shade200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: size.width * .05),
+                              child: const Text(
+                                'Barcode : ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            Text(
+                              widget.ean,
+                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            )
+                          ],
                         ),
-                      ),
-                    )
-                  : SizedBox(
-                      height: size.height,
-                      width: size.width * .95,
-                      child: Column(
-                        children: [
-                          Container(
-                            height: size.height * .05,
-                            width: size.width * .95,
-                            color: Colors.grey.shade200,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: size.width * .05),
-                                  child: Text(
-                                      'Showing ${orderList.isEmpty ? 0 : orderIndex + 1} of ${orderList.length}'),
-                                ),
-                              ],
+                      ],
+                    ),
+                  ),
+                  isLoading == true
+                      ? SizedBox(
+                          height:
+                              size.height - size.width * .05 - size.height * .07,
+                          width: size.width * .95,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: appColor,
                             ),
                           ),
-                          allOrders(size).isEmpty
-                              ? Padding(
-                                  padding:
-                                      EdgeInsets.only(top: size.height * .03),
-                                  child: SizedBox(
-                                      height: size.height -
-                                          size.width * .05 -
-                                          size.height * .07 -
-                                          size.height * .1,
-                                      width: size.width * .95,
-                                      child: const Center(
-                                        child: Text('No Orders available.'),
-                                      )),
-                                )
-                              : Padding(
-                                  padding:
-                                      EdgeInsets.only(top: size.height * .03),
-                                  child: SizedBox(
-                                    height: size.height * .8,
-                                    width: size.width * .95,
-                                    child: orderLoading == true
-                                        ? const Center(
-                                            child: CircularProgressIndicator(
-                                              color: appColor,
-                                            ),
-                                          )
-                                        : Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                height: size.height * .07,
-                                                width: size.width * .95,
-                                                color: Colors.grey.shade200,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    Row(
+                        )
+                      : SizedBox(
+                          height: size.height,
+                          width: size.width * .95,
+                          child: Column(
+                            children: [
+                              Container(
+                                height: size.height * .05,
+                                width: size.width * .95,
+                                color: Colors.grey.shade200,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: size.width * .05),
+                                      child: Text(
+                                          'Showing ${orderList.isEmpty ? 0 : orderIndex + 1} of ${orderList.length}'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              allOrders(size).isEmpty
+                                  ? Padding(
+                                      padding:
+                                          EdgeInsets.only(top: size.height * .03),
+                                      child: SizedBox(
+                                          height: size.height -
+                                              size.width * .05 -
+                                              size.height * .07 -
+                                              size.height * .1,
+                                          width: size.width * .95,
+                                          child: const Center(
+                                            child: Text('No Orders available.'),
+                                          )),
+                                    )
+                                  : Padding(
+                                      padding:
+                                          EdgeInsets.only(top: size.height * .03),
+                                      child: SizedBox(
+                                        height: size.height * .8,
+                                        width: size.width * .95,
+                                        child: orderLoading == true
+                                            ? const Center(
+                                                child: CircularProgressIndicator(
+                                                  color: appColor,
+                                                ),
+                                              )
+                                            : Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    height: size.height * .07,
+                                                    width: size.width * .95,
+                                                    color: Colors.grey.shade200,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: size
-                                                                          .width *
-                                                                      .05),
-                                                          child: Text(
-                                                            'Order Id : ',
+                                                        Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsets.only(
+                                                                      left: size
+                                                                              .width *
+                                                                          .05),
+                                                              child: Text(
+                                                                'Order Id : ',
+                                                                style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: ResponsiveCheck.isLargeScreen(
+                                                                      context)
+                                                                      ? size.width * .015
+                                                                      : ResponsiveCheck.isMediumScreen(context)
+                                                                      ? size.width * .02
+                                                                      : size.width * .025,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              '${orderList[orderIndex].orderId}',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.red,
+                                                                fontSize: ResponsiveCheck.isLargeScreen(context)
+                                                                    ? size.width * .015
+                                                                    : ResponsiveCheck.isMediumScreen(context)
+                                                                    ? size.width * .02
+                                                                    : size.width * .025,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: size.height * .06,
+                                                    width: size.width * .95,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SizedBox(
+                                                          height:
+                                                              size.height * .06,
+                                                          width: size.width * .95,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets.only(
+                                                                    left:
+                                                                        size.width *
+                                                                            .05,
+                                                                    top:
+                                                                        size.width *
+                                                                            .03),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'Date : ',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Colors.grey,
+                                                                        fontSize: ResponsiveCheck.isLargeScreen(
+                                                                            context)
+                                                                            ? size.width * .015
+                                                                            : ResponsiveCheck.isMediumScreen(
+                                                                            context)
+                                                                            ? size.width * .02
+                                                                            : size.width * .025,
+                                                                        fontWeight: FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      orderList[
+                                                                              orderIndex]
+                                                                          .createdDate,
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Colors.black,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: ResponsiveCheck.isLargeScreen(
+                                                                            context)
+                                                                            ? size.width * .015
+                                                                            : ResponsiveCheck.isMediumScreen(
+                                                                            context)
+                                                                            ? size.width * .02
+                                                                            : size.width * .025,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: size.height * .06,
+                                                    width: size.width * .95,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                        left: size.width * .05,
+                                                        bottom: size.width * .03,
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Site Name : ',
                                                             style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: ResponsiveCheck.isLargeScreen(
-                                                                  context)
+                                                              color: Colors.grey,
+                                                              fontSize:
+                                                                  size.width *
+                                                                      .045,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            '${orderList[orderIndex].siteName}',
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: ResponsiveCheck.isLargeScreen(context)
                                                                   ? size.width * .015
                                                                   : ResponsiveCheck.isMediumScreen(context)
                                                                   ? size.width * .02
                                                                   : size.width * .025,
+                                                              fontWeight: FontWeight.bold,
                                                             ),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          '${orderList[orderIndex].orderId}',
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.red,
-                                                            fontSize: ResponsiveCheck.isLargeScreen(context)
-                                                                ? size.width * .015
-                                                                : ResponsiveCheck.isMediumScreen(context)
-                                                                ? size.width * .02
-                                                                : size.width * .025,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: size.height * .06,
-                                                width: size.width * .95,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height:
-                                                          size.height * .06,
-                                                      width: size.width * .95,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left:
-                                                                    size.width *
-                                                                        .05,
-                                                                top:
-                                                                    size.width *
-                                                                        .03),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  'Date : ',
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Colors.grey,
-                                                                    fontSize: ResponsiveCheck.isLargeScreen(
-                                                                        context)
-                                                                        ? size.width * .015
-                                                                        : ResponsiveCheck.isMediumScreen(
-                                                                        context)
-                                                                        ? size.width * .02
-                                                                        : size.width * .025,
-                                                                    fontWeight: FontWeight.bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  orderList[
-                                                                          orderIndex]
-                                                                      .createdDate,
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: ResponsiveCheck.isLargeScreen(
-                                                                        context)
-                                                                        ? size.width * .015
-                                                                        : ResponsiveCheck.isMediumScreen(
-                                                                        context)
-                                                                        ? size.width * .02
-                                                                        : size.width * .025,
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          )
                                                         ],
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: size.height * .06,
-                                                width: size.width * .95,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: size.width * .05,
-                                                    bottom: size.width * .03,
                                                   ),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Site Name : ',
-                                                        style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize:
-                                                              size.width *
-                                                                  .045,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        '${orderList[orderIndex].siteName}',
-                                                        style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: ResponsiveCheck.isLargeScreen(context)
-                                                              ? size.width * .015
-                                                              : ResponsiveCheck.isMediumScreen(context)
-                                                              ? size.width * .02
-                                                              : size.width * .025,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: size.height * .07,
-                                                width: size.width * .95,
-                                                child: Center(
-                                                  child: RoundedLoadingButton(
-                                                    color: Colors.green,
-                                                    borderRadius: 0,
+                                                  SizedBox(
                                                     height: size.height * .07,
                                                     width: size.width * .95,
-                                                    successIcon:
-                                                        Icons.check_rounded,
-                                                    failedIcon:
-                                                        Icons.close_rounded,
-                                                    successColor:
-                                                        Colors.green,
-                                                    controller:
-                                                        printController[
-                                                            orderIndex],
-                                                    onPressed: () async {
-                                                      if ('${orderList[orderIndex].siteName}' ==
-                                                          'Amazon UK-prime') {
-                                                        await printLabelAmazonPrime(
-                                                                siteOrderId:
-                                                                    '${orderList[orderIndex].siteOrderId}')
-                                                            .whenComplete(
-                                                                () async {
-                                                          if (labelError
-                                                              .isNotEmpty) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    labelError,
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG);
-                                                            await Future.delayed(
-                                                                const Duration(
-                                                                    seconds:
-                                                                        1),
-                                                                () {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .reset();
-                                                            });
-                                                          } else {
-                                                            await _launchUrl(
-                                                                    labelUrl)
-                                                                .whenComplete(
-                                                                    () async {
-                                                              await Future.delayed(
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          200),
-                                                                  () {
-                                                                saveLabelData(
-                                                                  orderId: orderList[
-                                                                          orderIndex]
-                                                                      .orderId,
-                                                                  orderDate: orderList[
-                                                                          orderIndex]
-                                                                      .createdDate,
-                                                                  siteOrderId:
-                                                                      orderList[orderIndex]
-                                                                          .siteOrderId,
-                                                                  siteName: orderList[
-                                                                          orderIndex]
-                                                                      .siteName,
-                                                                  serialNo:
-                                                                      '${int.parse(serialNoFromDB) + 1}',
-                                                                );
-                                                              }).whenComplete(
-                                                                  () async {
-                                                                await Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
-                                                                  loadingLabelPrintingData(
-                                                                      isFirstTime:
-                                                                          false);
-                                                                });
-                                                              }).whenComplete(
-                                                                  () async {
-                                                                printController[
-                                                                        orderIndex]
-                                                                    .reset();
-                                                                if (orderIndex ==
-                                                                    orderList
-                                                                            .length -
-                                                                        1) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                } else {
-                                                                  setState(
-                                                                      () {
-                                                                    orderLoading =
-                                                                        true;
-                                                                  });
-                                                                  await Future.delayed(
-                                                                      const Duration(
-                                                                          seconds:
+                                                    child: Center(
+                                                      child: RoundedLoadingButton(
+                                                        color: Colors.green,
+                                                        borderRadius: 0,
+                                                        height: size.height * .07,
+                                                        width: size.width * .95,
+                                                        successIcon:
+                                                            Icons.check_rounded,
+                                                        failedIcon:
+                                                            Icons.close_rounded,
+                                                        successColor:
+                                                            Colors.green,
+                                                        controller:
+                                                            printController[
+                                                                orderIndex],
+                                                        onPressed: () async {
+                                                          await SharedPreferences.getInstance().then((prefs) async {
+                                                            if ('${orderList[orderIndex].siteName}' ==
+                                                                'Amazon UK-prime') {
+                                                              await printLabelAmazonPrime(
+                                                              siteOrderId:
+                                                              '${orderList[orderIndex].siteOrderId}')
+                                                                  .whenComplete(
+                                                                      () async {
+                                                                    if (labelError
+                                                                        .isNotEmpty) {
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                          labelError,
+                                                                          toastLength: Toast
+                                                                              .LENGTH_LONG);
+                                                                      await Future.delayed(
+                                                                          const Duration(
+                                                                              seconds:
                                                                               1),
-                                                                      () {
-                                                                    setState(
-                                                                        () {
-                                                                      orderIndex =
-                                                                          orderIndex +
-                                                                              1;
-                                                                      orderLoading =
-                                                                          false;
-                                                                    });
+                                                                              () {
+                                                                            printController[
+                                                                            orderIndex]
+                                                                                .reset();
+                                                                          });
+                                                                    } else {
+                                                                      await _launchUrl(
+                                                                          labelUrl)
+                                                                          .whenComplete(
+                                                                              () async {
+                                                                            await Future.delayed(
+                                                                                const Duration(
+                                                                                    milliseconds:
+                                                                                    200),
+                                                                                    () {
+                                                                                  saveLabelData(
+                                                                                    orderId: orderList[
+                                                                                    orderIndex]
+                                                                                        .orderId,
+                                                                                    orderDate: orderList[
+                                                                                    orderIndex]
+                                                                                        .createdDate,
+                                                                                    siteOrderId:
+                                                                                    orderList[orderIndex]
+                                                                                        .siteOrderId,
+                                                                                    siteName: orderList[
+                                                                                    orderIndex]
+                                                                                        .siteName,
+                                                                                    serialNo:
+                                                                                    '${int.parse(serialNoFromDB) + 1}',
+                                                                                  );
+                                                                                }).whenComplete(
+                                                                                    () async {
+                                                                                  await Future.delayed(
+                                                                                      const Duration(
+                                                                                          seconds:
+                                                                                          1),
+                                                                                          () {
+                                                                                        loadingLabelPrintingData(
+                                                                                            isFirstTime:
+                                                                                            false);
+                                                                                      });
+                                                                                }).whenComplete(
+                                                                                    () async {
+                                                                                  printController[
+                                                                                  orderIndex]
+                                                                                      .reset();
+                                                                                  if (orderIndex ==
+                                                                                      orderList
+                                                                                          .length -
+                                                                                          1) {
+                                                                                    Navigator.pop(
+                                                                                        context);
+                                                                                  } else {
+                                                                                    setState(
+                                                                                            () {
+                                                                                          orderLoading =
+                                                                                          true;
+                                                                                        });
+                                                                                    await Future.delayed(
+                                                                                        const Duration(
+                                                                                            seconds:
+                                                                                            1),
+                                                                                            () {
+                                                                                          setState(
+                                                                                                  () {
+                                                                                                orderIndex =
+                                                                                                    orderIndex +
+                                                                                                        1;
+                                                                                                orderLoading =
+                                                                                                false;
+                                                                                              });
+                                                                                        });
+                                                                                  }
+                                                                                });
+                                                                          });
+                                                                    }
                                                                   });
-                                                                }
-                                                              });
-                                                            });
-                                                          }
-                                                        });
-                                                      } else {
-                                                        await printLabelOthers(
-                                                                siteOrderId:
-                                                                    '${orderList[orderIndex].siteOrderId}')
-                                                            .whenComplete(
-                                                                () async {
-                                                          if (labelError
-                                                              .isNotEmpty) {
-                                                            Fluttertoast.showToast(
-                                                                msg:
-                                                                    labelError,
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG);
-                                                            await Future.delayed(
-                                                                const Duration(
-                                                                    seconds:
-                                                                        1),
-                                                                () {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .reset();
-                                                            });
-                                                          } else {
-                                                            await _launchUrl(
-                                                                    labelUrl)
-                                                                .whenComplete(
-                                                                    () async {
-                                                              await Future.delayed(
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          200),
-                                                                  () {
-                                                                saveLabelData(
-                                                                  orderId: orderList[
-                                                                          orderIndex]
-                                                                      .orderId,
-                                                                  orderDate: orderList[
-                                                                          orderIndex]
-                                                                      .createdDate,
-                                                                  siteOrderId:
-                                                                      orderList[orderIndex]
-                                                                          .siteOrderId,
-                                                                  siteName: orderList[
-                                                                          orderIndex]
-                                                                      .siteName,
-                                                                  serialNo:
-                                                                      '${int.parse(serialNoFromDB) + 1}',
-                                                                );
-                                                              }).whenComplete(
-                                                                  () async {
-                                                                await Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
-                                                                  loadingLabelPrintingData(
-                                                                      isFirstTime:
-                                                                          false);
-                                                                });
-                                                              }).whenComplete(
-                                                                  () async {
-                                                                printController[
-                                                                        orderIndex]
-                                                                    .reset();
-                                                                if (orderIndex ==
-                                                                    orderList
-                                                                            .length -
-                                                                        1) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                } else {
-                                                                  setState(
-                                                                      () {
-                                                                    orderLoading =
-                                                                        true;
-                                                                  });
-                                                                  await Future.delayed(
-                                                                      const Duration(
-                                                                          seconds:
+                                                            } else {
+                                                              await printLabelOthers(
+                                                              siteOrderId:'${orderList[orderIndex].siteOrderId}',
+                                                              isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                                                              ).whenComplete(
+                                                                      () async {
+                                                                    if (labelError
+                                                                        .isNotEmpty) {
+                                                                      Fluttertoast.showToast(
+                                                                          msg:
+                                                                          labelError,
+                                                                          toastLength: Toast
+                                                                              .LENGTH_LONG);
+                                                                      await Future.delayed(
+                                                                          const Duration(
+                                                                              seconds:
                                                                               1),
-                                                                      () {
-                                                                    setState(
-                                                                        () {
-                                                                      orderIndex =
-                                                                          orderIndex +
-                                                                              1;
-                                                                      orderLoading =
-                                                                          false;
-                                                                    });
+                                                                              () {
+                                                                            printController[
+                                                                            orderIndex]
+                                                                                .reset();
+                                                                          });
+                                                                    } else {
+                                                                      await _launchUrl(
+                                                                          labelUrl)
+                                                                          .whenComplete(
+                                                                              () async {
+                                                                            await Future.delayed(
+                                                                                const Duration(
+                                                                                    milliseconds:
+                                                                                    200),
+                                                                                    () {
+                                                                                  saveLabelData(
+                                                                                    orderId: orderList[
+                                                                                    orderIndex]
+                                                                                        .orderId,
+                                                                                    orderDate: orderList[
+                                                                                    orderIndex]
+                                                                                        .createdDate,
+                                                                                    siteOrderId:
+                                                                                    orderList[orderIndex]
+                                                                                        .siteOrderId,
+                                                                                    siteName: orderList[
+                                                                                    orderIndex]
+                                                                                        .siteName,
+                                                                                    serialNo:
+                                                                                    '${int.parse(serialNoFromDB) + 1}',
+                                                                                  );
+                                                                                }).whenComplete(
+                                                                                    () async {
+                                                                                  await Future.delayed(
+                                                                                      const Duration(
+                                                                                          seconds:
+                                                                                          1),
+                                                                                          () {
+                                                                                        loadingLabelPrintingData(
+                                                                                            isFirstTime:
+                                                                                            false);
+                                                                                      });
+                                                                                }).whenComplete(
+                                                                                    () async {
+                                                                                  printController[
+                                                                                  orderIndex]
+                                                                                      .reset();
+                                                                                  if (orderIndex ==
+                                                                                      orderList
+                                                                                          .length -
+                                                                                          1) {
+                                                                                    Navigator.pop(
+                                                                                        context);
+                                                                                  } else {
+                                                                                    setState(
+                                                                                            () {
+                                                                                          orderLoading =
+                                                                                          true;
+                                                                                        });
+                                                                                    await Future.delayed(
+                                                                                        const Duration(
+                                                                                            seconds:
+                                                                                            1),
+                                                                                            () {
+                                                                                          setState(
+                                                                                                  () {
+                                                                                                orderIndex =
+                                                                                                    orderIndex +
+                                                                                                        1;
+                                                                                                orderLoading =
+                                                                                                false;
+                                                                                              });
+                                                                                        });
+                                                                                  }
+                                                                                });
+                                                                          });
+                                                                    }
                                                                   });
-                                                                }
-                                                              });
-                                                            });
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        SizedBox(
-                                                          height:
-                                                              size.height *
-                                                                  .05,
-                                                          width: size.height *
-                                                              .05,
-                                                          child: Image.asset(
-                                                            'assets/new_order_screen/orderpage-print.png',
-                                                            color:
-                                                                Colors.white,
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 10),
-                                                          child: Text(
-                                                            'Print Label',
-                                                            style: TextStyle(
-                                                              fontSize:
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            SizedBox(
+                                                              height:
                                                                   size.height *
-                                                                      .025,
-                                                              color: Colors
-                                                                  .white,
+                                                                      .05,
+                                                              width: size.height *
+                                                                  .05,
+                                                              child: Image.asset(
+                                                                'assets/new_order_screen/orderpage-print.png',
+                                                                color:
+                                                                    Colors.white,
+                                                              ),
                                                             ),
-                                                          ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 10),
+                                                              child: Text(
+                                                                'Print Label',
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      size.height *
+                                                                          .025,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                  ),
-                                ),
-                        ],
-                      ),
-                    ),
-            ],
+                                                  )
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -792,84 +794,91 @@ class _OrderScreenWebState extends State<OrderScreenWeb> {
                         successColor: Colors.green,
                         controller: printController[index],
                         onPressed: () async {
-                          if ('${orderList[index].siteName}' ==
-                              'Amazon UK-prime') {
-                            await printLabelAmazonPrime(
-                                    siteOrderId:
-                                        '${orderList[index].siteOrderId}')
-                                .whenComplete(() async {
-                              if (labelError.isNotEmpty) {
-                                Fluttertoast.showToast(
-                                    msg: labelError,
-                                    toastLength: Toast.LENGTH_LONG);
-                                await Future.delayed(const Duration(seconds: 1),
-                                    () {
-                                  printController[index].reset();
-                                });
-                              } else {
-                                if (defaultTargetPlatform ==
-                                        TargetPlatform.windows ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.fuchsia ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.linux ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.macOS) {
-                                  _launchUrl(labelUrl).whenComplete(() async {
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 200), () {
-                                      printController[index].reset();
-                                    });
-                                  });
+                          await SharedPreferences.getInstance().then((prefs) async {
+                            if ('${orderList[index].siteName}' ==
+                                'Amazon UK-prime') {
+                              await printLabelAmazonPrime(
+                              siteOrderId:
+                              '${orderList[index].siteOrderId}')
+                                  .whenComplete(() async {
+                                if (labelError.isNotEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: labelError,
+                                      toastLength: Toast.LENGTH_LONG);
+                                  await Future.delayed(const Duration(seconds: 1),
+                                          () {
+                                        printController[index].reset();
+                                      });
                                 } else {
-                                  await print(labelUrl).whenComplete(() async {
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 200), () {
-                                      printController[index].reset();
+                                  if (defaultTargetPlatform ==
+                                      TargetPlatform.windows ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.fuchsia ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.linux ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.macOS) {
+                                    _launchUrl(labelUrl).whenComplete(() async {
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 200), () {
+                                        printController[index].reset();
+                                      });
                                     });
-                                  });
+                                  } else {
+                                    await print(labelUrl).whenComplete(() async {
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 200), () {
+                                        printController[index].reset();
+                                      });
+                                    });
+                                  }
                                 }
-                              }
-                            });
-                          } else {
-                            await printLabelOthers(
-                                    siteOrderId:
-                                        '${orderList[index].siteOrderId}')
-                                .whenComplete(() async {
-                              if (labelError.isNotEmpty) {
-                                Fluttertoast.showToast(
-                                    msg: labelError,
-                                    toastLength: Toast.LENGTH_LONG);
-                                await Future.delayed(const Duration(seconds: 1),
-                                    () {
-                                  printController[index].reset();
-                                });
-                              } else {
-                                if (defaultTargetPlatform ==
-                                        TargetPlatform.windows ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.fuchsia ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.linux ||
-                                    defaultTargetPlatform ==
-                                        TargetPlatform.macOS) {
-                                  _launchUrl(labelUrl).whenComplete(() async {
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 200), () {
-                                      printController[index].reset();
-                                    });
-                                  });
+                              });
+                            } else {
+                              await printLabelOthers(
+                                siteOrderId: '${orderList[index].siteOrderId}',
+                                isTest: (prefs.getString(
+                                    'EasyPostTestOrLive') ?? 'Test') == 'Test',
+                              ).whenComplete(() async {
+                                if (labelError.isNotEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: labelError,
+                                      toastLength: Toast.LENGTH_LONG);
+                                  await Future.delayed(
+                                      const Duration(seconds: 1),
+                                          () {
+                                        printController[index].reset();
+                                      });
                                 } else {
-                                  await print(labelUrl).whenComplete(() async {
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 200), () {
-                                      printController[index].reset();
+                                  if (defaultTargetPlatform ==
+                                      TargetPlatform.windows ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.fuchsia ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.linux ||
+                                      defaultTargetPlatform ==
+                                          TargetPlatform.macOS) {
+                                    _launchUrl(labelUrl).whenComplete(() async {
+                                      await Future.delayed(
+                                          const Duration(
+                                              milliseconds: 200), () {
+                                        printController[index].reset();
+                                      });
                                     });
-                                  });
+                                  } else {
+                                    await print(labelUrl)
+                                        .whenComplete(() async {
+                                      await Future.delayed(
+                                          const Duration(
+                                              milliseconds: 200), () {
+                                        printController[index].reset();
+                                      });
+                                    });
+                                  }
                                 }
-                              }
-                            });
-                          }
+                              });
+                            }
+                          });
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1129,7 +1138,7 @@ class _OrderScreenWebState extends State<OrderScreenWeb> {
     }
   }
 
-  Future<void> printLabelOthers({required siteOrderId}) async {
+  Future<void> printLabelOthers({required siteOrderId, required isTest}) async {
     String siteOrderIdToSent = '';
     log('received siteOrderId>>>>>$siteOrderId');
     if (siteOrderId.toString().startsWith('#')) {
@@ -1144,7 +1153,7 @@ class _OrderScreenWebState extends State<OrderScreenWeb> {
     log('siteOrderIdToSent>>>>>$siteOrderIdToSent');
 
     String uri =
-        'https://weblegs.info/EasyPost/api/EasyPost?OrderNumber=$siteOrderIdToSent';
+        'https://weblegs.info/EasyPost/api/EasyPost?OrderNumber=$siteOrderIdToSent&IsTest=$isTest';
     log('print Label Others uri>>>>>$uri');
 
     labelError = '';

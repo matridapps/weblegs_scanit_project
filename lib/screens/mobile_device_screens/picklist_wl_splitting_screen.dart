@@ -485,11 +485,8 @@ class _PicklistWlSplittingScreenState extends State<PicklistWlSplittingScreen> {
       );
 
       if (response.statusCode == 200) {
-        log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
-
         GetPicklistDetailsResponse getPicklistDetailsResponse =
         GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
-        log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
         details.addAll(getPicklistDetailsResponse.sku.map((e) => e));

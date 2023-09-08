@@ -40,25 +40,19 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
-<script>
-    let useHtml = true;
-
+  <script>
     window.addEventListener('load', function(ev) {
-    _flutter.loader.loadEntrypoint({
-      serviceWorker: {
-        serviceWorkerVersion: serviceWorkerVersion,
-      },
-      onEntrypointLoaded: function(engineInitializer) {
-        let config = {
-          renderer: useHtml ? "html" : "canvaskit",
-        };
-        engineInitializer.initializeEngine(config).then(function(appRunner) {
-          appRunner.runApp();
-        });
-      }
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        }
+      }).then(function(engineInitializer) {
+        return engineInitializer.initializeEngine();
+      }).then(function(appRunner) {
+        return appRunner.runApp();
+      });
     });
-  });
   </script>
 </body>
-
 </html>

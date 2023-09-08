@@ -14,6 +14,7 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:photo_view/photo_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewOrderScreenOne extends StatefulWidget {
   const NewOrderScreenOne({
@@ -376,270 +377,272 @@ class _NewOrderScreenOneState extends State<NewOrderScreenOne> {
                                                           printController[
                                                               orderIndex],
                                                       onPressed: () async {
-                                                        if ('${orderList[orderIndex].siteName}' ==
-                                                            'Amazon UK-prime') {
-                                                          await printLabelAmazonPrime(
-                                                                  siteOrderId:
-                                                                      '${orderList[orderIndex].siteOrderId}')
-                                                              .whenComplete(
-                                                                  () async {
-                                                            if (labelError
-                                                                .isNotEmpty) {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .error();
-                                                              Fluttertoast.showToast(
-                                                                  msg:
-                                                                      labelError,
-                                                                  toastLength: Toast
-                                                                      .LENGTH_LONG);
-                                                              await Future.delayed(
-                                                                  const Duration(
-                                                                      seconds:
-                                                                          1),
-                                                                  () {
-                                                                printController[
-                                                                        orderIndex]
-                                                                    .reset();
-                                                              });
-                                                            } else {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .success();
-                                                              await print(
-                                                                      labelUrl)
-                                                                  .whenComplete(
-                                                                      () async {
-                                                                await Future.delayed(
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            200),
-                                                                    () {
-                                                                  String
-                                                                      valueToSave =
-                                                                      labelUrl;
-                                                                  const encryptionKey =
-                                                                      "This 32 char key have 256 bits..";
-
-                                                                  //Encrypt
-                                                                  encrypt.Encrypted
-                                                                      encrypted =
-                                                                      encryptWithAES(
-                                                                          encryptionKey,
-                                                                          valueToSave);
-                                                                  String
-                                                                      encryptedBase64 =
-                                                                      encrypted
-                                                                          .base64;
-                                                                  print(
-                                                                      'Encrypted data in base64 encoding: $encryptedBase64');
-
-                                                                  //Decrypt
-                                                                  String
-                                                                      decryptedText =
-                                                                      decryptWithAES(
-                                                                          encryptionKey,
-                                                                          encrypted /*or*/ /*encrypt.Encrypted.fromBase64(encryptedBase64)*/);
-                                                                  print(
-                                                                      'Decrypted data: $decryptedText');
-
-                                                                  saveLabelData(
-                                                                    orderId: orderList[
-                                                                            orderIndex]
-                                                                        .orderId,
-                                                                    orderDate: orderList[
-                                                                            orderIndex]
-                                                                        .createdDate,
-                                                                    siteOrderId:
-                                                                        orderList[orderIndex]
-                                                                            .siteOrderId,
-                                                                    siteName: orderList[
-                                                                            orderIndex]
-                                                                        .siteName,
-                                                                    serialNo:
-                                                                        '${int.parse(serialNoFromDB) + 1}',
-                                                                    labelToSave:
-                                                                        encryptedBase64,
-                                                                  );
-                                                                }).whenComplete(
+                                                        await SharedPreferences.getInstance().then((prefs) async {
+                                                          if ('${orderList[orderIndex].siteName}' ==
+                                                              'Amazon UK-prime') {
+                                                            await printLabelAmazonPrime(
+                                                                siteOrderId:
+                                                                '${orderList[orderIndex].siteOrderId}')
+                                                                .whenComplete(
                                                                     () async {
-                                                                  await Future.delayed(
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                      () {
-                                                                    loadingLabelPrintingData(
-                                                                        isFirstTime:
-                                                                            false);
-                                                                  });
-                                                                }).whenComplete(
-                                                                    () async {
-                                                                  printController[
-                                                                          orderIndex]
-                                                                      .reset();
-                                                                  if (orderIndex ==
-                                                                      orderList
-                                                                              .length -
-                                                                          1) {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      orderLoading =
-                                                                          true;
-                                                                    });
+                                                                  if (labelError
+                                                                      .isNotEmpty) {
+                                                                    printController[
+                                                                    orderIndex]
+                                                                        .error();
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                        labelError,
+                                                                        toastLength: Toast
+                                                                            .LENGTH_LONG);
                                                                     await Future.delayed(
                                                                         const Duration(
                                                                             seconds:
-                                                                                1),
-                                                                        () {
-                                                                      setState(
-                                                                          () {
-                                                                        orderIndex =
-                                                                            orderIndex +
-                                                                                1;
-                                                                        orderLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
+                                                                            1),
+                                                                            () {
+                                                                          printController[
+                                                                          orderIndex]
+                                                                              .reset();
+                                                                        });
+                                                                  } else {
+                                                                    printController[
+                                                                    orderIndex]
+                                                                        .success();
+                                                                    await print(
+                                                                        labelUrl)
+                                                                        .whenComplete(
+                                                                            () async {
+                                                                          await Future.delayed(
+                                                                              const Duration(
+                                                                                  milliseconds:
+                                                                                  200),
+                                                                                  () {
+                                                                                String
+                                                                                valueToSave =
+                                                                                    labelUrl;
+                                                                                const encryptionKey =
+                                                                                    "This 32 char key have 256 bits..";
+
+                                                                                //Encrypt
+                                                                                encrypt.Encrypted
+                                                                                encrypted =
+                                                                                encryptWithAES(
+                                                                                    encryptionKey,
+                                                                                    valueToSave);
+                                                                                String
+                                                                                encryptedBase64 =
+                                                                                    encrypted
+                                                                                        .base64;
+                                                                                print(
+                                                                                    'Encrypted data in base64 encoding: $encryptedBase64');
+
+                                                                                //Decrypt
+                                                                                String
+                                                                                decryptedText =
+                                                                                decryptWithAES(
+                                                                                    encryptionKey,
+                                                                                    encrypted /*or*/ /*encrypt.Encrypted.fromBase64(encryptedBase64)*/);
+                                                                                print(
+                                                                                    'Decrypted data: $decryptedText');
+
+                                                                                saveLabelData(
+                                                                                  orderId: orderList[
+                                                                                  orderIndex]
+                                                                                      .orderId,
+                                                                                  orderDate: orderList[
+                                                                                  orderIndex]
+                                                                                      .createdDate,
+                                                                                  siteOrderId:
+                                                                                  orderList[orderIndex]
+                                                                                      .siteOrderId,
+                                                                                  siteName: orderList[
+                                                                                  orderIndex]
+                                                                                      .siteName,
+                                                                                  serialNo:
+                                                                                  '${int.parse(serialNoFromDB) + 1}',
+                                                                                  labelToSave:
+                                                                                  encryptedBase64,
+                                                                                );
+                                                                              }).whenComplete(
+                                                                                  () async {
+                                                                                await Future.delayed(
+                                                                                    const Duration(
+                                                                                        seconds:
+                                                                                        1),
+                                                                                        () {
+                                                                                      loadingLabelPrintingData(
+                                                                                          isFirstTime:
+                                                                                          false);
+                                                                                    });
+                                                                              }).whenComplete(
+                                                                                  () async {
+                                                                                printController[
+                                                                                orderIndex]
+                                                                                    .reset();
+                                                                                if (orderIndex ==
+                                                                                    orderList
+                                                                                        .length -
+                                                                                        1) {
+                                                                                  Navigator.pop(
+                                                                                      context);
+                                                                                } else {
+                                                                                  setState(
+                                                                                          () {
+                                                                                        orderLoading =
+                                                                                        true;
+                                                                                      });
+                                                                                  await Future.delayed(
+                                                                                      const Duration(
+                                                                                          seconds:
+                                                                                          1),
+                                                                                          () {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              orderIndex =
+                                                                                                  orderIndex +
+                                                                                                      1;
+                                                                                              orderLoading =
+                                                                                              false;
+                                                                                            });
+                                                                                      });
+                                                                                }
+                                                                              });
+                                                                        });
                                                                   }
                                                                 });
-                                                              });
-                                                            }
-                                                          });
-                                                        } else {
-                                                          await printLabelOthers(
-                                                                  siteOrderId:
-                                                                      '${orderList[orderIndex].siteOrderId}')
-                                                              .whenComplete(
-                                                                  () async {
-                                                            if (labelError
-                                                                .isNotEmpty) {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .error();
-                                                              Fluttertoast.showToast(
-                                                                  msg:
-                                                                      labelError,
-                                                                  toastLength: Toast
-                                                                      .LENGTH_LONG);
-                                                              await Future.delayed(
-                                                                  const Duration(
-                                                                      seconds:
-                                                                          1),
-                                                                  () {
-                                                                printController[
-                                                                        orderIndex]
-                                                                    .reset();
-                                                              });
-                                                            } else {
-                                                              printController[
-                                                                      orderIndex]
-                                                                  .success();
-                                                              await print(
-                                                                      labelUrl)
-                                                                  .whenComplete(
-                                                                      () async {
-                                                                await Future.delayed(
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            200),
-                                                                    () {
-                                                                  String
-                                                                      valueToSave =
-                                                                      labelUrl;
-                                                                  const encryptionKey =
-                                                                      "This 32 char key have 256 bits..";
-
-                                                                  //Encrypt
-                                                                  encrypt.Encrypted
-                                                                      encrypted =
-                                                                      encryptWithAES(
-                                                                          encryptionKey,
-                                                                          valueToSave);
-                                                                  String
-                                                                      encryptedBase64 =
-                                                                      encrypted
-                                                                          .base64;
-                                                                  print(
-                                                                      'Encrypted data in base64 encoding: $encryptedBase64');
-
-                                                                  //Decrypt
-                                                                  String
-                                                                      decryptedText =
-                                                                      decryptWithAES(
-                                                                          encryptionKey,
-                                                                          encrypted /*or*/ /*encrypt.Encrypted.fromBase64(encryptedBase64)*/);
-                                                                  print(
-                                                                      'Decrypted data: $decryptedText');
-
-                                                                  saveLabelData(
-                                                                    orderId: orderList[
-                                                                            orderIndex]
-                                                                        .orderId,
-                                                                    orderDate: orderList[
-                                                                            orderIndex]
-                                                                        .createdDate,
-                                                                    siteOrderId:
-                                                                        orderList[orderIndex]
-                                                                            .siteOrderId,
-                                                                    siteName: orderList[
-                                                                            orderIndex]
-                                                                        .siteName,
-                                                                    serialNo:
-                                                                        '${int.parse(serialNoFromDB) + 1}',
-                                                                    labelToSave:
-                                                                        encryptedBase64,
-                                                                  );
-                                                                }).whenComplete(
+                                                          } else {
+                                                            await printLabelOthers(
+                                                              siteOrderId: '${orderList[orderIndex].siteOrderId}',
+                                                              isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                                                            ).whenComplete(
                                                                     () async {
-                                                                  await Future.delayed(
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                      () {
-                                                                    loadingLabelPrintingData(
-                                                                        isFirstTime:
-                                                                            false);
-                                                                  });
-                                                                }).whenComplete(
-                                                                    () async {
-                                                                  printController[
-                                                                          orderIndex]
-                                                                      .reset();
-                                                                  if (orderIndex ==
-                                                                      orderList
-                                                                              .length -
-                                                                          1) {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  } else {
-                                                                    setState(
-                                                                        () {
-                                                                      orderLoading =
-                                                                          true;
-                                                                    });
+                                                                  if (labelError
+                                                                      .isNotEmpty) {
+                                                                    printController[
+                                                                    orderIndex]
+                                                                        .error();
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                        labelError,
+                                                                        toastLength: Toast
+                                                                            .LENGTH_LONG);
                                                                     await Future.delayed(
                                                                         const Duration(
                                                                             seconds:
-                                                                                1),
-                                                                        () {
-                                                                      setState(
-                                                                          () {
-                                                                        orderIndex =
-                                                                            orderIndex +
-                                                                                1;
-                                                                        orderLoading =
-                                                                            false;
-                                                                      });
-                                                                    });
+                                                                            1),
+                                                                            () {
+                                                                          printController[
+                                                                          orderIndex]
+                                                                              .reset();
+                                                                        });
+                                                                  } else {
+                                                                    printController[
+                                                                    orderIndex]
+                                                                        .success();
+                                                                    await print(
+                                                                        labelUrl)
+                                                                        .whenComplete(
+                                                                            () async {
+                                                                          await Future.delayed(
+                                                                              const Duration(
+                                                                                  milliseconds:
+                                                                                  200),
+                                                                                  () {
+                                                                                String
+                                                                                valueToSave =
+                                                                                    labelUrl;
+                                                                                const encryptionKey =
+                                                                                    "This 32 char key have 256 bits..";
+
+                                                                                //Encrypt
+                                                                                encrypt.Encrypted
+                                                                                encrypted =
+                                                                                encryptWithAES(
+                                                                                    encryptionKey,
+                                                                                    valueToSave);
+                                                                                String
+                                                                                encryptedBase64 =
+                                                                                    encrypted
+                                                                                        .base64;
+                                                                                print(
+                                                                                    'Encrypted data in base64 encoding: $encryptedBase64');
+
+                                                                                //Decrypt
+                                                                                String
+                                                                                decryptedText =
+                                                                                decryptWithAES(
+                                                                                    encryptionKey,
+                                                                                    encrypted /*or*/ /*encrypt.Encrypted.fromBase64(encryptedBase64)*/);
+                                                                                print(
+                                                                                    'Decrypted data: $decryptedText');
+
+                                                                                saveLabelData(
+                                                                                  orderId: orderList[
+                                                                                  orderIndex]
+                                                                                      .orderId,
+                                                                                  orderDate: orderList[
+                                                                                  orderIndex]
+                                                                                      .createdDate,
+                                                                                  siteOrderId:
+                                                                                  orderList[orderIndex]
+                                                                                      .siteOrderId,
+                                                                                  siteName: orderList[
+                                                                                  orderIndex]
+                                                                                      .siteName,
+                                                                                  serialNo:
+                                                                                  '${int.parse(serialNoFromDB) + 1}',
+                                                                                  labelToSave:
+                                                                                  encryptedBase64,
+                                                                                );
+                                                                              }).whenComplete(
+                                                                                  () async {
+                                                                                await Future.delayed(
+                                                                                    const Duration(
+                                                                                        seconds:
+                                                                                        1),
+                                                                                        () {
+                                                                                      loadingLabelPrintingData(
+                                                                                          isFirstTime:
+                                                                                          false);
+                                                                                    });
+                                                                              }).whenComplete(
+                                                                                  () async {
+                                                                                printController[
+                                                                                orderIndex]
+                                                                                    .reset();
+                                                                                if (orderIndex ==
+                                                                                    orderList
+                                                                                        .length -
+                                                                                        1) {
+                                                                                  Navigator.pop(
+                                                                                      context);
+                                                                                } else {
+                                                                                  setState(
+                                                                                          () {
+                                                                                        orderLoading =
+                                                                                        true;
+                                                                                      });
+                                                                                  await Future.delayed(
+                                                                                      const Duration(
+                                                                                          seconds:
+                                                                                          1),
+                                                                                          () {
+                                                                                        setState(
+                                                                                                () {
+                                                                                              orderIndex =
+                                                                                                  orderIndex +
+                                                                                                      1;
+                                                                                              orderLoading =
+                                                                                              false;
+                                                                                            });
+                                                                                      });
+                                                                                }
+                                                                              });
+                                                                        });
                                                                   }
                                                                 });
-                                                              });
-                                                            }
-                                                          });
-                                                        }
+                                                          }
+                                                        });
                                                       },
                                                       child: Row(
                                                         mainAxisAlignment:
@@ -827,56 +830,58 @@ class _NewOrderScreenOneState extends State<NewOrderScreenOne> {
                         successColor: Colors.green,
                         controller: printController[index],
                         onPressed: () async {
-                          if ('${orderList[index].siteName}' ==
-                              'Amazon UK-prime') {
-                            await printLabelAmazonPrime(
-                                    siteOrderId:
-                                        '${orderList[index].siteOrderId}')
-                                .whenComplete(() async {
-                              if (labelError.isNotEmpty) {
-                                printController[index].error();
-                                Fluttertoast.showToast(
-                                    msg: labelError,
-                                    toastLength: Toast.LENGTH_LONG);
-                                await Future.delayed(const Duration(seconds: 1),
-                                    () {
-                                  printController[index].reset();
-                                });
-                              } else {
-                                printController[index].success();
-                                await print(labelUrl).whenComplete(() async {
-                                  await Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    printController[index].reset();
+                          await SharedPreferences.getInstance().then((prefs) async {
+                            if ('${orderList[index].siteName}' ==
+                                'Amazon UK-prime') {
+                              await printLabelAmazonPrime(
+                                  siteOrderId:
+                                  '${orderList[index].siteOrderId}')
+                                  .whenComplete(() async {
+                                if (labelError.isNotEmpty) {
+                                  printController[index].error();
+                                  Fluttertoast.showToast(
+                                      msg: labelError,
+                                      toastLength: Toast.LENGTH_LONG);
+                                  await Future.delayed(const Duration(seconds: 1),
+                                          () {
+                                        printController[index].reset();
+                                      });
+                                } else {
+                                  printController[index].success();
+                                  await print(labelUrl).whenComplete(() async {
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      printController[index].reset();
+                                    });
                                   });
-                                });
-                              }
-                            });
-                          } else {
-                            await printLabelOthers(
-                                    siteOrderId:
-                                        '${orderList[index].siteOrderId}')
-                                .whenComplete(() async {
-                              if (labelError.isNotEmpty) {
-                                printController[index].error();
-                                Fluttertoast.showToast(
-                                    msg: labelError,
-                                    toastLength: Toast.LENGTH_LONG);
-                                await Future.delayed(const Duration(seconds: 1),
-                                    () {
-                                  printController[index].reset();
-                                });
-                              } else {
-                                printController[index].success();
-                                await print(labelUrl).whenComplete(() async {
-                                  await Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    printController[index].reset();
+                                }
+                              });
+                            } else {
+                              await printLabelOthers(
+                                siteOrderId: '${orderList[index].siteOrderId}',
+                                isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                              ).whenComplete(() async {
+                                if (labelError.isNotEmpty) {
+                                  printController[index].error();
+                                  Fluttertoast.showToast(
+                                      msg: labelError,
+                                      toastLength: Toast.LENGTH_LONG);
+                                  await Future.delayed(const Duration(seconds: 1),
+                                          () {
+                                        printController[index].reset();
+                                      });
+                                } else {
+                                  printController[index].success();
+                                  await print(labelUrl).whenComplete(() async {
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      printController[index].reset();
+                                    });
                                   });
-                                });
-                              }
-                            });
-                          }
+                                }
+                              });
+                            }
+                          });
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1145,7 +1150,7 @@ class _NewOrderScreenOneState extends State<NewOrderScreenOne> {
     }
   }
 
-  Future<void> printLabelOthers({required siteOrderId}) async {
+  Future<void> printLabelOthers({required siteOrderId, required bool isTest}) async {
     String siteOrderIdToSent = '';
     log('received siteOrderId - $siteOrderId');
     if (siteOrderId.toString().startsWith('#')) {
@@ -1160,7 +1165,7 @@ class _NewOrderScreenOneState extends State<NewOrderScreenOne> {
     log('siteOrderIdToSent - $siteOrderIdToSent');
 
     String uri =
-        'https://weblegs.info/EasyPost/api/EasyPost?OrderNumber=$siteOrderIdToSent';
+        'https://weblegs.info/EasyPost/api/EasyPost?OrderNumber=$siteOrderIdToSent&IsTest=$isTest';
     log('print Label Others uri - $uri');
 
     labelError = '';

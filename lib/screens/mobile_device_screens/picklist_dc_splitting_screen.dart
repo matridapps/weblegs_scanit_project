@@ -17,8 +17,6 @@ class PicklistDCSplittingScreen extends StatefulWidget {
     required this.appBarName,
     required this.picklist,
     required this.status,
-    required this.showPickedOrders,
-    required this.totalQty,
     required this.picklistLength,
     required this.totalOrders,
   });
@@ -27,8 +25,6 @@ class PicklistDCSplittingScreen extends StatefulWidget {
   final String appBarName;
   final String picklist;
   final String status;
-  final bool showPickedOrders;
-  final String totalQty;
   final String totalOrders;
   final int picklistLength;
 
@@ -376,10 +372,7 @@ class _PicklistDCSplittingScreenState extends State<PicklistDCSplittingScreen> {
 
   void detailsApis() async {
     if (widget.status != 'Processing.......') {
-      await getPickListDetailsForAllocation(
-        batchId: widget.batchId,
-        showPickedOrders: widget.showPickedOrders,
-      );
+      await getPickListDetailsForAllocation(widget.batchId);
     } else {
       setState(() {
         isScreenVisible = true;
@@ -439,12 +432,9 @@ class _PicklistDCSplittingScreenState extends State<PicklistDCSplittingScreen> {
     }
   }
 
-  Future<void> getPickListDetailsForAllocation({
-    required String batchId,
-    required bool showPickedOrders,
-  }) async {
+  Future<void> getPickListDetailsForAllocation(String batchId) async {
     String uri =
-        'https://weblegs.info/JadlamApp/api/GetPicklistByBatchId?BatchId=$batchId&ShowPickedOrders=$showPickedOrders';
+        'https://weblegs.info/JadlamApp/api/GetPicklistByBatchId?BatchId=$batchId&ShowPickedOrders=false';
     log('getPickListDetails uri - $uri');
     setState(() {
       isScreenVisible = false;
@@ -462,11 +452,8 @@ class _PicklistDCSplittingScreenState extends State<PicklistDCSplittingScreen> {
       );
 
       if (response.statusCode == 200) {
-        log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
-
         GetPicklistDetailsResponse getPicklistDetailsResponse =
         GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
-        log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
         details.addAll(getPicklistDetailsResponse.sku.map((e) => e));

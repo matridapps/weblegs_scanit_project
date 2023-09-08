@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
+
 import 'package:absolute_app/core/state_management/logic_class.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/navigation_methods.dart';
@@ -7,10 +9,12 @@ import 'package:absolute_app/screens/mobile_device_screens/new_order_screen_one.
 import 'package:absolute_app/screens/mobile_device_screens/pack_and_scan.dart';
 import 'package:absolute_app/screens/mobile_device_screens/product_details.dart';
 import 'package:absolute_app/screens/mobile_device_screens/scan_for_transfer.dart';
+import 'package:absolute_app/screens/mobile_device_screens/shop_replenish_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class BarcodeCameraScreen extends StatefulWidget {
   const BarcodeCameraScreen(
@@ -42,6 +46,11 @@ class BarcodeCameraScreen extends StatefulWidget {
 
 class _BarcodeCameraScreenState extends State<BarcodeCameraScreen>
     with SingleTickerProviderStateMixin {
+  RoundedLoadingButtonController scanMoreController =
+      RoundedLoadingButtonController();
+  RoundedLoadingButtonController goToListController =
+      RoundedLoadingButtonController();
+
   BarcodeCapture? barcode;
 
   bool isLoaderVisible = false;
@@ -51,16 +60,29 @@ class _BarcodeCameraScreenState extends State<BarcodeCameraScreen>
 
   bool isStarted = true;
   BusinessLogic logicProvider = BusinessLogic();
+  List<String> eanList = [];
 
   @override
   void initState() {
-    Timer.periodic(const Duration(milliseconds: 10), (Timer t) async {
-      if (barcode?.barcodes != null) {
-        HapticFeedback.heavyImpact();
-        t.cancel();
-        checkForBarcodeValue();
-      }
-    });
+    if (widget.screenType == 'shop replenish') {
+      Timer.periodic(const Duration(milliseconds: 10), (Timer t) async {
+        if (barcode?.barcodes != null) {
+          HapticFeedback.heavyImpact();
+          t.cancel();
+          eanList.add('${barcode?.barcodes.first.rawValue}');
+          log('eanList >> $eanList');
+          barcodeFoundHandlingShopReplenish();
+        }
+      });
+    } else {
+      Timer.periodic(const Duration(milliseconds: 10), (Timer t) async {
+        if (barcode?.barcodes != null) {
+          HapticFeedback.heavyImpact();
+          t.cancel();
+          checkForBarcodeValue();
+        }
+      });
+    }
     super.initState();
   }
 
@@ -68,6 +90,117 @@ class _BarcodeCameraScreenState extends State<BarcodeCameraScreen>
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void timerForShopReplenish() {
+    setState(() {
+      barcode = null;
+    });
+    Timer.periodic(const Duration(milliseconds: 10), (Timer t) async {
+      if (barcode?.barcodes != null) {
+        HapticFeedback.heavyImpact();
+        t.cancel();
+        eanList.add('${barcode?.barcodes.first.rawValue}');
+        log('eanList >> $eanList');
+        barcodeFoundHandlingShopReplenish();
+      }
+    });
+  }
+
+  void barcodeFoundHandlingShopReplenish() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateSB) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              elevation: 5,
+              titleTextStyle: const TextStyle(
+                color: Colors.black,
+                fontSize: 150,
+                fontWeight: FontWeight.bold,
+              ),
+              title: const Text(
+                'Scanned EAN',
+                style: TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              content: SizedBox(
+                height: 40,
+                width: 250,
+                child: Center(
+                  child: Text(
+                    '${barcode?.barcodes.first.rawValue}',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 10),
+                      child: RoundedLoadingButton(
+                        color: Colors.green,
+                        borderRadius: 10,
+                        height: 40,
+                        width: 110,
+                        successIcon: Icons.check_rounded,
+                        failedIcon: Icons.close_rounded,
+                        successColor: Colors.green,
+                        controller: goToListController,
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await Future.delayed(const Duration(milliseconds: 100), () async {
+                            await NavigationMethods.pushReplacement(
+                              context,
+                              ShopReplenishScreen(eanList: eanList),
+                            );
+                          });
+                        },
+                        child: const Text('Go to List'),
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10, bottom: 10),
+                            child: RoundedLoadingButton(
+                              color: Colors.green,
+                              borderRadius: 10,
+                              height: 40,
+                              width: 110,
+                              successIcon: Icons.check_rounded,
+                              failedIcon: Icons.close_rounded,
+                              successColor: Colors.green,
+                              controller: scanMoreController,
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                await Future.delayed(const Duration(milliseconds: 100), () {
+                                  timerForShopReplenish();
+                                });
+                              },
+                              child: const Text('Scan More'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void checkForBarcodeValue() async {

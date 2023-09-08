@@ -92,7 +92,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   state is ShopRepienishLoadingState
               ? const Scaffold(
                   body: Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(color: appColor),
                   ),
                 )
               : state is ShopRepienishLoadedState

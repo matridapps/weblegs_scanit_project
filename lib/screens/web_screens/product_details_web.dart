@@ -1192,6 +1192,7 @@ class _ProductDetailsWebState extends State<ProductDetailsWeb> {
     );
   }
 
+  // ignore: unused_element
   Widget _allDistCenter(BuildContext context, Size size) {
     return Padding(
       padding: EdgeInsets.fromLTRB(size.width * .05, 0, size.width * .05, 0),

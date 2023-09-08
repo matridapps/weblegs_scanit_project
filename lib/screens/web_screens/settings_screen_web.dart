@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
+import 'package:absolute_app/screens/switch_for_barcode_validation_setting.dart';
 import 'package:absolute_app/screens/switch_for_bundle_sku_setting.dart';
 import 'package:absolute_app/screens/switch_for_dc_split_setting.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -22,7 +24,7 @@ class SettingsScreenWeb extends StatefulWidget {
 
 class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   final RoundedLoadingButtonController saveValuesController =
-  RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
 
   final TextEditingController lengthController = TextEditingController();
   final TextEditingController widthController = TextEditingController();
@@ -30,7 +32,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   final TextEditingController weightController = TextEditingController();
   final TextEditingController eanOrOrderController = TextEditingController();
   final TextEditingController selectedPicklistController =
-  TextEditingController();
+      TextEditingController();
 
   List<String> pickListTypes = ['SIW', 'SSMQW', 'MSMQW'];
   List<String> eanOrOrder = ['Barcode', 'Order Number'];
@@ -39,6 +41,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   List<bool> checkBoxValueListForSiteName = [];
   List<String> objectIdListForSiteName = [];
   List<String> userIdListForSiteName = [];
+  List<String> labelOptions = ['Test', 'Live'];
 
   bool isLoading = false;
   bool isError = false;
@@ -46,6 +49,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   String error = '';
   String eanOrOrderSelected = 'Barcode';
   String selectedPicklist = 'SIW';
+  String selectedLabelMode = 'Test';
 
   @override
   void initState() {
@@ -70,6 +74,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
     await getDefaultValuesForSKU()
         .whenComplete(() async => await getPackAndScanValues())
         .whenComplete(() async => await getSiteNameList())
+        .whenComplete(() async => await getEasyPostLiveOrTestValue())
         .whenComplete(() {
       setState(() {
         isLoading = false;
@@ -80,76 +85,82 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    return SelectionArea(
+      child: Scaffold(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: true,
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        toolbarHeight: AppBar().preferredSize.height,
-        elevation: 5,
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.black,
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: true,
+          iconTheme: const IconThemeData(color: Colors.black),
+          centerTitle: true,
+          toolbarHeight: AppBar().preferredSize.height,
+          elevation: 5,
+          title: const Text(
+            'Settings',
+            style: TextStyle(fontSize: 25, color: Colors.black),
           ),
         ),
-      ),
-      body: isLoading == true
-          ? SizedBox(
-        height: size.height,
-        width: size.width,
-        child: const Center(
-          child: CircularProgressIndicator(
-            color: appColor,
-          ),
-        ),
-      )
-          : isError == true
-          ? SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Center(
-          child: Text(
-            error,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      )
-          : Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        child: Column(
-          children: [
-            _topBuilder(context, size),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    _bundleSettingBuilder(context, size),
-                    _dcSplitSettingBuilder(context, size),
-                    _defaultValuesBuilder(context, size),
-                    _defaultValueForPackAndScanBuilder(context, size),
-                    _settingForSiteName(context, size),
-                  ],
+        body: isLoading == true
+            ? SizedBox(
+                height: size.height,
+                width: size.width,
+                child: const Center(
+                  child: CircularProgressIndicator(color: appColor),
                 ),
-              ),
-            ),
-          ],
-        ),
+              )
+            : isError == true
+                ? SizedBox(
+                    height: size.height,
+                    width: size.width,
+                    child: Center(
+                      child: Text(error, style: const TextStyle(fontSize: 16)),
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: Column(
+                        children: [
+                          _saveChangesBuilder(context, size),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  _toggleLabelOptionBuilder(size),
+                                  _bundleSettingBuilder(context, size),
+                                  _dcSplitSettingBuilder(context, size),
+                                  _barcodeValidationSettingBuilder(context, size),
+                                  _defaultValuesBuilder(context, size),
+                                  _defaultValueForPackAndScanBuilder(
+                                      context, size),
+                                  _settingForSiteName(context, size),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
       ),
     );
   }
 
   /// BUILDER METHODS FOR WEB
 
-  Widget _topBuilder(BuildContext context, Size size) {
+  Widget _saveChangesBuilder(BuildContext context, Size size) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,19 +179,19 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
             controller: saveValuesController,
             onPressed: () async {
               await saveValues(
-                length: lengthController.text.toString(),
-                width: widthController.text.toString(),
-                height: heightController.text.toString(),
-                weight: weightController.text.toString(),
+                length: lengthController.text,
+                width: widthController.text,
+                height: heightController.text,
+                weight: weightController.text,
               ).whenComplete(
-                    () async {
+                () async {
                   await savePackAndScanValues(
                     eanOrOrder: eanOrOrderSelected,
                     picklistType: selectedPicklist,
                   );
                 },
               ).whenComplete(
-                    () async {
+                () async {
                   await saveSiteNameList(
                     isSelected: checkBoxValueListForSiteName
                         .map((e) => e == true ? 'Yes' : 'No')
@@ -189,11 +200,15 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                   );
                 },
               ).whenComplete(() async {
+                await saveEasyPostLiveOrTestValue();
+              }).whenComplete(() async {
                 await getDefaultValuesForSKU();
               }).whenComplete(() async {
                 await getPackAndScanValues();
               }).whenComplete(() async {
                 await getSiteNameList();
+              }).whenComplete(() async {
+                await getEasyPostLiveOrTestValue();
               }).whenComplete(() {
                 ToastUtils.motionToastCentered1500MS(
                   message: 'Changes Saved Successfully',
@@ -212,6 +227,48 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
           ),
         ),
         const Divider(),
+      ],
+    );
+  }
+
+  Widget _toggleLabelOptionBuilder(Size size) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          dense: true,
+          visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+          title: Text(
+            'Label Options Mode',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            'Choose a Label Option Mode below',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+          child: SizedBox(
+            height: 35,
+            width: size.width - 72,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2(
+                isExpanded: true,
+                items: stringDropdownItems(labelOptions),
+                value: selectedLabelMode,
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedLabelMode = value!;
+                  });
+                  log('selectedLabelMode >>---> $selectedLabelMode');
+                },
+                buttonStyleData: buttonStyleDropdowns(30, size.width - 72),
+                dropdownStyleData: dropdownStyle(size.width - 72),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
@@ -237,10 +294,24 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       subtitle: const Text(
-        'Whenever a new request to create a SIW or SSMQW Picklist is given, If this setting is enabled, then it will automatically create separate Picklists for all Distribution Centers and If disabled, then only one Picklist will be created and there will option to Split that Picklist on Distribution Centers',
+        'Whenever a new request to create a SIW or SSMQW Picklist is given, If this setting is enabled, then it will automatically create separate Picklists for all Distribution Centers and If disabled, then only one Picklist will be created and there will option to Split that Picklist on Distribution Centers.',
         style: TextStyle(fontSize: 16),
       ),
       trailing: SwitchForDCSplitSetting(userId: widget.userId),
+    );
+  }
+
+  Widget _barcodeValidationSettingBuilder(BuildContext context, Size size) {
+    return ListTile(
+      title: const Text(
+        'Enable Barcode Validation in Picklist',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      subtitle: const Text(
+        'If enabled, then each SKU in every Picklist needs to validated via scan and if disabled, then there is no need to validate each sku in picklists via scan.',
+        style: TextStyle(fontSize: 16),
+      ),
+      trailing: SwitchForBarcodeValidationSetting(),
     );
   }
 
@@ -248,7 +319,6 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
@@ -277,25 +347,26 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                     width: size.width,
                     child: TextFormField(
                       controller: lengthController,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      decoration: const InputDecoration(
+                      style: const TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
                         hintText: 'Length',
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                        ),
-                        contentPadding: EdgeInsets.all(5),
+                        hintStyle: TextStyle(fontSize: 16),
+                        contentPadding: EdgeInsets.fromLTRB(15, 5, 5, 5),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(width: 0.5),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: appColor, width: 1),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      onChanged: (_) {},
+                      onChanged: (_) {
+                        log('Length in the Default values for sku changed!');
+                        log('New Length is $_');
+                      },
                     ),
                   ),
                 ),
@@ -313,25 +384,25 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                     width: size.width,
                     child: TextFormField(
                       controller: widthController,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      decoration: const InputDecoration(
+                      style: const TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
                         hintText: 'Width',
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                        ),
-                        contentPadding: EdgeInsets.all(5),
+                        hintStyle: TextStyle(fontSize: 16),
+                        contentPadding: EdgeInsets.fromLTRB(15, 5, 5, 5),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(width: 0.5),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: appColor, width: 1),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      onChanged: (_) {},
+                      onChanged: (_) {
+                        log('Width in default values for sku is changed!');
+                      },
                     ),
                   ),
                 ),
@@ -349,20 +420,18 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                     width: size.width,
                     child: TextFormField(
                       controller: heightController,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      decoration: const InputDecoration(
+                      style: const TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
                         hintText: 'Height',
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                        ),
-                        contentPadding: EdgeInsets.all(5),
+                        hintStyle: TextStyle(fontSize: 16),
+                        contentPadding: EdgeInsets.fromLTRB(15, 5, 5, 5),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(width: 0.5),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: appColor, width: 1),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -385,20 +454,18 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                     width: size.width,
                     child: TextFormField(
                       controller: weightController,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      decoration: const InputDecoration(
+                      style: const TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
                         hintText: 'Weight',
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                        ),
-                        contentPadding: EdgeInsets.all(5),
+                        hintStyle: TextStyle(fontSize: 16),
+                        contentPadding: EdgeInsets.fromLTRB(15, 5, 5, 5),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(width: 0.5),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: appColor, width: 1),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -454,7 +521,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                         color: Colors.black,
                         fontSize: 16,
                       ),
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
                         color: Colors.grey[700]!,
                         width: 1,
@@ -495,7 +562,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
                           color: Colors.black,
                           fontSize: 16,
                         ),
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
                           color: Colors.grey[700]!,
                           width: 1,
@@ -559,10 +626,50 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
   /// OTHER WIDGETS
 
+  /// DROPDOWN ITEMS MAKER FOR DROPDOWNS WITH LIST OF STRING DATA.
+  List<DropdownMenuItem<String>> stringDropdownItems(List<String> items) {
+    return items.map(
+      (item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Text(item, style: const TextStyle(fontSize: 18)),
+        );
+      },
+    ).toList();
+  }
+
+  /// BUTTON STYLE DATA FOR DROPDOWNS MADE USING THE DROPDOWN2 LIBRARY.
+  ButtonStyleData buttonStyleDropdowns(double height, double width) {
+    return ButtonStyleData(
+      height: height,
+      width: width,
+      padding: const EdgeInsets.only(left: 14, right: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.black26),
+        color: Colors.white,
+      ),
+    );
+  }
+
+  /// DROPDOWN STYLE DATA FOR DROPDOWNS MADE USING THE DROPDOWN2 LIBRARY.
+  DropdownStyleData dropdownStyle(double width) {
+    return DropdownStyleData(
+      maxHeight: 250,
+      width: width,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+      scrollbarTheme: ScrollbarThemeData(
+        radius: const Radius.circular(40),
+        thickness: MaterialStateProperty.all<double>(6),
+        thumbVisibility: MaterialStateProperty.all<bool>(true),
+      ),
+    );
+  }
+
   List<Widget> _siteNameListMaker() {
     return List.generate(
       siteNameList.length,
-          (index) => Row(
+      (index) => Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -572,7 +679,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
             onChanged: (bool? newValue) {
               setState(() {
                 checkBoxValueListForSiteName[index] =
-                !(checkBoxValueListForSiteName[index]);
+                    !(checkBoxValueListForSiteName[index]);
                 userIdListForSiteName[index] = widget.userId;
               });
               log('V checkBoxValueListForSiteName At $index >>---> ${checkBoxValueListForSiteName[index]}');
@@ -596,6 +703,20 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
   /// API METHODS
 
+  Future<void> getEasyPostLiveOrTestValue() async {
+    await SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        selectedLabelMode = prefs.getString('EasyPostTestOrLive') ?? 'Test';
+      });
+    });
+    log('selectedLabelMode >>---> $selectedLabelMode');
+  }
+
+  Future<void> saveEasyPostLiveOrTestValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('EasyPostTestOrLive', selectedLabelMode);
+  }
+
   Future<void> getDefaultValuesForSKU() async {
     await ApiCalls.getDefaultValuesForSKU().then((data) {
       if (data.isEmpty) {
@@ -610,16 +731,16 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
         setState(() {
           lengthController.text = defaultValuesDB[defaultValuesDB
-              .indexWhere((e) => e.get<String>('item_name') == 'Length')]
+                  .indexWhere((e) => e.get<String>('item_name') == 'Length')]
               .get<String>('item_value')!;
           widthController.text = defaultValuesDB[defaultValuesDB
-              .indexWhere((e) => e.get<String>('item_name') == 'Width')]
+                  .indexWhere((e) => e.get<String>('item_name') == 'Width')]
               .get<String>('item_value')!;
           heightController.text = defaultValuesDB[defaultValuesDB
-              .indexWhere((e) => e.get<String>('item_name') == 'Height')]
+                  .indexWhere((e) => e.get<String>('item_name') == 'Height')]
               .get<String>('item_value')!;
           weightController.text = defaultValuesDB[defaultValuesDB
-              .indexWhere((e) => e.get<String>('item_name') == 'Weight')]
+                  .indexWhere((e) => e.get<String>('item_name') == 'Weight')]
               .get<String>('item_value')!;
         });
       }
@@ -693,7 +814,7 @@ class _SettingsScreenWebState extends State<SettingsScreenWeb> {
 
         checkBoxValueListForSiteName = [];
         checkBoxValueListForSiteName.addAll(siteNameList.map((e) =>
-        (e.get<String>('is_selected') ?? 'No') == 'Yes' ? true : false));
+            (e.get<String>('is_selected') ?? 'No') == 'Yes' ? true : false));
         log('V checkBoxValueListForSiteName >>---> $checkBoxValueListForSiteName');
 
         objectIdListForSiteName = [];

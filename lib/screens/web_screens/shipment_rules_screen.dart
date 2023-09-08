@@ -5,7 +5,7 @@ import 'dart:ui';
 
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
-import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:absolute_app/screens/web_screens/edit_rule.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

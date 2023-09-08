@@ -22,8 +22,22 @@ Widget loader() {
   );
 }
 
-dynamic commonToastCentered(String msg, BuildContext context) {
+dynamic commonToastCentered({
+  required String msg,
+  required BuildContext context,
+}) {
   return kIsWeb
       ? ToastUtils.motionToastCentered(message: msg, context: context)
-      : ToastUtils.motionToastCentered(message: msg, context: context);
+      : ToastUtils.showCenteredLongToast(message: msg);
 }
+
+Size calcTextSize(String text, BuildContext context) {
+  final TextPainter textPainter = TextPainter(
+    text: TextSpan(text: text),
+    textDirection: TextDirection.ltr,
+    textScaleFactor: MediaQuery.of(context).textScaleFactor,
+  )..layout();
+  return textPainter.size;
+}
+
+

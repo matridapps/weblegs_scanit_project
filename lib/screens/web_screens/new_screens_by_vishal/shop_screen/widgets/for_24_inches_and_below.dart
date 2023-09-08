@@ -36,6 +36,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
 
   final ScrollController controller = ScrollController();
 
+  // ignore: unused_field
   final _pageController = ScrollController();
 
   final _focusNode = FocusNode();
@@ -433,6 +434,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
     );
   }
 
+  // ignore: unused_element
   List<Widget> _forGridView({
     required double width,
     required double height,
@@ -983,7 +985,7 @@ class _ShopScreenForWebState extends State<ShopScreenForWeb> {
 }
 
 class _image extends StatefulWidget {
-  _image({super.key, required this.constraints, required this.url});
+  _image({required this.constraints, required this.url});
 
   BoxConstraints constraints;
   final String url;

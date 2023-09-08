@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
+
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, required this.dataFromDB}) : super(key: key);
@@ -30,6 +33,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isUFocused = false;
   bool _isPFocused = false;
 
+  String androidAppLastUpdated = '';
+  String androidAppLastUpdatedLocal =
+      'Last Updated at 01 September, 2023 03:03 PM';
+  String iosAppLastUpdated = '';
+  String iosAppLastUpdatedLocal = 'Not Yet Updated';
+  String androidAppInstallLink = '';
+  String iosAppInstallLink = '';
+
   final RoundedLoadingButtonController loginController =
       RoundedLoadingButtonController();
 
@@ -41,10 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController = TextEditingController();
     _userNameFocus = FocusNode();
     _passwordFocus = FocusNode();
-
-    loginController.stateStream.listen((value) {
-      log('$value');
-    });
   }
 
   @override
@@ -1384,407 +1391,466 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: size.width,
                     color: Colors.white,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                size.width * .05,
-                                size.width * .03,
-                                size.width * .05,
-                                size.width * .05,
-                              ),
-                              child: SizedBox(
-                                height: size.width * .5,
-                                width: size.width * .5,
-                                child: Image.asset('assets/logo/new_logo.png'),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * .05,
-                                  size.width * .03, size.width * .05, 0),
-                              child: Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  size.width * .05,
+                                  size.width * .03,
+                                  size.width * .05,
+                                  size.width * .05,
                                 ),
-                                child: Theme(
-                                  data: Theme.of(context).copyWith(
-                                    colorScheme: ThemeData()
-                                        .colorScheme
-                                        .copyWith(primary: appColor),
-                                  ),
-                                  child: FocusScope(
-                                    child: Focus(
-                                      onFocusChange: (isFocused) {
-                                        setState(() {
-                                          _isUFocused = isFocused;
-                                          log('uFocused - $_isUFocused');
-                                        });
-                                      },
-                                      child: TextFormField(
-                                        controller: _userNameController,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: _isUFocused
-                                              ? Colors.white
-                                              : Colors.grey.shade100,
-                                          prefixIcon: Image.asset(
-                                            'assets/login_icons/username.png',
-                                            height: size.width * .15,
-                                            width: size.width * .15,
-                                            color:
-                                                _isUFocused ? appColor : null,
-                                          ),
-                                          labelText: "User name",
-                                          border: InputBorder.none,
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                              color: appColor,
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusColor: appColor,
-                                        ),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "user name cannot be empty";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                child: SizedBox(
+                                  height: size.width * .5,
+                                  width: size.width * .5,
+                                  child:
+                                      Image.asset('assets/logo/new_logo.png'),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * .05,
-                                  size.width * .03, size.width * .05, 0),
-                              child: Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Theme(
-                                  data: Theme.of(context).copyWith(
-                                    colorScheme:
-                                        ThemeData().colorScheme.copyWith(
-                                              primary: appColor,
-                                            ),
-                                  ),
-                                  child: FocusScope(
-                                    child: Focus(
-                                      onFocusChange: (isFocused) {
-                                        setState(() {
-                                          _isPFocused = isFocused;
-                                          log('pFocused - $_isPFocused');
-                                        });
-                                      },
-                                      child: TextFormField(
-                                        obscureText: _passwordVisible,
-                                        controller: _passwordController,
-                                        decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: Icon(_passwordVisible
-                                                ? Icons.visibility_rounded
-                                                : Icons.visibility_off_rounded),
-                                            onPressed: () {
-                                              setState(() {
-                                                _passwordVisible =
-                                                    !_passwordVisible;
-                                              });
-                                            },
-                                          ),
-                                          filled: true,
-                                          fillColor: _isPFocused
-                                              ? Colors.white
-                                              : Colors.grey.shade100,
-                                          prefixIcon: Image.asset(
-                                            'assets/login_icons/password.png',
-                                            height: size.width * .15,
-                                            width: size.width * .15,
-                                            color:
-                                                _isPFocused ? appColor : null,
-                                          ),
-                                          labelText: "Password",
-                                          border: InputBorder.none,
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                              color: appColor,
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusColor: appColor,
-                                        ),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "password cannot be empty";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                size.width * .03,
-                                size.width * .02,
-                                size.width * .05,
-                                0,
-                              ),
-                              child: SizedBox(
-                                height: size.height * .05,
-                                width: size.width,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Checkbox(
-                                      activeColor: appColor,
-                                      value: _isRememberChecked,
-                                      onChanged: (bool? newValue) {
-                                        setState(() {
-                                          _isRememberChecked = newValue!;
-                                        });
-                                        log('_isRememberChecked - $_isRememberChecked');
-                                      },
-                                    ),
-                                    Text(
-                                      'Remember me',
-                                      style: TextStyle(
-                                        fontSize: size.width * .04,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(size.width * .05,
-                                  size.width * .1, size.width * .05, 0),
-                              child: SizedBox(
-                                height: size.width * .12,
-                                width: size.width * .4,
-                                child: RoundedLoadingButton(
-                                  color: appColor,
-                                  borderRadius: 0,
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * .05,
+                                    size.width * .03, size.width * .05, 0),
+                                child: Card(
                                   elevation: 10,
-                                  height: size.width * .12,
-                                  width: size.width * .35,
-                                  successIcon: Icons.check_rounded,
-                                  failedIcon: Icons.close_rounded,
-                                  successColor: Colors.green,
-                                  errorColor: appColor,
-                                  controller: loginController,
-                                  onPressed: () {
-                                    FocusScope.of(context).unfocus();
-                                    if (widget.dataFromDB.isEmpty) {
-                                      loginController.error();
-                                      Future.delayed(const Duration(seconds: 1),
-                                          () {
-                                        Fluttertoast.showToast(
-                                            msg:
-                                                'Internet may not be available, Please check your connection and Restart the app.',
-                                            toastLength: Toast.LENGTH_SHORT);
-                                        loginController.reset();
-                                      });
-                                    } else {
-                                      if (_userNameController.text
-                                              .toString()
-                                              .isNotEmpty &&
-                                          _passwordController.text
-                                              .toString()
-                                              .isNotEmpty) {
-                                        if (widget.dataFromDB.any((e) =>
-                                                e.get<String>('user_id') ==
-                                                _userNameController.text
-                                                    .toString()) ==
-                                            false) {
-                                          log(_userNameController.text
-                                              .toString());
-                                          loginController.error();
-                                          Future.delayed(
-                                              const Duration(seconds: 1), () {
-                                            Fluttertoast.showToast(
-                                                msg:
-                                                    'You have entered an invalid username',
-                                                toastLength: Toast.LENGTH_LONG);
-                                            loginController.reset();
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: ThemeData()
+                                          .colorScheme
+                                          .copyWith(primary: appColor),
+                                    ),
+                                    child: FocusScope(
+                                      child: Focus(
+                                        onFocusChange: (isFocused) {
+                                          setState(() {
+                                            _isUFocused = isFocused;
+                                            log('uFocused - $_isUFocused');
                                           });
-                                        } else {
-                                          if (_passwordController.text
-                                                  .toString() !=
-                                              widget.dataFromDB[widget
-                                                      .dataFromDB
-                                                      .indexWhere((e) =>
-                                                          e.get<String>(
-                                                              'user_id') ==
-                                                          _userNameController
-                                                              .text
-                                                              .toString())]
-                                                  .get<String>('password')) {
-                                            loginController.error();
-                                            Future.delayed(
-                                                const Duration(seconds: 1), () {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      'The password you entered is incorrect',
-                                                  toastLength:
-                                                      Toast.LENGTH_LONG);
-                                              loginController.reset();
-                                            });
-                                          } else {
-                                            /// set Remember Me Values
-                                            SharedPreferences.getInstance()
-                                                .then(
-                                              (prefs) {
-                                                prefs.setBool("rememberMe",
-                                                    _isRememberChecked);
-                                                prefs.setString('userName',
-                                                    _userNameController.text);
-                                                prefs.setString('password',
-                                                    _passwordController.text);
-                                                prefs.setString(
-                                                    'loggedInTime',
-                                                    DateFormat().format(
-                                                        DateTime.now()));
-                                                prefs.setBool(
-                                                    'isLoggedOut', false);
+                                        },
+                                        child: TextFormField(
+                                          controller: _userNameController,
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: _isUFocused
+                                                ? Colors.white
+                                                : Colors.grey.shade100,
+                                            prefixIcon: Image.asset(
+                                              'assets/login_icons/username.png',
+                                              height: size.width * .15,
+                                              width: size.width * .15,
+                                              color:
+                                                  _isUFocused ? appColor : null,
+                                            ),
+                                            labelText: "User name",
+                                            border: InputBorder.none,
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                color: appColor,
+                                                width: 1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusColor: appColor,
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "user name cannot be empty";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * .05,
+                                    size.width * .03, size.width * .05, 0),
+                                child: Card(
+                                  elevation: 10,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme:
+                                          ThemeData().colorScheme.copyWith(
+                                                primary: appColor,
+                                              ),
+                                    ),
+                                    child: FocusScope(
+                                      child: Focus(
+                                        onFocusChange: (isFocused) {
+                                          setState(() {
+                                            _isPFocused = isFocused;
+                                            log('pFocused - $_isPFocused');
+                                          });
+                                        },
+                                        child: TextFormField(
+                                          obscureText: _passwordVisible,
+                                          controller: _passwordController,
+                                          decoration: InputDecoration(
+                                            suffixIcon: IconButton(
+                                              icon: Icon(_passwordVisible
+                                                  ? Icons.visibility_rounded
+                                                  : Icons
+                                                      .visibility_off_rounded),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _passwordVisible =
+                                                      !_passwordVisible;
+                                                });
                                               },
-                                            );
-
-                                            loginController.success();
-                                            Future.delayed(
-                                                const Duration(seconds: 1), () {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      'You have successfully logged in.',
-                                                  toastLength:
-                                                      Toast.LENGTH_LONG);
-                                              Future.delayed(
-                                                  const Duration(seconds: 1),
-                                                  () {
-                                                Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (_) => HomeScreen(
-                                                      accType: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<String>(
-                                                              'account_type')!,
-                                                      authorization: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<String>(
-                                                              'authorization')!,
-                                                      refreshToken: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<String>(
-                                                              'refresh_token')!,
-                                                      userId: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<String>(
-                                                              'user_id')!,
-                                                      profileId: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<int>(
-                                                              'profile_id')!,
-                                                      distCenterId: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<int>(
-                                                              'distribution_center_id')!,
-                                                      distCenterName: widget
-                                                          .dataFromDB[widget
-                                                              .dataFromDB
-                                                              .indexWhere((e) =>
-                                                                  e.get<String>(
-                                                                      'user_id') ==
-                                                                  _userNameController
-                                                                      .text
-                                                                      .toString())]
-                                                          .get<String>(
-                                                              'distribution_center_name')!,
-                                                    ),
-                                                  ),
-                                                ).whenComplete(() =>
-                                                    loginController.reset());
-                                              });
-                                            });
-                                          }
-                                        }
-                                      } else {
+                                            ),
+                                            filled: true,
+                                            fillColor: _isPFocused
+                                                ? Colors.white
+                                                : Colors.grey.shade100,
+                                            prefixIcon: Image.asset(
+                                              'assets/login_icons/password.png',
+                                              height: size.width * .15,
+                                              width: size.width * .15,
+                                              color:
+                                                  _isPFocused ? appColor : null,
+                                            ),
+                                            labelText: "Password",
+                                            border: InputBorder.none,
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: const BorderSide(
+                                                color: appColor,
+                                                width: 1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusColor: appColor,
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "password cannot be empty";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  size.width * .03,
+                                  size.width * .02,
+                                  size.width * .05,
+                                  0,
+                                ),
+                                child: SizedBox(
+                                  height: size.height * .05,
+                                  width: size.width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Checkbox(
+                                        activeColor: appColor,
+                                        value: _isRememberChecked,
+                                        onChanged: (bool? newValue) {
+                                          setState(() {
+                                            _isRememberChecked = newValue!;
+                                          });
+                                          log('_isRememberChecked - $_isRememberChecked');
+                                        },
+                                      ),
+                                      Text(
+                                        'Remember me',
+                                        style: TextStyle(
+                                          fontSize: size.width * .04,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * .05,
+                                    size.width * .1, size.width * .05, 0),
+                                child: SizedBox(
+                                  height: size.width * .12,
+                                  width: size.width * .4,
+                                  child: RoundedLoadingButton(
+                                    color: appColor,
+                                    borderRadius: 0,
+                                    elevation: 10,
+                                    height: size.width * .12,
+                                    width: size.width * .35,
+                                    successIcon: Icons.check_rounded,
+                                    failedIcon: Icons.close_rounded,
+                                    successColor: Colors.green,
+                                    errorColor: appColor,
+                                    controller: loginController,
+                                    onPressed: () {
+                                      FocusScope.of(context).unfocus();
+                                      if (widget.dataFromDB.isEmpty) {
                                         loginController.error();
                                         Future.delayed(
                                             const Duration(seconds: 1), () {
                                           Fluttertoast.showToast(
                                               msg:
-                                                  'Please enter required details');
+                                                  'Internet may not be available, Please check your connection and Restart the app.',
+                                              toastLength: Toast.LENGTH_SHORT);
                                           loginController.reset();
                                         });
+                                      } else {
+                                        if (_userNameController.text
+                                                .toString()
+                                                .isNotEmpty &&
+                                            _passwordController.text
+                                                .toString()
+                                                .isNotEmpty) {
+                                          if (widget.dataFromDB.any((e) =>
+                                                  e.get<String>('user_id') ==
+                                                  _userNameController.text
+                                                      .toString()) ==
+                                              false) {
+                                            log(_userNameController.text
+                                                .toString());
+                                            loginController.error();
+                                            Future.delayed(
+                                                const Duration(seconds: 1), () {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      'You have entered an invalid username',
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG);
+                                              loginController.reset();
+                                            });
+                                          } else {
+                                            if (_passwordController.text
+                                                    .toString() !=
+                                                widget.dataFromDB[widget
+                                                        .dataFromDB
+                                                        .indexWhere((e) =>
+                                                            e.get<String>(
+                                                                'user_id') ==
+                                                            _userNameController
+                                                                .text
+                                                                .toString())]
+                                                    .get<String>('password')) {
+                                              loginController.error();
+                                              Future.delayed(
+                                                  const Duration(seconds: 1),
+                                                  () {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        'The password you entered is incorrect',
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG);
+                                                loginController.reset();
+                                              });
+                                            } else {
+                                              /// set Remember Me Values
+                                              SharedPreferences.getInstance()
+                                                  .then(
+                                                (prefs) {
+                                                  prefs.setBool("rememberMe",
+                                                      _isRememberChecked);
+                                                  prefs.setString('userName',
+                                                      _userNameController.text);
+                                                  prefs.setString('password',
+                                                      _passwordController.text);
+                                                  prefs.setString(
+                                                      'loggedInTime',
+                                                      DateFormat().format(
+                                                          DateTime.now()));
+                                                  prefs.setBool(
+                                                      'isLoggedOut', false);
+                                                },
+                                              );
+
+                                              loginController.success();
+                                              Future.delayed(
+                                                  const Duration(seconds: 1),
+                                                  () {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        'You have successfully logged in.',
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG);
+                                                Future.delayed(
+                                                    const Duration(seconds: 1),
+                                                    () {
+                                                  Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          HomeScreen(
+                                                        accType: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<String>(
+                                                                'account_type')!,
+                                                        authorization: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<String>(
+                                                                'authorization')!,
+                                                        refreshToken: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<String>(
+                                                                'refresh_token')!,
+                                                        userId: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<String>(
+                                                                'user_id')!,
+                                                        profileId: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<int>(
+                                                                'profile_id')!,
+                                                        distCenterId: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<int>(
+                                                                'distribution_center_id')!,
+                                                        distCenterName: widget
+                                                            .dataFromDB[widget
+                                                                .dataFromDB
+                                                                .indexWhere((e) =>
+                                                                    e.get<String>(
+                                                                        'user_id') ==
+                                                                    _userNameController
+                                                                        .text
+                                                                        .toString())]
+                                                            .get<String>(
+                                                                'distribution_center_name')!,
+                                                      ),
+                                                    ),
+                                                  ).whenComplete(() =>
+                                                      loginController.reset());
+                                                });
+                                              });
+                                            }
+                                          }
+                                        } else {
+                                          loginController.error();
+                                          Future.delayed(
+                                              const Duration(seconds: 1), () {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Please enter required details');
+                                            loginController.reset();
+                                          });
+                                        }
                                       }
-                                    }
-                                  },
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: size.width * .05),
+                                    },
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: size.width * .05),
+                                    ),
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: Platform.isAndroid,
+                          child: Padding(
+                            padding: androidAppLastUpdated !=
+                                    androidAppLastUpdatedLocal
+                                ? EdgeInsets.zero
+                                : EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              androidAppLastUpdated ==
+                                      androidAppLastUpdatedLocal
+                                  ? '* The Current App is the latest.'
+                                  : '* The Current App is not the latest.',
+                              overflow: TextOverflow.visible,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: Platform.isAndroid &&
+                              androidAppLastUpdated !=
+                                  androidAppLastUpdatedLocal,
+                          child: TextButton(
+                            onPressed: () => _launchURL(),
+                            child: Text(
+                              'Please Click here to update',
+                              overflow: TextOverflow.visible,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: Platform.isIOS,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              iosAppLastUpdated == iosAppLastUpdatedLocal
+                                  ? '* The Current App is the latest.'
+                                  : '* The Current App is not the latest.',
+                              overflow: TextOverflow.visible,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -1795,7 +1861,34 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  _launchURL() async {
+    final Uri url = Uri.parse(
+      Platform.isAndroid
+          ? androidAppInstallLink
+          : Platform.isIOS
+              ? iosAppInstallLink
+              : '',
+    );
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   void _loadUserNamePassword() async {
+    setState(() {
+      androidAppLastUpdated =
+          widget.dataFromDB[0].get<String>('android_app_last_updated') ?? '';
+      iosAppLastUpdated =
+          widget.dataFromDB[0].get<String>('ios_app_last_updated') ?? '';
+      androidAppInstallLink =
+          widget.dataFromDB[0].get<String>('andriod_app_link_to_install') ?? '';
+      iosAppInstallLink =
+          widget.dataFromDB[0].get<String>('ios_app_link_to_install') ?? '';
+    });
+    log('androidAppLastUpdated >>--> $androidAppLastUpdated');
+    log('iosAppLastUpdated >>--> $iosAppLastUpdated');
+    log('androidAppInstallLink >>--> $androidAppInstallLink');
+    log('iosAppInstallLink >>--> $iosAppInstallLink');
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var userName = prefs.getString("userName") ?? "";
@@ -1850,7 +1943,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         onPressed: () => Navigator.of(context).pop(false),
-                        //return false when click on "NO"
                         child: const Text('No'),
                       ),
                     ),
@@ -1868,7 +1960,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20))),
                             onPressed: () => Navigator.of(context).pop(true),
-                            //return true when click on "Yes"
                             child: const Text('Yes'),
                           ),
                         ),

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_web_libraries_in_flutter
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -7,7 +5,7 @@ import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/navigation_methods.dart';
 import 'package:absolute_app/core/utils/responsive_check.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
-import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:absolute_app/models/get_locked_picklist_response.dart';
 import 'package:absolute_app/models/get_picklist_details_response.dart';
 import 'package:absolute_app/screens/mobile_device_screens/barcode_camera_screen.dart';
@@ -73,9 +71,9 @@ class _PickListDetailsState extends State<PickListDetails> {
   final RoundedLoadingButtonController validateController =
       RoundedLoadingButtonController();
   final RoundedLoadingButtonController printController =
-  RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
   final RoundedLoadingButtonController cancelController =
-  RoundedLoadingButtonController();
+      RoundedLoadingButtonController();
 
   List<SkuXX> details = [];
   List<String> qtyToPick = [];
@@ -83,7 +81,7 @@ class _PickListDetailsState extends State<PickListDetails> {
   List<List<TableRow>> tableForPicklistDetails = [];
   List<String> isLabelPrintedForNonMSMQW = [];
   List<ParseObject> savedLockedPicklistData = [];
-  List<MessageXX> lockedPicklistList = [];
+  List<MsgX> lockedPicklistList = [];
 
   Map<dynamic, dynamic> skuInOrder = {};
 
@@ -270,13 +268,11 @@ class _PickListDetailsState extends State<PickListDetails> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SelectableText(
+                            Text(
                               details[id - 1].title == ''
                                   ? 'Not Available'
                                   : details[id - 1].title,
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ],
                         ),
@@ -287,13 +283,13 @@ class _PickListDetailsState extends State<PickListDetails> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SelectableText(
+                            const Text(
                               "Location : ",
                               style: TextStyle(
                                 fontSize: 20,
                               ),
                             ),
-                            SelectableText(
+                            Text(
                               details[id - 1].warehouseLocation == ''
                                   ? 'Not Available'
                                   : details[id - 1].warehouseLocation,
@@ -311,13 +307,13 @@ class _PickListDetailsState extends State<PickListDetails> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SelectableText(
+                            const Text(
                               "Barcode : ",
                               style: TextStyle(
                                 fontSize: 20,
                               ),
                             ),
-                            SelectableText(
+                            Text(
                               details[id - 1].ean == ''
                                   ? 'Not Available'
                                   : details[id - 1].ean,
@@ -328,73 +324,304 @@ class _PickListDetailsState extends State<PickListDetails> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 10,
-                          width: size.width,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SelectableText(
-                              "Order Id : ",
-                              style: TextStyle(
-                                fontSize: 20,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "SKU : ",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
                               ),
-                            ),
-                            SelectableText(
-                              details[id - 1].orderNumber == ''
-                                  ? 'Not Available'
-                                  : details[id - 1].orderNumber,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                details[id - 1].sku == ''
+                                    ? 'Not Available'
+                                    : details[id - 1].sku,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          height: 10,
-                          width: size.width,
+                        Visibility(
+                          visible: /*widget.requestType == 'MSMQW'*/ true,
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SelectableText(
-                              "Shipping Carrier : ",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            SelectableText(
-                              details[id - 1].shippingCarrierForMsmqw == ''
-                                  ? 'Not Available'
-                                  : details[id - 1].shippingCarrierForMsmqw,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Order Id : ",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                          width: size.width,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SelectableText(
-                              "Shipping Class : ",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            SelectableText(
-                              details[id - 1].shippingClassForMsmqw == ''
-                                  ? 'Not Available'
-                                  : details[id - 1].shippingClassForMsmqw,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                details[id - 1].orderNumber == ''
+                                    ? 'Not Available'
+                                    : details[id - 1].orderNumber,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Shipping Carrier : ",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                widget.requestType == 'MSMQW'
+                                    ? details[id - 1].shippingCarrierForMsmqw ==
+                                            ''
+                                        ? 'Not Available'
+                                        : details[id - 1]
+                                            .shippingCarrierForMsmqw
+                                    : details[id - 1]
+                                        .orderQuantity
+                                        .map((e) => e.shippingCarrier)
+                                        .join(', '),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Shipping Class : ",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                widget.requestType == 'MSMQW'
+                                    ? details[id - 1].shippingClassForMsmqw ==
+                                            ''
+                                        ? 'Not Available'
+                                        : details[id - 1].shippingClassForMsmqw
+                                    : details[id - 1]
+                                        .orderQuantity
+                                        .map((e) => e.shippingClass)
+                                        .join(', '),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: /*widget.requestType == 'MSMQW' &&*/
+                              widget.showPickedOrders == true &&
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: /*widget.requestType == 'MSMQW' &&*/
+                              widget.showPickedOrders == true &&
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Label Printed : ",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                widget.requestType == 'MSMQW'
+                                    ? (details[id - 1]
+                                                .shippingClassForMsmqw
+                                                .toLowerCase()
+                                                .contains('prime') ||
+                                            details[id - 1]
+                                                .shippingCarrierForMsmqw
+                                                .toLowerCase()
+                                                .contains('prime'))
+                                        ? details[id - 1].amazonLabelPrinted ==
+                                                true
+                                            ? 'Yes'
+                                            : 'No'
+                                        : details[id - 1]
+                                                    .easyPostLabelPrinted ==
+                                                true
+                                            ? 'Yes'
+                                            : 'No'
+                                    : isLabelPrintedForNonMSMQW[id - 1],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: /*widget.requestType != 'MSMQW'*/ false,
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: /*widget.requestType != 'MSMQW'*/ false,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Table(
+                                  border: TableBorder.all(
+                                      color: Colors.black, width: 1),
+                                  columnWidths: <int, TableColumnWidth>{
+                                    0: FixedColumnWidth(size.width * .1),
+                                    1: FixedColumnWidth(size.width * .2),
+                                    2: FixedColumnWidth(size.width * .2),
+                                    3: FixedColumnWidth(size.width * .1),
+                                  },
+                                  children: [
+                                    TableRow(
+                                      children: <TableCell>[
+                                        TableCell(
+                                          child: Container(
+                                            height: 30,
+                                            color: Colors.grey.shade200,
+                                            child: const Center(
+                                              child: Text(
+                                                'Order Number',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 30,
+                                            color: Colors.grey.shade200,
+                                            child: const Center(
+                                              child: Text(
+                                                'Shipping Carrier',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        TableCell(
+                                          child: Container(
+                                            height: 30,
+                                            color: Colors.grey.shade200,
+                                            child: const Center(
+                                              child: Text(
+                                                'Shipping Class',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        if (widget.showPickedOrders == true)
+                                          TableCell(
+                                            child: Container(
+                                              height: 30,
+                                              color: Colors.grey.shade200,
+                                              child: const Center(
+                                                child: Text(
+                                                  'Label Printed',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                    ...tableForPicklistDetails[id - 1],
+                                  ]),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.requestType == 'MSMQW',
+                          child: SizedBox(
+                            height: 10,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.requestType == 'MSMQW',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Distribution Center : ",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                ),
+                              ),
+                              Text(
+                                details[id - 1].distributionCenter == ''
+                                    ? 'Not Available'
+                                    : details[id - 1].distributionCenter,
+                                style: TextStyle(
+                                  fontSize: size.width * .012,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 15,
@@ -501,63 +728,67 @@ class _PickListDetailsState extends State<PickListDetails> {
                           height: 20,
                           width: size.width,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            details[id - 1].ean == ''
-                                ? Row(
-                                    children: [
-                                      const SelectableText(
-                                        "Barcode missing for this SKU : ",
-                                        style: TextStyle(
-                                            color: Colors.red, fontSize: 20),
-                                      ),
-                                      SelectableText(
-                                        details[id - 1].sku,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              details[id - 1].ean == ''
+                                  ? Row(
+                                      children: [
+                                        const SelectableText(
+                                          "Barcode missing for this SKU : ",
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 20),
                                         ),
-                                      )
-                                    ],
-                                  )
-                                : Visibility(
-                                    visible: widget.showPickedOrders == false,
-                                    child: RoundedLoadingButton(
-                                      color: appColor,
-                                      borderRadius: 0,
-                                      elevation: 10,
-                                      height: 50,
-                                      width: 100,
-                                      successIcon: Icons.check_rounded,
-                                      failedIcon: Icons.close_rounded,
-                                      successColor: Colors.green,
-                                      errorColor: appColor,
-                                      controller: validateController,
-                                      onPressed: () async => validate(
-                                        screen: EANForWebApp(
-                                          accType: widget.accType,
-                                          authorization: widget.authorization,
-                                          refreshToken: widget.refreshToken,
-                                          crossVisible: false,
-                                          screenType: 'picklist details',
-                                          profileId: widget.profileId,
-                                          distCenterName: widget.distCenterName,
-                                          distCenterId: widget.distCenterId,
-                                          barcodeToCheck: int.parse(
-                                              details[id - 1].ean.isEmpty
-                                                  ? '0'
-                                                  : details[id - 1].ean),
+                                        SelectableText(
+                                          details[id - 1].sku,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  : Visibility(
+                                      visible: widget.showPickedOrders == false,
+                                      child: RoundedLoadingButton(
+                                        color: appColor,
+                                        borderRadius: 0,
+                                        elevation: 10,
+                                        height: 50,
+                                        width: 100,
+                                        successIcon: Icons.check_rounded,
+                                        failedIcon: Icons.close_rounded,
+                                        successColor: Colors.green,
+                                        errorColor: appColor,
+                                        controller: validateController,
+                                        onPressed: () async => validate(
+                                          screen: EANForWebApp(
+                                            accType: widget.accType,
+                                            authorization: widget.authorization,
+                                            refreshToken: widget.refreshToken,
+                                            crossVisible: false,
+                                            screenType: 'picklist details',
+                                            profileId: widget.profileId,
+                                            distCenterName:
+                                                widget.distCenterName,
+                                            distCenterId: widget.distCenterId,
+                                            barcodeToCheck: int.parse(
+                                                details[id - 1].ean.isEmpty
+                                                    ? '0'
+                                                    : details[id - 1].ean),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Validate Scan",
+                                          style: TextStyle(fontSize: 25),
                                         ),
                                       ),
-                                      child: const Text(
-                                        "Validate Scan",
-                                        style: TextStyle(fontSize: 25),
-                                      ),
-                                    ),
-                                  )
-                          ],
+                                    )
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -791,6 +1022,38 @@ class _PickListDetailsState extends State<PickListDetails> {
                               ],
                             ),
                             Visibility(
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                              child: SizedBox(
+                                height: size.height * .008,
+                                width: size.width,
+                              ),
+                            ),
+                            Visibility(
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "SKU : ",
+                                    style: TextStyle(
+                                      fontSize: size.width * .012,
+                                    ),
+                                  ),
+                                  Text(
+                                    details[id - 1].sku == ''
+                                        ? 'Not Available'
+                                        : details[id - 1].sku,
+                                    style: TextStyle(
+                                      fontSize: size.width * .012,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Visibility(
                               visible: /*widget.requestType == 'MSMQW'*/ true,
                               child: SizedBox(
                                 height: size.height * .008,
@@ -798,7 +1061,8 @@ class _PickListDetailsState extends State<PickListDetails> {
                               ),
                             ),
                             Visibility(
-                              visible: /*widget.requestType == 'MSMQW'*/ true,
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -821,14 +1085,16 @@ class _PickListDetailsState extends State<PickListDetails> {
                               ),
                             ),
                             Visibility(
-                              visible: /*widget.requestType == 'MSMQW'*/ true,
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
                               child: SizedBox(
                                 height: size.height * .008,
                                 width: size.width,
                               ),
                             ),
                             Visibility(
-                              visible: /*widget.requestType == 'MSMQW'*/ true,
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -858,14 +1124,16 @@ class _PickListDetailsState extends State<PickListDetails> {
                               ),
                             ),
                             Visibility(
-                              visible: /*widget.requestType == 'MSMQW'*/ true,
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
                               child: SizedBox(
                                 height: size.height * .008,
                                 width: size.width,
                               ),
                             ),
                             Visibility(
-                              visible: /*widget.requestType == 'MSMQW'*/ true,
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -896,7 +1164,9 @@ class _PickListDetailsState extends State<PickListDetails> {
                             ),
                             Visibility(
                               visible: /*widget.requestType == 'MSMQW' &&*/
-                                  widget.showPickedOrders == true,
+                                  widget.showPickedOrders == true &&
+                                      widget.appBarName.substring(0, 4) !=
+                                          'Shop',
                               child: SizedBox(
                                 height: size.height * .008,
                                 width: size.width,
@@ -904,7 +1174,9 @@ class _PickListDetailsState extends State<PickListDetails> {
                             ),
                             Visibility(
                               visible: /*widget.requestType == 'MSMQW' &&*/
-                                  widget.showPickedOrders == true,
+                                  widget.showPickedOrders == true &&
+                                      widget.appBarName.substring(0, 4) !=
+                                          'Shop',
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -1174,336 +1446,420 @@ class _PickListDetailsState extends State<PickListDetails> {
                               height: size.height * .02,
                               width: size.width,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                details[id - 1].ean == ''
-                                    ? Row(children: [
-                                        const SelectableText(
-                                          "Barcode missing for this SKU : ",
-                                          style: TextStyle(
-                                              color: Colors.red, fontSize: 20),
-                                        ),
-                                        SelectableText(
-                                          details[id - 1].sku,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                            Visibility(
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  details[id - 1].ean == ''
+                                      ? Row(children: [
+                                          const SelectableText(
+                                            "Barcode missing for this SKU : ",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 20),
+                                          ),
+                                          SelectableText(
+                                            details[id - 1].sku,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          )
+                                        ])
+                                      : Visibility(
+                                          visible:
+                                              parseToInt(qtyToPick[id - 1]) > 0,
+                                          child: Visibility(
+                                            visible: widget.showPickedOrders ==
+                                                false,
+                                            child: RoundedLoadingButton(
+                                              color: appColor,
+                                              borderRadius: 0,
+                                              elevation: 10,
+                                              height: size.width * .03,
+                                              width: size.width * .6,
+                                              successIcon: Icons.check_rounded,
+                                              failedIcon: Icons.close_rounded,
+                                              successColor: Colors.green,
+                                              errorColor: appColor,
+                                              controller: validateController,
+                                              onPressed: () async => validate(
+                                                screen: EANForWebApp(
+                                                  accType: widget.accType,
+                                                  authorization:
+                                                      widget.authorization,
+                                                  refreshToken:
+                                                      widget.refreshToken,
+                                                  crossVisible: false,
+                                                  screenType:
+                                                      'picklist details',
+                                                  profileId: widget.profileId,
+                                                  distCenterName:
+                                                      widget.distCenterName,
+                                                  distCenterId:
+                                                      widget.distCenterId,
+                                                  barcodeToCheck: int.parse(
+                                                      details[id - 1]
+                                                              .ean
+                                                              .isEmpty
+                                                          ? '0'
+                                                          : details[id - 1]
+                                                              .ean),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Validate Scan",
+                                                style: TextStyle(
+                                                  fontSize: size.width * .015,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         )
-                                      ])
-                                    : Visibility(
-                                        visible:
-                                            parseToInt(qtyToPick[id - 1]) > 0,
-                                        child: Visibility(
-                                          visible:
-                                              widget.showPickedOrders == false,
-                                          child: RoundedLoadingButton(
-                                            color: appColor,
-                                            borderRadius: 0,
-                                            elevation: 10,
-                                            height: size.width * .03,
-                                            width: size.width * .6,
-                                            successIcon: Icons.check_rounded,
-                                            failedIcon: Icons.close_rounded,
-                                            successColor: Colors.green,
-                                            errorColor: appColor,
-                                            controller: validateController,
-                                            onPressed: () async => validate(
-                                              screen: EANForWebApp(
-                                                accType: widget.accType,
-                                                authorization:
-                                                    widget.authorization,
-                                                refreshToken:
-                                                    widget.refreshToken,
-                                                crossVisible: false,
-                                                screenType: 'picklist details',
-                                                profileId: widget.profileId,
-                                                distCenterName:
-                                                    widget.distCenterName,
-                                                distCenterId:
-                                                    widget.distCenterId,
-                                                barcodeToCheck: int.parse(
-                                                    details[id - 1].ean.isEmpty
-                                                        ? '0'
-                                                        : details[id - 1].ean),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              "Validate Scan",
-                                              style: TextStyle(
-                                                fontSize: size.width * .015,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                              ],
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: size.height * .02,
                               width: size.width,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Visibility(
-                                  visible: details[id - 1].ean == '' && widget.showPickedOrders == false,
-                                  child: RoundedLoadingButton(
-                                    color: appColor,
-                                    borderRadius: 0,
-                                    elevation: 10,
-                                    height: size.width * .03,
-                                    width: size.width * .6,
-                                    successIcon: Icons.check_rounded,
-                                    failedIcon: Icons.close_rounded,
-                                    successColor: Colors.green,
-                                    errorColor: appColor,
-                                    controller: validateController,
-                                    onPressed: () async {
-                                      if (widget.requestType == 'MSMQW') {
-                                        await printLabel(
-                                          siteOrderId:
+                            Visibility(
+                              visible:
+                                  widget.appBarName.substring(0, 4) != 'Shop',
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Visibility(
+                                    visible: details[id - 1].ean == '' &&
+                                        widget.showPickedOrders == false,
+                                    child: RoundedLoadingButton(
+                                      color: appColor,
+                                      borderRadius: 0,
+                                      elevation: 10,
+                                      height: size.width * .03,
+                                      width: size.width * .6,
+                                      successIcon: Icons.check_rounded,
+                                      failedIcon: Icons.close_rounded,
+                                      successColor: Colors.green,
+                                      errorColor: appColor,
+                                      controller: validateController,
+                                      onPressed: () async {
+                                        await SharedPreferences.getInstance().then((prefs) async {
+                                          if (widget.requestType == 'MSMQW') {
+                                            await printLabel(
+                                              siteOrderId:
                                               details[id - 1].siteOrderId,
-                                          isAmazonPrime:
+                                              isAmazonPrime:
                                               details[id - 1].siteName ==
-                                                      'Amazon UK-prime'
-                                                  ? true
-                                                  : false,
-                                        ).whenComplete(() async {
-                                          if (labelError.isNotEmpty) {
-                                            await Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 100), () {
-                                              ToastUtils
-                                                  .motionToastCentered1500MS(
-                                                message: labelError,
-                                                context: context,
-                                              );
-                                            }).whenComplete(() {
-                                              validateController.reset();
-                                            });
-                                          } else {
-                                            await print(labelUrl)
-                                                .whenComplete(() {
-                                              validateController.reset();
+                                                  'Amazon UK-prime',
+                                              isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                                            ).whenComplete(() async {
+                                              if (labelError.isNotEmpty) {
+                                                await Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 100), () {
+                                                  ToastUtils
+                                                      .motionToastCentered1500MS(
+                                                    message: labelError,
+                                                    context: context,
+                                                  );
+                                                }).whenComplete(() {
+                                                  validateController.reset();
+                                                });
+                                              } else {
+                                                await print(labelUrl)
+                                                    .whenComplete(() {
+                                                  validateController.reset();
+                                                });
+                                              }
                                             });
                                           }
-                                        });
-                                      } else {
-                                        if (details[id - 1]
+                                          else {
+                                            if (details[id - 1]
                                                 .orderQuantity
                                                 .length ==
-                                            1) {
-                                          await printLabel(
-                                            siteOrderId: details[id - 1]
-                                                .orderQuantity[0]
-                                                .siteOrderId,
-                                            isAmazonPrime: details[id - 1]
-                                                        .orderQuantity[0]
-                                                        .siteName ==
-                                                    'Amazon UK-prime'
-                                                ? true
-                                                : false,
-                                          ).whenComplete(() async {
-                                            if (labelError.isNotEmpty) {
-                                              await Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 100), () {
-                                                ToastUtils
-                                                    .motionToastCentered1500MS(
-                                                  message: labelError,
-                                                  context: context,
-                                                );
-                                              }).whenComplete(() {
-                                                validateController.reset();
+                                                1) {
+                                              await printLabel(
+                                                siteOrderId: details[id - 1]
+                                                    .orderQuantity[0]
+                                                    .siteOrderId,
+                                                isAmazonPrime: details[id - 1]
+                                                    .orderQuantity[0]
+                                                    .siteName ==
+                                                    'Amazon UK-prime',
+                                                isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                                              ).whenComplete(() async {
+                                                if (labelError.isNotEmpty) {
+                                                  await Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 100), () {
+                                                    ToastUtils
+                                                        .motionToastCentered1500MS(
+                                                      message: labelError,
+                                                      context: context,
+                                                    );
+                                                  }).whenComplete(() {
+                                                    validateController.reset();
+                                                  });
+                                                } else {
+                                                  await print(labelUrl)
+                                                      .whenComplete(() {
+                                                    validateController.reset();
+                                                  });
+                                                }
                                               });
                                             } else {
-                                              await print(labelUrl)
-                                                  .whenComplete(() {
-                                                validateController.reset();
-                                              });
-                                            }
-                                          });
-                                        } else {
-                                          String selectedOrder = '${details[id - 1].orderQuantity[0].orderNumber}';
-                                            await showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (context) {
-                                                return StatefulBuilder(
-                                                  builder: (context, setStateSB) {
-                                                    return AlertDialog(
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(25),
-                                                      ),
-                                                      elevation: 5,
-                                                      titleTextStyle: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: size.width * .042,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                      title: Text(
-                                                        'Select a Order for printing Label',
-                                                        style:
-                                                        TextStyle(fontSize: size.width * .015),
-                                                      ),
-                                                      content: Container(
-                                                        height: size.height * .08,
-                                                        width: size.width * .2,
-                                                        decoration: BoxDecoration(
-                                                          color: const Color.fromARGB(
-                                                              255, 255, 255, 255),
-                                                          border: Border.all(
-                                                            width: 1,
-                                                            color: Colors.black,
-                                                          ),
-                                                          borderRadius: BorderRadius.circular(10),
+                                              String selectedOrder =
+                                                  '${details[id - 1].orderQuantity[0].orderNumber}';
+                                              await showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return StatefulBuilder(
+                                                    builder:
+                                                        (context, setStateSB) {
+                                                      return AlertDialog(
+                                                        shape:
+                                                        RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(25),
                                                         ),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: DropdownButtonHideUnderline(
-                                                            child: DropdownButton(
-                                                              elevation: 0,
-                                                              value: selectedOrder,
-                                                              icon: SizedBox(
-                                                                height: 35,
-                                                                width: 35,
-                                                                child: FittedBox(
-                                                                  child: Image.asset(
-                                                                      'assets/add_new_rule_assets/dd_icon.png'),
-                                                                ),
-                                                              ),
-                                                              items: details[id - 1].orderQuantity.map((e) => e.orderNumber).toList()
-                                                                  .map(
-                                                                    (value) => DropdownMenuItem(
-                                                                  value: '$value',
-                                                                  child: Text(
-                                                                    '$value',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                        size.width * .012),
+                                                        elevation: 5,
+                                                        titleTextStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize:
+                                                          size.width * .042,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                        ),
+                                                        title: Text(
+                                                          'Select a Order for printing Label',
+                                                          style: TextStyle(
+                                                              fontSize:
+                                                              size.width *
+                                                                  .015),
+                                                        ),
+                                                        content: Container(
+                                                          height:
+                                                          size.height * .08,
+                                                          width: size.width * .2,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: const Color
+                                                                .fromARGB(255,
+                                                                255, 255, 255),
+                                                            border: Border.all(
+                                                              width: 1,
+                                                              color: Colors.black,
+                                                            ),
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                            child:
+                                                            DropdownButtonHideUnderline(
+                                                              child:
+                                                              DropdownButton(
+                                                                elevation: 0,
+                                                                value:
+                                                                selectedOrder,
+                                                                icon: SizedBox(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  child:
+                                                                  FittedBox(
+                                                                    child: Image
+                                                                        .asset(
+                                                                        'assets/add_new_rule_assets/dd_icon.png'),
                                                                   ),
                                                                 ),
-                                                              )
-                                                                  .toList(),
-                                                              onChanged: (Object? newValue) {
-                                                                selectedOrder = newValue as String;
-                                                                setStateSB(() {});
-                                                                log('selectedOrder >>>>> $selectedOrder');
-                                                              },
+                                                                items: details[
+                                                                id - 1]
+                                                                    .orderQuantity
+                                                                    .map((e) => e
+                                                                    .orderNumber)
+                                                                    .toList()
+                                                                    .map(
+                                                                      (value) =>
+                                                                      DropdownMenuItem(
+                                                                        value:
+                                                                        '$value',
+                                                                        child:
+                                                                        Text(
+                                                                          '$value',
+                                                                          style: TextStyle(
+                                                                              fontSize:
+                                                                              size.width * .012),
+                                                                        ),
+                                                                      ),
+                                                                )
+                                                                    .toList(),
+                                                                onChanged: (Object?
+                                                                newValue) {
+                                                                  selectedOrder =
+                                                                  newValue
+                                                                  as String;
+                                                                  setStateSB(
+                                                                          () {});
+                                                                  log('selectedOrder >>>>> $selectedOrder');
+                                                                },
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      actions: <Widget>[
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                              const EdgeInsets.only(left: 13),
-                                                              child: RoundedLoadingButton(
-                                                                color: Colors.red,
-                                                                borderRadius: 10,
-                                                                height: size.width * .03,
-                                                                width: size.width * .07,
-                                                                successIcon: Icons.check_rounded,
-                                                                failedIcon: Icons.close_rounded,
-                                                                successColor: Colors.green,
-                                                                controller: cancelController,
-                                                                onPressed: () async {
-                                                                  await Future.delayed(
-                                                                      const Duration(
-                                                                          milliseconds: 500), () {
-                                                                    cancelController.reset();
-                                                                    Navigator.pop(context);
-                                                                  });
-                                                                },
-                                                                child: const Text('Cancel'),
+                                                        actions: <Widget>[
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 13),
+                                                                child:
+                                                                RoundedLoadingButton(
+                                                                  color:
+                                                                  Colors.red,
+                                                                  borderRadius:
+                                                                  10,
+                                                                  height:
+                                                                  size.width *
+                                                                      .03,
+                                                                  width:
+                                                                  size.width *
+                                                                      .07,
+                                                                  successIcon: Icons
+                                                                      .check_rounded,
+                                                                  failedIcon: Icons
+                                                                      .close_rounded,
+                                                                  successColor:
+                                                                  Colors
+                                                                      .green,
+                                                                  controller:
+                                                                  cancelController,
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await Future.delayed(
+                                                                        const Duration(
+                                                                            milliseconds:
+                                                                            500),
+                                                                            () {
+                                                                          cancelController
+                                                                              .reset();
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        });
+                                                                  },
+                                                                  child: const Text(
+                                                                      'Cancel'),
+                                                                ),
                                                               ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.end,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(
-                                                                        right: 13),
-                                                                    child: RoundedLoadingButton(
-                                                                      color: Colors.green,
-                                                                      borderRadius: 10,
-                                                                      height: size.width * .03,
-                                                                      width: size.width * .07,
-                                                                      successIcon:
-                                                                      Icons.check_rounded,
-                                                                      failedIcon:
-                                                                      Icons.close_rounded,
-                                                                      successColor: Colors.green,
-                                                                      controller: printController,
-                                                                      onPressed: () async {
-                                                                        await printLabel(
-                                                                          siteOrderId: details[id - 1]
-                                                                              .orderQuantity[details[id - 1].orderQuantity.indexWhere((e) => e.orderNumber == parseToInt(selectedOrder))]
-                                                                              .siteOrderId,
-                                                                          isAmazonPrime: details[id - 1]
-                                                                              .orderQuantity[details[id - 1].orderQuantity.indexWhere((e) => e.orderNumber == parseToInt(selectedOrder))]
-                                                                              .siteName ==
-                                                                              'Amazon UK-prime'
-                                                                              ? true
-                                                                              : false,
-                                                                        ).whenComplete(() async {
-                                                                          if (labelError.isNotEmpty) {
-                                                                            await Future.delayed(
-                                                                                const Duration(
-                                                                                    milliseconds: 100), () {
-                                                                              ToastUtils
-                                                                                  .motionToastCentered1500MS(
-                                                                                message: labelError,
-                                                                                context: context,
-                                                                              );
-                                                                            }).whenComplete(() {
-                                                                              validateController.reset();
-                                                                            });
-                                                                          } else {
-                                                                            await print(labelUrl)
-                                                                                .whenComplete(() {
-                                                                              validateController.reset();
-                                                                            });
-                                                                          }
-                                                                        }).whenComplete(() => Navigator.pop(context));
-                                                                      },
-                                                                      child: const Text(
-                                                                        'Create',
+                                                              Expanded(
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          right:
+                                                                          13),
+                                                                      child:
+                                                                      RoundedLoadingButton(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        borderRadius:
+                                                                        10,
+                                                                        height:
+                                                                        size.width *
+                                                                            .03,
+                                                                        width: size
+                                                                            .width *
+                                                                            .07,
+                                                                        successIcon:
+                                                                        Icons
+                                                                            .check_rounded,
+                                                                        failedIcon:
+                                                                        Icons
+                                                                            .close_rounded,
+                                                                        successColor:
+                                                                        Colors
+                                                                            .green,
+                                                                        controller:
+                                                                        printController,
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await SharedPreferences.getInstance().then((prefs) async {
+                                                                            await printLabel(
+                                                                              siteOrderId: details[id - 1]
+                                                                                  .orderQuantity[details[id - 1].orderQuantity.indexWhere((e) => e.orderNumber == parseToInt(selectedOrder))]
+                                                                                  .siteOrderId,
+                                                                              isAmazonPrime: details[id - 1].orderQuantity[details[id - 1].orderQuantity.indexWhere((e) => e.orderNumber == parseToInt(selectedOrder))].siteName == 'Amazon UK-prime',
+                                                                              isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+                                                                            ).whenComplete(
+                                                                                    () async {
+                                                                                  if (labelError
+                                                                                      .isNotEmpty) {
+                                                                                    await Future.delayed(const Duration(milliseconds: 100),
+                                                                                            () {
+                                                                                          ToastUtils.motionToastCentered1500MS(
+                                                                                            message: labelError,
+                                                                                            context: context,
+                                                                                          );
+                                                                                        }).whenComplete(() {
+                                                                                      validateController.reset();
+                                                                                    });
+                                                                                  } else {
+                                                                                    await print(labelUrl).whenComplete(() {
+                                                                                      validateController.reset();
+                                                                                    });
+                                                                                  }
+                                                                                }).whenComplete(() =>
+                                                                                Navigator.pop(context));
+                                                                          });
+                                                                        },
+                                                                        child:
+                                                                        const Text(
+                                                                          'Create',
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                  ],
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            );
-                                        }
-                                      }
-                                    },
-                                    child: Text(
-                                      "Print Shipping Label",
-                                      style: TextStyle(
-                                        fontSize: size.width * .015,
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          }
+                                        });
+                                      },
+                                      child: Text(
+                                        "Print Shipping Label",
+                                        style: TextStyle(
+                                          fontSize: size.width * .015,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -1723,88 +2079,130 @@ class _PickListDetailsState extends State<PickListDetails> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: size.height * .01,
-                          width: size.width,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: size.height * .01,
+                            width: size.width,
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SelectableText(
-                              "Order Id : ",
-                              style: TextStyle(
-                                fontSize: size.width * .04,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SelectableText(
+                                "SKU : ",
+                                style: TextStyle(fontSize: size.width * .04),
                               ),
-                            ),
-                            Flexible(
-                              child: SelectableText(
-                                details[id - 1].orderNumber == ''
+                              SelectableText(
+                                details[id - 1].sku == ''
                                     ? 'Not Available'
-                                    : details[id - 1].orderNumber.trim(),
+                                    : details[id - 1].sku,
                                 style: TextStyle(
-                                  overflow: TextOverflow.visible,
-                                  fontSize: size.width * .04,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                    fontSize: size.width * .04,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.height * .01,
-                          width: size.width,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SelectableText(
-                              "Shipping Carrier : ",
-                              style: TextStyle(
-                                fontSize: size.width * .04,
-                              ),
-                            ),
-                            Flexible(
-                              child: SelectableText(
-                                details[id - 1].shippingCarrierForMsmqw == ''
-                                    ? 'Not Available'
-                                    : details[id - 1]
-                                        .shippingCarrierForMsmqw
-                                        .trim(),
-                                style: TextStyle(
-                                  overflow: TextOverflow.visible,
-                                  fontSize: size.width * .04,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: size.height * .01,
                           width: size.width,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SelectableText(
-                              "Shipping Class : ",
-                              style: TextStyle(fontSize: size.width * .04),
-                            ),
-                            Flexible(
-                              child: SelectableText(
-                                details[id - 1].shippingClassForMsmqw == ''
-                                    ? 'Not Available'
-                                    : details[id - 1]
-                                        .shippingClassForMsmqw
-                                        .trim(),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SelectableText(
+                                "Order Id : ",
                                 style: TextStyle(
-                                  overflow: TextOverflow.visible,
                                   fontSize: size.width * .04,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                          ],
+                              Flexible(
+                                child: SelectableText(
+                                  details[id - 1].orderNumber == ''
+                                      ? 'Not Available'
+                                      : details[id - 1].orderNumber.trim(),
+                                  style: TextStyle(
+                                    overflow: TextOverflow.visible,
+                                    fontSize: size.width * .04,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: size.height * .01,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SelectableText(
+                                "Shipping Carrier : ",
+                                style: TextStyle(
+                                  fontSize: size.width * .04,
+                                ),
+                              ),
+                              Flexible(
+                                child: SelectableText(
+                                  details[id - 1].shippingCarrierForMsmqw == ''
+                                      ? 'Not Available'
+                                      : details[id - 1]
+                                          .shippingCarrierForMsmqw
+                                          .trim(),
+                                  style: TextStyle(
+                                    overflow: TextOverflow.visible,
+                                    fontSize: size.width * .04,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: SizedBox(
+                            height: size.height * .01,
+                            width: size.width,
+                          ),
+                        ),
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SelectableText(
+                                "Shipping Class : ",
+                                style: TextStyle(fontSize: size.width * .04),
+                              ),
+                              Flexible(
+                                child: SelectableText(
+                                  details[id - 1].shippingClassForMsmqw == ''
+                                      ? 'Not Available'
+                                      : details[id - 1]
+                                          .shippingClassForMsmqw
+                                          .trim(),
+                                  style: TextStyle(
+                                    overflow: TextOverflow.visible,
+                                    fontSize: size.width * .04,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: size.height * .02,
@@ -1907,63 +2305,66 @@ class _PickListDetailsState extends State<PickListDetails> {
                           height: size.height * .02,
                           width: size.width,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            details[id - 1].ean == ''
-                                ? Column(children: [
-                                    const SelectableText(
-                                      "Barcode missing for this SKU : ",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 15),
-                                    ),
-                                    SelectableText(
-                                      details[id - 1].sku,
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
+                        Visibility(
+                          visible: widget.appBarName.substring(0, 4) != 'Shop',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              details[id - 1].ean == ''
+                                  ? Column(children: [
+                                      const SelectableText(
+                                        "Barcode missing for this SKU : ",
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 15),
+                                      ),
+                                      SelectableText(
+                                        details[id - 1].sku,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      )
+                                    ])
+                                  : Visibility(
+                                      visible: widget.showPickedOrders == false,
+                                      child: RoundedLoadingButton(
+                                        color: appColor,
+                                        borderRadius: 10,
+                                        elevation: 10,
+                                        height: size.width * .12,
+                                        width: size.width * .8,
+                                        successIcon: Icons.check_rounded,
+                                        failedIcon: Icons.close_rounded,
+                                        successColor: Colors.green,
+                                        errorColor: appColor,
+                                        controller: validateController,
+                                        onPressed: () async => validate(
+                                          screen: BarcodeCameraScreen(
+                                            accType: widget.accType,
+                                            authorization: widget.authorization,
+                                            refreshToken: widget.refreshToken,
+                                            crossVisible: false,
+                                            screenType: 'picklist details',
+                                            profileId: widget.profileId,
+                                            distCenterName: widget.distCenterName,
+                                            distCenterId: widget.distCenterId,
+                                            barcodeToCheck: int.parse(
+                                                details[id - 1].ean.isEmpty
+                                                    ? '0'
+                                                    : details[id - 1].ean),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "Validate Scan",
+                                          style: TextStyle(
+                                            fontSize: size.width * .05,
+                                          ),
+                                        ),
                                       ),
                                     )
-                                  ])
-                                : Visibility(
-                                    visible: widget.showPickedOrders == false,
-                                    child: RoundedLoadingButton(
-                                      color: appColor,
-                                      borderRadius: 10,
-                                      elevation: 10,
-                                      height: size.width * .12,
-                                      width: size.width * .8,
-                                      successIcon: Icons.check_rounded,
-                                      failedIcon: Icons.close_rounded,
-                                      successColor: Colors.green,
-                                      errorColor: appColor,
-                                      controller: validateController,
-                                      onPressed: () async => validate(
-                                        screen: BarcodeCameraScreen(
-                                          accType: widget.accType,
-                                          authorization: widget.authorization,
-                                          refreshToken: widget.refreshToken,
-                                          crossVisible: false,
-                                          screenType: 'picklist details',
-                                          profileId: widget.profileId,
-                                          distCenterName: widget.distCenterName,
-                                          distCenterId: widget.distCenterId,
-                                          barcodeToCheck: int.parse(
-                                              details[id - 1].ean.isEmpty
-                                                  ? '0'
-                                                  : details[id - 1].ean),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        "Validate Scan",
-                                        style: TextStyle(
-                                          fontSize: size.width * .05,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -2084,7 +2485,8 @@ class _PickListDetailsState extends State<PickListDetails> {
 
   double webImageSizeIfOrdersMoreThan3(Size size) {
     return details[id - 1].orderQuantity.length > 3
-        ? (size.height * .35) - (30 * (details[id - 1].orderQuantity.length - 3))
+        ? (size.height * .35) -
+            (30 * (details[id - 1].orderQuantity.length - 3))
         : size.height * .35;
   }
 
@@ -2112,8 +2514,8 @@ class _PickListDetailsState extends State<PickListDetails> {
             6 * PdfPageFormat.inch,
           ),
           build: (pw.Context context) {
-        return pw.Image(pw.MemoryImage(base64Decode(url)));
-      }));
+            return pw.Image(pw.MemoryImage(base64Decode(url)));
+          }));
       await Printing.layoutPdf(
           onLayout: (PdfPageFormat format) async => pdf.save());
     } catch (e) {
@@ -2124,6 +2526,7 @@ class _PickListDetailsState extends State<PickListDetails> {
   Future<void> printLabel({
     required String siteOrderId,
     required bool isAmazonPrime,
+    required bool isTest,
   }) async {
     setState(() {
       labelUrl = '';
@@ -2141,7 +2544,7 @@ class _PickListDetailsState extends State<PickListDetails> {
     }
     String uri = isAmazonPrime
         ? 'https://pickpackquick.azurewebsites.net/api/JadlamLabel?OrderNumber=$siteOrderIdToSent'
-        : 'https://weblegs.info/EasyPostv2/api/EasyPostVersion2?OrderNumber=$siteOrderIdToSent';
+        : 'https://weblegs.info/EasyPostv2/api/EasyPostVersion2?OrderNumber=$siteOrderIdToSent&IsTest=$isTest';
     log('PRINT LABEL FOR PICKLIST DETAILS SCREEN PROCESS');
     log('V siteOrderIdToSent >>---> $siteOrderIdToSent');
     log('PRINT LABEL API URI >>---> $uri');
@@ -2207,14 +2610,14 @@ class _PickListDetailsState extends State<PickListDetails> {
 
         GetLockedPicklistResponse getLockedPicklistResponse =
             GetLockedPicklistResponse.fromJson(jsonDecode(response.body));
-        log('V getLockedPicklistResponse >>---> $getLockedPicklistResponse');
+        log('V getLockedPicklistResponse >>---> ${jsonEncode(getLockedPicklistResponse)}');
 
         lockedPicklistList = [];
         if (getLockedPicklistResponse.message.isNotEmpty) {
           lockedPicklistList
               .addAll(getLockedPicklistResponse.message.map((e) => e));
         }
-        log('V lockedPicklistList >>---> $lockedPicklistList');
+        log('V lockedPicklistList >>---> ${jsonEncode(lockedPicklistList)}');
 
         setState(() {
           isDetailsVisible = true;
@@ -2248,7 +2651,7 @@ class _PickListDetailsState extends State<PickListDetails> {
         DateTime.now().toUtc().add(const Duration(hours: 1));
     log('V britishTimeNow >>---> $britishTimeNow');
 
-    List<MessageXX> picklistsToDelete = [];
+    List<MsgX> picklistsToDelete = [];
     if (lockedPicklistList
         .where((e) =>
             (britishTimeNow
@@ -2748,11 +3151,8 @@ class _PickListDetailsState extends State<PickListDetails> {
       );
 
       if (response.statusCode == 200) {
-        log('getPickListDetails response >>>>> ${jsonDecode(response.body)}');
-
         GetPicklistDetailsResponse getPicklistDetailsResponse =
             GetPicklistDetailsResponse.fromJson(jsonDecode(response.body));
-        log('getPicklistDetailsResponse >>>>>>>> ${jsonEncode(getPicklistDetailsResponse)}');
 
         details = [];
         details.addAll(getPicklistDetailsResponse.sku.map((e) => e));
@@ -2765,9 +3165,6 @@ class _PickListDetailsState extends State<PickListDetails> {
               !skuInOrder.containsKey(e) ? (1) : (skuInOrder[e] + 1);
         }
         log('skuInOrder > $skuInOrder');
-
-        log('details >>>>> ${jsonEncode(details)}');
-        log('length >>>> ${details.length}');
 
         qtyToPick.addAll(details.map((e) => e.qtyToPick));
         log('qtyToPick - ${jsonEncode(qtyToPick)}');

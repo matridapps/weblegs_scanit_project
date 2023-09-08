@@ -4,7 +4,7 @@ import 'dart:developer';
 
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
-import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:absolute_app/models/get_order_details_with_label_response.dart';
 import 'package:absolute_app/models/scanned_order_model.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +77,9 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
       setState(() {
         eanOrOrderSelected = prefs.getString('eanOrOrderNumber') ?? 'Barcode';
         selectedPicklist = prefs.getString('picklistType') ?? 'SIW';
-        selectedPrinter = prefs.getString('selectedPrinter') ?? '';
+        selectedPrinter = prefs.getString('selectedPrinter') == 'null'
+            ? ''
+            : prefs.getString('selectedPrinter') ?? '';
         selectedPrinterId = prefs.getInt('selectedPrinterId') ?? 0;
       });
     }).whenComplete(() async {
@@ -121,215 +123,220 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
   }
 
   void apiCall() async {
-    if (eanOrOrderSelected == 'Order Number') {
-      await getOrdersDetailsWithLabel(
-        type: '',
-        ean: '',
-        orderNumber: barcodeController.text,
-      ).whenComplete(() async {
-        if (isSuccessfulCase) {
-          await sendPrintJob(
-            apiKey: widget.apiKey,
-            printerId: selectedPrinterId,
-            printerName: selectedPrinter,
-            orderNumber: ordersList[0].orderNumber,
-            labelPdfUrl: labelUrl,
-          );
-        }
-      }).whenComplete(() async {
-        setState(() {
-          isLoading = true;
-        });
-        if (ordersList.isNotEmpty) {
-          if (ordersList.length > 1) {
-            /// MSMQW
-            saveScannedOrdersForMSMQWData(
-              picklistType: 'MSMQW',
-              title: ordersList.map((e) => e.title).toList(),
-              sku: ordersList.map((e) => e.sku).toList(),
-              barcode: ordersList.map((e) => e.ean).toList(),
+    await SharedPreferences.getInstance().then((prefs) async {
+      if (eanOrOrderSelected == 'Order Number') {
+        await getOrdersDetailsWithLabel(
+                type: '',
+                ean: '',
+                orderNumber: barcodeController.text,
+                isTest:
+                    (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test')
+            .whenComplete(() async {
+          if (isSuccessfulCase) {
+            await sendPrintJob(
+              apiKey: widget.apiKey,
+              printerId: selectedPrinterId,
+              printerName: selectedPrinter,
               orderNumber: ordersList[0].orderNumber,
-              qtyToPick: ordersList.map((e) => e.qtyToPick).toList(),
-              url: ordersList.map((e) => e.url).toList(),
-              siteOrderId: ordersList[0].siteOrderId,
-              siteName: ordersList.map((e) => e.siteName).toList(),
-              labelError: labelError,
-              labelUrl: labelUrl,
-            );
-
-            setState(() {
-              selectedPicklist = 'MSMQW';
-            });
-          } else {
-            /// SIW OR SSMQW
-            saveScannedOrdersData(
-              picklistType:
-                  parseToInt(ordersList[0].qtyToPick) > 1 ? 'SSMQW' : 'SIW',
-              title: ordersList[0].title,
-              sku: ordersList[0].sku,
-              barcode: ordersList[0].ean,
-              orderNumber: ordersList[0].orderNumber,
-              qtyToPick: ordersList[0].qtyToPick,
-              url: ordersList[0].url,
-              siteOrderId: ordersList[0].siteOrderId,
-              siteName: ordersList[0].siteName,
-              labelError: labelError,
-              labelUrl: labelUrl,
-              packagingType: ordersList[0].packageType,
-            );
-
-            setState(() {
-              selectedPicklist =
-                  parseToInt(ordersList[0].qtyToPick) > 1 ? 'SSMQW' : 'SIW';
-            });
-          }
-        }
-        await Future.delayed(const Duration(seconds: 1), () async {
-          if (selectedPicklist == 'MSMQW') {
-            await getScannedMSMQWOrders().whenComplete(() {
-              barcodeController.clear();
-              barcodeFocus.requestFocus();
-              setState(() {
-                ordersList = [];
-                labelUrl = '';
-              });
-            }).whenComplete(() {
-              setState(() {
-                isLoading = false;
-              });
-            });
-          }
-
-          if (selectedPicklist != 'MSMQW') {
-            await getScannedOrders().whenComplete(() {
-              if (scannedOrdersList
-                  .where((e) => e.picklistType == selectedPicklist)
-                  .toList()
-                  .isNotEmpty) {
-                printController = [];
-                printController.addAll(List.generate(
-                    scannedOrdersList
-                        .where((e) => e.picklistType == selectedPicklist)
-                        .toList()
-                        .length,
-                    (index) => RoundedLoadingButtonController()));
-                log('LENGTH OF PRINT CONTROLLER LIST FOR SIW AND SSMQW >>---> ${printController.length}');
-              }
-            }).whenComplete(() {
-              barcodeController.clear();
-              barcodeFocus.requestFocus();
-              setState(() {
-                ordersList = [];
-                labelUrl = '';
-              });
-            }).whenComplete(() {
-              setState(() {
-                isLoading = false;
-              });
-            });
-          }
-        });
-      });
-    }
-
-    ///  PRODUCT BARCODE SELECTED CASE
-
-    else {
-      await getOrdersDetailsWithLabel(
-        type: selectedPicklist,
-        ean: barcodeController.text,
-        orderNumber: '',
-      ).whenComplete(() async {
-        if (isSuccessfulCase) {
-          await sendPrintJob(
-            apiKey: widget.apiKey,
-            printerId: selectedPrinterId,
-            printerName: selectedPrinter,
-            orderNumber: ordersList[0].orderNumber,
-            labelPdfUrl: labelUrl,
-          );
-        }
-      }).whenComplete(() async {
-        setState(() {
-          isLoading = true;
-        });
-        if (ordersList.isNotEmpty) {
-          if (selectedPicklist == 'MSMQW') {
-            saveScannedOrdersForMSMQWData(
-              picklistType: 'MSMQW',
-              title: ordersList.map((e) => e.title).toList(),
-              sku: ordersList.map((e) => e.sku).toList(),
-              barcode: ordersList.map((e) => e.ean).toList(),
-              orderNumber: ordersList[0].orderNumber,
-              qtyToPick: ordersList.map((e) => e.qtyToPick).toList(),
-              url: ordersList.map((e) => e.url).toList(),
-              siteOrderId: ordersList[0].siteOrderId,
-              siteName: ordersList.map((e) => e.siteName).toList(),
-              labelError: labelError,
-              labelUrl: labelUrl,
-            );
-          } else {
-            saveScannedOrdersData(
-              picklistType: selectedPicklist,
-              title: ordersList[0].title,
-              sku: ordersList[0].sku,
-              barcode: ordersList[0].ean,
-              orderNumber: ordersList[0].orderNumber,
-              qtyToPick: ordersList[0].qtyToPick,
-              url: ordersList[0].url,
-              siteOrderId: ordersList[0].siteOrderId,
-              siteName: ordersList[0].siteName,
-              labelError: labelError,
-              labelUrl: labelUrl,
-              packagingType: ordersList[0].packageType,
+              labelPdfUrl: labelUrl,
             );
           }
-        }
-        await Future.delayed(const Duration(seconds: 1), () async {
-          if (selectedPicklist == 'MSMQW') {
-            await getScannedMSMQWOrders().whenComplete(() {
-              barcodeController.clear();
-              barcodeFocus.requestFocus();
+        }).whenComplete(() async {
+          setState(() {
+            isLoading = true;
+          });
+          if (ordersList.isNotEmpty) {
+            if (ordersList.length > 1) {
+              /// MSMQW
+              saveScannedOrdersForMSMQWData(
+                picklistType: 'MSMQW',
+                title: ordersList.map((e) => e.title).toList(),
+                sku: ordersList.map((e) => e.sku).toList(),
+                barcode: ordersList.map((e) => e.ean).toList(),
+                orderNumber: ordersList[0].orderNumber,
+                qtyToPick: ordersList.map((e) => e.qtyToPick).toList(),
+                url: ordersList.map((e) => e.url).toList(),
+                siteOrderId: ordersList[0].siteOrderId,
+                siteName: ordersList.map((e) => e.siteName).toList(),
+                labelError: labelError,
+                labelUrl: labelUrl,
+              );
+
               setState(() {
-                ordersList = [];
-                labelUrl = '';
+                selectedPicklist = 'MSMQW';
               });
-            }).whenComplete(() {
+            } else {
+              /// SIW OR SSMQW
+              saveScannedOrdersData(
+                picklistType:
+                    parseToInt(ordersList[0].qtyToPick) > 1 ? 'SSMQW' : 'SIW',
+                title: ordersList[0].title,
+                sku: ordersList[0].sku,
+                barcode: ordersList[0].ean,
+                orderNumber: ordersList[0].orderNumber,
+                qtyToPick: ordersList[0].qtyToPick,
+                url: ordersList[0].url,
+                siteOrderId: ordersList[0].siteOrderId,
+                siteName: ordersList[0].siteName,
+                labelError: labelError,
+                labelUrl: labelUrl,
+                packagingType: ordersList[0].packageType,
+              );
+
               setState(() {
-                isLoading = false;
+                selectedPicklist =
+                    parseToInt(ordersList[0].qtyToPick) > 1 ? 'SSMQW' : 'SIW';
               });
-            });
-          } else {
-            await getScannedOrders().whenComplete(() {
-              if (scannedOrdersList
-                  .where((e) => e.picklistType == selectedPicklist)
-                  .toList()
-                  .isNotEmpty) {
-                printController = [];
-                printController.addAll(List.generate(
-                    scannedOrdersList
-                        .where((e) => e.picklistType == selectedPicklist)
-                        .toList()
-                        .length,
-                    (index) => RoundedLoadingButtonController()));
-                log('LENGTH OF PRINT CONTROLLER LIST FOR SIW AND SSMQW >>---> ${printController.length}');
-              }
-            }).whenComplete(() {
-              barcodeController.clear();
-              barcodeFocus.requestFocus();
-              setState(() {
-                ordersList = [];
-                labelUrl = '';
-              });
-            }).whenComplete(() {
-              setState(() {
-                isLoading = false;
-              });
-            });
+            }
           }
+          await Future.delayed(const Duration(seconds: 1), () async {
+            if (selectedPicklist == 'MSMQW') {
+              await getScannedMSMQWOrders().whenComplete(() {
+                barcodeController.clear();
+                barcodeFocus.requestFocus();
+                setState(() {
+                  ordersList = [];
+                  labelUrl = '';
+                });
+              }).whenComplete(() {
+                setState(() {
+                  isLoading = false;
+                });
+              });
+            }
+
+            if (selectedPicklist != 'MSMQW') {
+              await getScannedOrders().whenComplete(() {
+                if (scannedOrdersList
+                    .where((e) => e.picklistType == selectedPicklist)
+                    .toList()
+                    .isNotEmpty) {
+                  printController = [];
+                  printController.addAll(List.generate(
+                      scannedOrdersList
+                          .where((e) => e.picklistType == selectedPicklist)
+                          .toList()
+                          .length,
+                      (index) => RoundedLoadingButtonController()));
+                  log('LENGTH OF PRINT CONTROLLER LIST FOR SIW AND SSMQW >>---> ${printController.length}');
+                }
+              }).whenComplete(() {
+                barcodeController.clear();
+                barcodeFocus.requestFocus();
+                setState(() {
+                  ordersList = [];
+                  labelUrl = '';
+                });
+              }).whenComplete(() {
+                setState(() {
+                  isLoading = false;
+                });
+              });
+            }
+          });
         });
-      });
-    }
+      }
+
+      ///  PRODUCT BARCODE SELECTED CASE
+      else {
+        await getOrdersDetailsWithLabel(
+                type: selectedPicklist,
+                ean: barcodeController.text,
+                orderNumber: '',
+                isTest:
+                    (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test')
+            .whenComplete(() async {
+          if (isSuccessfulCase) {
+            await sendPrintJob(
+              apiKey: widget.apiKey,
+              printerId: selectedPrinterId,
+              printerName: selectedPrinter,
+              orderNumber: ordersList[0].orderNumber,
+              labelPdfUrl: labelUrl,
+            );
+          }
+        }).whenComplete(() async {
+          setState(() {
+            isLoading = true;
+          });
+          if (ordersList.isNotEmpty) {
+            if (selectedPicklist == 'MSMQW') {
+              saveScannedOrdersForMSMQWData(
+                picklistType: 'MSMQW',
+                title: ordersList.map((e) => e.title).toList(),
+                sku: ordersList.map((e) => e.sku).toList(),
+                barcode: ordersList.map((e) => e.ean).toList(),
+                orderNumber: ordersList[0].orderNumber,
+                qtyToPick: ordersList.map((e) => e.qtyToPick).toList(),
+                url: ordersList.map((e) => e.url).toList(),
+                siteOrderId: ordersList[0].siteOrderId,
+                siteName: ordersList.map((e) => e.siteName).toList(),
+                labelError: labelError,
+                labelUrl: labelUrl,
+              );
+            } else {
+              saveScannedOrdersData(
+                picklistType: selectedPicklist,
+                title: ordersList[0].title,
+                sku: ordersList[0].sku,
+                barcode: ordersList[0].ean,
+                orderNumber: ordersList[0].orderNumber,
+                qtyToPick: ordersList[0].qtyToPick,
+                url: ordersList[0].url,
+                siteOrderId: ordersList[0].siteOrderId,
+                siteName: ordersList[0].siteName,
+                labelError: labelError,
+                labelUrl: labelUrl,
+                packagingType: ordersList[0].packageType,
+              );
+            }
+          }
+          await Future.delayed(const Duration(seconds: 1), () async {
+            if (selectedPicklist == 'MSMQW') {
+              await getScannedMSMQWOrders().whenComplete(() {
+                barcodeController.clear();
+                barcodeFocus.requestFocus();
+                setState(() {
+                  ordersList = [];
+                  labelUrl = '';
+                });
+              }).whenComplete(() {
+                setState(() {
+                  isLoading = false;
+                });
+              });
+            } else {
+              await getScannedOrders().whenComplete(() {
+                if (scannedOrdersList
+                    .where((e) => e.picklistType == selectedPicklist)
+                    .toList()
+                    .isNotEmpty) {
+                  printController = [];
+                  printController.addAll(List.generate(
+                      scannedOrdersList
+                          .where((e) => e.picklistType == selectedPicklist)
+                          .toList()
+                          .length,
+                      (index) => RoundedLoadingButtonController()));
+                  log('LENGTH OF PRINT CONTROLLER LIST FOR SIW AND SSMQW >>---> ${printController.length}');
+                }
+              }).whenComplete(() {
+                barcodeController.clear();
+                barcodeFocus.requestFocus();
+                setState(() {
+                  ordersList = [];
+                  labelUrl = '';
+                });
+              }).whenComplete(() {
+                setState(() {
+                  isLoading = false;
+                });
+              });
+            }
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -359,7 +366,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
               width: size.width,
               child: const Center(
                 child: Text(
-                  'No Printer Selected! Please Select from PrintNode Settings.',
+                  'No Printer Selected! Please Select from PrintNode Settings',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -383,13 +390,14 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                         Padding(
                           padding: EdgeInsets.only(top: size.width * .025),
                           child: SizedBox(
-                            height: size.height * .05,
+                            height: 40,
                             width: size.width,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height: 50,
+                                  height: 40,
                                   width: size.width * .1,
                                   decoration: BoxDecoration(
                                     border: Border.all(
@@ -511,7 +519,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                 Visibility(
                                   visible: eanOrOrderSelected == 'Barcode',
                                   child: Container(
-                                    height: 50,
+                                    height: 40,
                                     width: size.width * .1,
                                     decoration: BoxDecoration(
                                       border: Border.all(
@@ -630,7 +638,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 50,
+                                  height: 40,
                                   width: eanOrOrderSelected == 'Barcode'
                                       ? size.width * .7
                                       : size.width * .8,
@@ -638,9 +646,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                     focusNode: barcodeFocus,
                                     autofocus: true,
                                     controller: barcodeController,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                     decoration: InputDecoration(
                                       hintText: eanOrOrderSelected == 'Barcode'
                                           ? 'Product Barcode'
@@ -650,11 +656,14 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                       ),
                                       contentPadding: const EdgeInsets.all(5),
                                       border: const OutlineInputBorder(
-                                        borderSide: BorderSide(width: 0.5),
+                                        borderSide: BorderSide(
+                                            color: appColor, width: 1),
+                                        borderRadius: BorderRadius.zero,
                                       ),
                                       focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: appColor, width: 1),
+                                        borderRadius: BorderRadius.zero,
                                       ),
                                       filled: true,
                                       fillColor: Colors.white,
@@ -905,9 +914,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -926,9 +933,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -946,9 +951,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -1123,18 +1126,10 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                     width: 1,
                   ),
                   columnWidths: {
-                      0: FixedColumnWidth(
-                        size.width * .55,
-                      ),
-                      1: FixedColumnWidth(
-                        size.width * .1,
-                      ),
-                      2: FixedColumnWidth(
-                        size.width * .2,
-                      ),
-                      3: FixedColumnWidth(
-                        size.width * .1,
-                      ),
+                      0: FixedColumnWidth(size.width * .55),
+                      1: FixedColumnWidth(size.width * .1),
+                      2: FixedColumnWidth(size.width * .2),
+                      3: FixedColumnWidth(size.width * .1),
                     },
                   children: [
                       TableRow(
@@ -1143,36 +1138,28 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                             child: Container(
                               height: 50,
                               color: Colors.grey.shade200,
-                              child: const Center(
-                                child: Text('Order Details'),
-                              ),
+                              child: const Center(child: Text('Order Details')),
                             ),
                           ),
                           TableCell(
                             child: Container(
                               height: 50,
                               color: Colors.grey.shade200,
-                              child: const Center(
-                                child: Text('QTY'),
-                              ),
+                              child: const Center(child: Text('QTY')),
                             ),
                           ),
                           TableCell(
                             child: Container(
                               height: 50,
                               color: Colors.grey.shade200,
-                              child: const Center(
-                                child: Text('Image'),
-                              ),
+                              child: const Center(child: Text('Image')),
                             ),
                           ),
                           TableCell(
                             child: Container(
                               height: 50,
                               color: Colors.grey.shade200,
-                              child: const Center(
-                                child: Text('Print Label'),
-                              ),
+                              child: const Center(child: Text('Print Label')),
                             ),
                           ),
                         ],
@@ -1213,9 +1200,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -1234,9 +1219,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -1254,9 +1237,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                             )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+                                        const SizedBox(height: 10),
                                         Row(
                                           children: [
                                             const SelectableText(
@@ -1413,9 +1394,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
 
   Widget _msmqwScanOffBuilder(BuildContext context, Size size) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: size.width * .01,
-      ),
+      padding: EdgeInsets.only(top: size.width * .01),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1427,22 +1406,15 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
               children: [
                 const SelectableText(
                   'Showing Last Scanned',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
                 const SelectableText(
                   'MSMQW',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SelectableText(
                   'Order',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
                 Visibility(
                   visible: scannedOrdersList
@@ -1469,20 +1441,11 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
             ),
           ),
           Table(
-              border: TableBorder.all(
-                color: Colors.black,
-                width: 1,
-              ),
+              border: TableBorder.all(color: Colors.black, width: 1),
               columnWidths: {
-                0: FixedColumnWidth(
-                  size.width * .55,
-                ),
-                1: FixedColumnWidth(
-                  size.width * .1,
-                ),
-                2: FixedColumnWidth(
-                  size.width * .3,
-                ),
+                0: FixedColumnWidth(size.width * .55),
+                1: FixedColumnWidth(size.width * .1),
+                2: FixedColumnWidth(size.width * .3),
               },
               children: [
                 TableRow(
@@ -1491,27 +1454,21 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                       child: Container(
                         height: 50,
                         color: Colors.grey.shade200,
-                        child: const Center(
-                          child: Text('Order Details'),
-                        ),
+                        child: const Center(child: Text('Order Details')),
                       ),
                     ),
                     TableCell(
                       child: Container(
                         height: 50,
                         color: Colors.grey.shade200,
-                        child: const Center(
-                          child: Text('QTY'),
-                        ),
+                        child: const Center(child: Text('QTY')),
                       ),
                     ),
                     TableCell(
                       child: Container(
                         height: 50,
                         color: Colors.grey.shade200,
-                        child: const Center(
-                          child: Text('Image'),
-                        ),
+                        child: const Center(child: Text('Image')),
                       ),
                     ),
                   ],
@@ -1550,9 +1507,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                       )
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   Row(
                                     children: [
                                       const SelectableText(
@@ -1570,15 +1525,14 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                       )
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   Row(
                                     children: [
                                       const SelectableText(
                                         'Barcode : ',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                       SelectableText(
                                         scannedOrdersList
@@ -1589,9 +1543,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                       )
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   Row(
                                     children: [
                                       const SelectableText(
@@ -1624,8 +1576,9 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                                       .toList()[index]
                                       .qtyToPick,
                                   style: const TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1711,9 +1664,7 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
                 child: const Center(
                   child: Text(
                     'RePrint Label',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -1883,13 +1834,14 @@ class _PackAndScanWebNewState extends State<PackAndScanWebNew> {
     required String type,
     required String ean,
     required String orderNumber,
+    required bool isTest,
   }) async {
     setState(() {
       isPrintingLabel = true;
       isSuccessfulCase = false;
     });
     String uri =
-        'https://weblegs.info/EasyPost/api/EasyPostSpeedCheck?type=$type&ean=$ean&OrderNumber=$orderNumber';
+        'https://weblegs.info/EasyPost/api/EasyPostSpeedCheck?type=$type&ean=$ean&OrderNumber=$orderNumber&IsTest=$isTest';
     log('GET ORDERS DETAILS WITH LABEL API URI >>---> $uri');
 
     try {

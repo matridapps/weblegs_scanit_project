@@ -7,7 +7,7 @@ String getLockedPicklistResponseToJson(GetLockedPicklistResponse data) =>
     json.encode(data.toJson());
 
 class GetLockedPicklistResponse {
-  List<MessageXX> message;
+  List<MsgX> message;
 
   GetLockedPicklistResponse({
     required this.message,
@@ -15,8 +15,8 @@ class GetLockedPicklistResponse {
 
   factory GetLockedPicklistResponse.fromJson(Map<String, dynamic> json) =>
       GetLockedPicklistResponse(
-        message: List<MessageXX>.from(
-            json["message"].map((x) => MessageXX.fromJson(x))),
+        message: List<MsgX>.from(
+            json["message"].map((x) => MsgX.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -24,20 +24,20 @@ class GetLockedPicklistResponse {
       };
 }
 
-class MessageXX {
+class MsgX {
   String id;
   String batchId;
   String userName;
   String createdDate;
 
-  MessageXX({
+  MsgX({
     required this.id,
     required this.batchId,
     required this.userName,
     required this.createdDate,
   });
 
-  factory MessageXX.fromJson(Map<String, dynamic> json) => MessageXX(
+  factory MsgX.fromJson(Map<String, dynamic> json) => MsgX(
         id: json["id"],
         batchId: json["BatchId"],
         userName: json["UserName"],

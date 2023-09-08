@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
-import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:absolute_app/models/get_pack_and_scan_response.dart';
 import 'package:absolute_app/models/scanned_order_model.dart';
 import 'package:flutter/material.dart';
@@ -283,255 +283,72 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
       buttonLoading = true;
     });
     log('PRINT LABEL API START >>---> ${DateTime.now().toUtc().add(const Duration(hours: 1))}');
-    await printLabel(
-      siteOrderId:
-          (eanOrOrderSelected == 'Barcode' && selectedPicklist == 'MSMQW')
-              ? orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId
-              : orderListForPackAndScan[0].siteOrderId,
-      isAmazonPrime:
-          ((eanOrOrderSelected == 'Barcode' && selectedPicklist == 'MSMQW')
-                      ? orderListForPackAndScanBarcodeMSMQW[0][0].siteName
-                      : orderListForPackAndScan[0].siteName) ==
-                  'Amazon UK-prime'
-              ? true
-              : false,
-    ).whenComplete(() async {
-      if (labelError.isNotEmpty) {
-        setState(() {
-          isPrintingLabel = false;
-        });
-        Fluttertoast.showToast(msg: labelError).whenComplete(() async {
+    await SharedPreferences.getInstance().then((prefs) async {
+      await printLabel(
+      siteOrderId: (eanOrOrderSelected == 'Barcode' && selectedPicklist == 'MSMQW')
+          ? orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId
+          : orderListForPackAndScan[0].siteOrderId,
+      isAmazonPrime: ((eanOrOrderSelected == 'Barcode' && selectedPicklist == 'MSMQW')
+          ? orderListForPackAndScanBarcodeMSMQW[0][0].siteName
+          : orderListForPackAndScan[0].siteName) == 'Amazon UK-prime',
+      isTest: (prefs.getString('EasyPostTestOrLive') ?? 'Test') == 'Test',
+      ).whenComplete(() async {
+        if (labelError.isNotEmpty) {
           setState(() {
-            isLoading = true;
+            isPrintingLabel = false;
           });
-          await Future.delayed(const Duration(milliseconds: 100), () {
+          Fluttertoast.showToast(msg: labelError).whenComplete(() async {
             setState(() {
-              errorVisible = true;
-              isLoading = false;
+              isLoading = true;
             });
-          }).whenComplete(() async {
-            setState(() {
-              buttonLoading = false;
-            });
-            if (labelError.contains('shipped') == true) {
-              if (eanOrOrderSelected == 'Order Number') {
-                saveLabelData(
-                  serialNo: serialNoDB + 1,
-                  isShippedOrder: 'Yes',
-                  orderId: orderListForPackAndScan[0].orderNumber,
-                  ean: eanListForOrderNumberCase.join(','),
-                  siteName: siteNameListForOrderNumberCase.join(','),
-                  siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                  encryptedLabel: 'NA',
-                );
-
-                /// ERROR IN LABEL AND ORDER NUMBER SELECTED CASE
-                /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
-                /// SSMQW ORDERS
-                if (selectedPicklist == 'MSMQW') {
-                  /// ADDED HANDLING FOR ORDER NUMBER -- LABEL ERROR -- MSMQW CASE
-                  saveScannedOrdersForMSMQWData(
-                    picklistType: 'MSMQW',
-                    title: orderListForPackAndScan.map((e) => e.title).toList(),
-                    sku: orderListForPackAndScan.map((e) => e.sku).toList(),
-                    barcode: orderListForPackAndScan.map((e) => e.ean).toList(),
-                    orderNumber: orderListForPackAndScan[0].orderNumber,
-                    qtyToPick: orderListForPackAndScan
-                        .map((e) => e.qtyToPick)
-                        .toList(),
-                    url: orderListForPackAndScan.map((e) => e.url).toList(),
-                    siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                    siteName:
-                        orderListForPackAndScan.map((e) => e.siteName).toList(),
-                    labelError: labelError,
-                    labelUrl: labelUrl,
-                  );
-                } else {
-                  saveScannedOrdersData(
-                    picklistType:
-                        parseToInt(orderListForPackAndScan[0].qtyToPick) == 1
-                            ? 'SIW'
-                            : 'SSMQW',
-                    title: orderListForPackAndScan[0].title,
-                    sku: orderListForPackAndScan[0].sku,
-                    barcode: orderListForPackAndScan[0].ean,
-                    orderNumber: orderListForPackAndScan[0].orderNumber,
-                    qtyToPick: orderListForPackAndScan[0].qtyToPick,
-                    url: orderListForPackAndScan[0].url,
-                    siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                    siteName: orderListForPackAndScan[0].siteName,
-                    labelError: labelError,
-                    labelUrl: labelUrl,
-                    packagingType:
-                        orderListForPackAndScan[0].packagingType.isEmpty
-                            ? 'NA'
-                            : orderListForPackAndScan[0].packagingType,
-                  );
-                }
-              } else {
-                if (selectedPicklist == 'MSMQW') {
-                  saveLabelData(
-                    serialNo: serialNoDB + 1,
-                    isShippedOrder: 'Yes',
-                    orderId:
-                        orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
-                    ean: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.ean)
-                        .toList()
-                        .join(','),
-                    siteName: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.siteName)
-                        .toList()
-                        .join(','),
-                    siteOrderId:
-                        orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
-                    encryptedLabel: 'NA',
-                  );
-
-                  /// ADDED HANDLING FOR BARCODE -- LABEL ERROR -- MSMQW CASE
-                  saveScannedOrdersForMSMQWData(
-                    picklistType: 'MSMQW',
-                    title: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.title)
-                        .toList(),
-                    sku: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.sku)
-                        .toList(),
-                    barcode: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.ean)
-                        .toList(),
-                    orderNumber:
-                        orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
-                    qtyToPick: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.qtyToPick)
-                        .toList(),
-                    url: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.url)
-                        .toList(),
-                    siteOrderId:
-                        orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
-                    siteName: orderListForPackAndScanBarcodeMSMQW[0]
-                        .map((e) => e.siteName)
-                        .toList(),
-                    labelError: labelError,
-                    labelUrl: labelUrl,
-                  );
-                } else {
-                  saveLabelData(
-                    serialNo: serialNoDB + 1,
-                    isShippedOrder: 'Yes',
-                    orderId: orderListForPackAndScan[0].orderNumber,
-                    ean: orderListForPackAndScan[0].ean,
-                    siteName: orderListForPackAndScan[0].siteName,
-                    siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                    encryptedLabel: 'NA',
-                  );
-
-                  /// ERROR IN LABEL AND BARCODE SELECTED CASE
-                  /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
-                  /// SSMQW ORDERS
-                  saveScannedOrdersData(
-                    picklistType: selectedPicklist,
-                    title: orderListForPackAndScan[0].title,
-                    sku: orderListForPackAndScan[0].sku,
-                    barcode: orderListForPackAndScan[0].ean,
-                    orderNumber: orderListForPackAndScan[0].orderNumber,
-                    qtyToPick: orderListForPackAndScan[0].qtyToPick,
-                    url: orderListForPackAndScan[0].url,
-                    siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                    siteName: orderListForPackAndScan[0].siteName,
-                    labelError: labelError,
-                    labelUrl: labelUrl,
-                    packagingType:
-                        orderListForPackAndScan[0].packagingType.isEmpty
-                            ? 'NA'
-                            : orderListForPackAndScan[0].packagingType,
-                  );
-                }
-              }
-            }
-            await Future.delayed(
-                Duration(seconds: labelError.length >= 60 ? 8 : 3), () {
+            await Future.delayed(const Duration(milliseconds: 100), () {
               setState(() {
-                errorVisible = false;
-                orderListForPackAndScan = [];
-                orderListForPackAndScanBarcodeMSMQW = [];
+                errorVisible = true;
                 isLoading = false;
               });
-              barcodeController.clear();
-              FocusScope.of(context).requestFocus(barcodeFocus);
-            });
-          });
-        });
-      } else {
-        setState(() {
-          isPrintingLabel = true;
-        });
-        await Future.delayed(const Duration(milliseconds: 100), () {
-          log('${DateTime.now().toUtc().add(const Duration(hours: 1))}');
-          print(labelUrl).whenComplete(() async {
-            await Future.delayed(const Duration(milliseconds: 100), () async {
+            }).whenComplete(() async {
               setState(() {
                 buttonLoading = false;
-                isLoading = true;
-                isPrintingLabel = false;
               });
-
-              const encryptionKey = "This 32 char key have 256 bits..";
-
-              encrypt.Encrypted encrypted =
-                  encryptWithAES(encryptionKey, labelUrl);
-              String encryptedBase64 = encrypted.base64;
-              log('Encrypted data in base64 encoding: $encryptedBase64');
-              setState(() {
-                encryptedLabel = encryptedBase64;
-              });
-
-              String decryptedText = decryptWithAES(encryptionKey, encrypted);
-              log('Decrypted data: $decryptedText');
-
-              await Future.delayed(const Duration(milliseconds: 100), () async {
+              if (labelError.contains('shipped') == true) {
                 if (eanOrOrderSelected == 'Order Number') {
                   saveLabelData(
                     serialNo: serialNoDB + 1,
-                    isShippedOrder: 'No',
+                    isShippedOrder: 'Yes',
                     orderId: orderListForPackAndScan[0].orderNumber,
                     ean: eanListForOrderNumberCase.join(','),
                     siteName: siteNameListForOrderNumberCase.join(','),
                     siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                    encryptedLabel: encryptedLabel,
+                    encryptedLabel: 'NA',
                   );
 
+                  /// ERROR IN LABEL AND ORDER NUMBER SELECTED CASE
+                  /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
+                  /// SSMQW ORDERS
                   if (selectedPicklist == 'MSMQW') {
-                    /// ADDED HANDLING FOR ORDER NUMBER -- LABEL PRINTED -- MSMQW CASE
+                    /// ADDED HANDLING FOR ORDER NUMBER -- LABEL ERROR -- MSMQW CASE
                     saveScannedOrdersForMSMQWData(
                       picklistType: 'MSMQW',
-                      title:
-                          orderListForPackAndScan.map((e) => e.title).toList(),
+                      title: orderListForPackAndScan.map((e) => e.title).toList(),
                       sku: orderListForPackAndScan.map((e) => e.sku).toList(),
-                      barcode:
-                          orderListForPackAndScan.map((e) => e.ean).toList(),
+                      barcode: orderListForPackAndScan.map((e) => e.ean).toList(),
                       orderNumber: orderListForPackAndScan[0].orderNumber,
                       qtyToPick: orderListForPackAndScan
                           .map((e) => e.qtyToPick)
                           .toList(),
                       url: orderListForPackAndScan.map((e) => e.url).toList(),
                       siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                      siteName: orderListForPackAndScan
-                          .map((e) => e.siteName)
-                          .toList(),
+                      siteName:
+                      orderListForPackAndScan.map((e) => e.siteName).toList(),
                       labelError: labelError,
                       labelUrl: labelUrl,
                     );
                   } else {
-                    /// ORDER NUMBER SELECTED CASE
-                    /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
-                    /// SSMQW ORDERS
                     saveScannedOrdersData(
                       picklistType:
-                          parseToInt(orderListForPackAndScan[0].qtyToPick) == 1
-                              ? 'SIW'
-                              : 'SSMQW',
+                      parseToInt(orderListForPackAndScan[0].qtyToPick) == 1
+                          ? 'SIW'
+                          : 'SSMQW',
                       title: orderListForPackAndScan[0].title,
                       sku: orderListForPackAndScan[0].sku,
                       barcode: orderListForPackAndScan[0].ean,
@@ -540,57 +357,35 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
                       url: orderListForPackAndScan[0].url,
                       siteOrderId: orderListForPackAndScan[0].siteOrderId,
                       siteName: orderListForPackAndScan[0].siteName,
-                      labelError: '',
+                      labelError: labelError,
                       labelUrl: labelUrl,
                       packagingType:
-                          orderListForPackAndScan[0].packagingType.isEmpty
-                              ? 'NA'
-                              : orderListForPackAndScan[0].packagingType,
+                      orderListForPackAndScan[0].packagingType.isEmpty
+                          ? 'NA'
+                          : orderListForPackAndScan[0].packagingType,
                     );
                   }
                 } else {
                   if (selectedPicklist == 'MSMQW') {
-                    if (isOrderSavedToDBForMSMQW[0] == true &&
-                        isAllSKUPicked[0] == true) {
-                      /// ORDER IS SAVED PREVIOUSLY AND ALL SKUs ARE PICKED NOW >>>> PRINT LABEL AND CHANGE THE LABEL FROM 'NA' TO ACTUAL LABEL IN THE DB
-                      updateLabelData(
-                        objectId: labelDataPAndSDB[labelDataPAndSDB.indexWhere(
-                                    (e) =>
-                                        (e.get<String>('order_id') ?? '') ==
-                                        orderListForPackAndScanBarcodeMSMQW[0]
-                                                [0]
-                                            .orderNumber)]
-                                .get<String>('objectId') ??
-                            '',
-                        isShippedOrder:
-                            'Was Partial Picked MSMQW Order - Label Printed Now',
-                        encryptedLabel: encryptedLabel,
-                      );
-                    }
+                    saveLabelData(
+                      serialNo: serialNoDB + 1,
+                      isShippedOrder: 'Yes',
+                      orderId:
+                      orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
+                      ean: orderListForPackAndScanBarcodeMSMQW[0]
+                          .map((e) => e.ean)
+                          .toList()
+                          .join(','),
+                      siteName: orderListForPackAndScanBarcodeMSMQW[0]
+                          .map((e) => e.siteName)
+                          .toList()
+                          .join(','),
+                      siteOrderId:
+                      orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
+                      encryptedLabel: 'NA',
+                    );
 
-                    if (isOrderSavedToDBForMSMQW[0] == false &&
-                        isAllSKUPicked[0] == true) {
-                      /// ORDER IS NOT SAVED PREVIOUSLY AND ALL SKUs ARE PICKED >>>> PRINT LABEL AND SAVE THE LABEL TO THE DB
-                      saveLabelData(
-                        serialNo: serialNoDB + 1,
-                        isShippedOrder: 'No',
-                        orderId: orderListForPackAndScanBarcodeMSMQW[0][0]
-                            .orderNumber,
-                        ean: orderListForPackAndScanBarcodeMSMQW[0]
-                            .map((e) => e.ean)
-                            .toList()
-                            .join(','),
-                        siteName: orderListForPackAndScanBarcodeMSMQW[0]
-                            .map((e) => e.siteName)
-                            .toList()
-                            .join(','),
-                        siteOrderId: orderListForPackAndScanBarcodeMSMQW[0][0]
-                            .siteOrderId,
-                        encryptedLabel: encryptedLabel,
-                      );
-                    }
-
-                    /// ADD HANDLING FOR BARCODE -- LABEL PRINTED -- MSMQW CASE
+                    /// ADDED HANDLING FOR BARCODE -- LABEL ERROR -- MSMQW CASE
                     saveScannedOrdersForMSMQWData(
                       picklistType: 'MSMQW',
                       title: orderListForPackAndScanBarcodeMSMQW[0]
@@ -603,7 +398,7 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
                           .map((e) => e.ean)
                           .toList(),
                       orderNumber:
-                          orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
+                      orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
                       qtyToPick: orderListForPackAndScanBarcodeMSMQW[0]
                           .map((e) => e.qtyToPick)
                           .toList(),
@@ -611,7 +406,7 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
                           .map((e) => e.url)
                           .toList(),
                       siteOrderId:
-                          orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
+                      orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
                       siteName: orderListForPackAndScanBarcodeMSMQW[0]
                           .map((e) => e.siteName)
                           .toList(),
@@ -621,17 +416,17 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
                   } else {
                     saveLabelData(
                       serialNo: serialNoDB + 1,
-                      isShippedOrder: 'No',
+                      isShippedOrder: 'Yes',
                       orderId: orderListForPackAndScan[0].orderNumber,
                       ean: orderListForPackAndScan[0].ean,
                       siteName: orderListForPackAndScan[0].siteName,
                       siteOrderId: orderListForPackAndScan[0].siteOrderId,
-                      encryptedLabel: encryptedLabel,
+                      encryptedLabel: 'NA',
                     );
 
-                    /// BARCODE SELECTED CASE
-                    /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW
-                    /// AND SSMQW ORDERS
+                    /// ERROR IN LABEL AND BARCODE SELECTED CASE
+                    /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
+                    /// SSMQW ORDERS
                     saveScannedOrdersData(
                       picklistType: selectedPicklist,
                       title: orderListForPackAndScan[0].title,
@@ -642,15 +437,18 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
                       url: orderListForPackAndScan[0].url,
                       siteOrderId: orderListForPackAndScan[0].siteOrderId,
                       siteName: orderListForPackAndScan[0].siteName,
-                      labelError: '',
+                      labelError: labelError,
                       labelUrl: labelUrl,
                       packagingType:
-                          orderListForPackAndScan[0].packagingType.isEmpty
-                              ? 'NA'
-                              : orderListForPackAndScan[0].packagingType,
+                      orderListForPackAndScan[0].packagingType.isEmpty
+                          ? 'NA'
+                          : orderListForPackAndScan[0].packagingType,
                     );
                   }
                 }
+              }
+              await Future.delayed(
+                  Duration(seconds: labelError.length >= 60 ? 8 : 3), () {
                 setState(() {
                   errorVisible = false;
                   orderListForPackAndScan = [];
@@ -662,8 +460,208 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
               });
             });
           });
-        });
-      }
+        } else {
+          setState(() {
+            isPrintingLabel = true;
+          });
+          await Future.delayed(const Duration(milliseconds: 100), () {
+            log('${DateTime.now().toUtc().add(const Duration(hours: 1))}');
+            print(labelUrl).whenComplete(() async {
+              await Future.delayed(const Duration(milliseconds: 100), () async {
+                setState(() {
+                  buttonLoading = false;
+                  isLoading = true;
+                  isPrintingLabel = false;
+                });
+
+                const encryptionKey = "This 32 char key have 256 bits..";
+
+                encrypt.Encrypted encrypted =
+                encryptWithAES(encryptionKey, labelUrl);
+                String encryptedBase64 = encrypted.base64;
+                log('Encrypted data in base64 encoding: $encryptedBase64');
+                setState(() {
+                  encryptedLabel = encryptedBase64;
+                });
+
+                String decryptedText = decryptWithAES(encryptionKey, encrypted);
+                log('Decrypted data: $decryptedText');
+
+                await Future.delayed(const Duration(milliseconds: 100), () async {
+                  if (eanOrOrderSelected == 'Order Number') {
+                    saveLabelData(
+                      serialNo: serialNoDB + 1,
+                      isShippedOrder: 'No',
+                      orderId: orderListForPackAndScan[0].orderNumber,
+                      ean: eanListForOrderNumberCase.join(','),
+                      siteName: siteNameListForOrderNumberCase.join(','),
+                      siteOrderId: orderListForPackAndScan[0].siteOrderId,
+                      encryptedLabel: encryptedLabel,
+                    );
+
+                    if (selectedPicklist == 'MSMQW') {
+                      /// ADDED HANDLING FOR ORDER NUMBER -- LABEL PRINTED -- MSMQW CASE
+                      saveScannedOrdersForMSMQWData(
+                        picklistType: 'MSMQW',
+                        title:
+                        orderListForPackAndScan.map((e) => e.title).toList(),
+                        sku: orderListForPackAndScan.map((e) => e.sku).toList(),
+                        barcode:
+                        orderListForPackAndScan.map((e) => e.ean).toList(),
+                        orderNumber: orderListForPackAndScan[0].orderNumber,
+                        qtyToPick: orderListForPackAndScan
+                            .map((e) => e.qtyToPick)
+                            .toList(),
+                        url: orderListForPackAndScan.map((e) => e.url).toList(),
+                        siteOrderId: orderListForPackAndScan[0].siteOrderId,
+                        siteName: orderListForPackAndScan
+                            .map((e) => e.siteName)
+                            .toList(),
+                        labelError: labelError,
+                        labelUrl: labelUrl,
+                      );
+                    } else {
+                      /// ORDER NUMBER SELECTED CASE
+                      /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW AND
+                      /// SSMQW ORDERS
+                      saveScannedOrdersData(
+                        picklistType:
+                        parseToInt(orderListForPackAndScan[0].qtyToPick) == 1
+                            ? 'SIW'
+                            : 'SSMQW',
+                        title: orderListForPackAndScan[0].title,
+                        sku: orderListForPackAndScan[0].sku,
+                        barcode: orderListForPackAndScan[0].ean,
+                        orderNumber: orderListForPackAndScan[0].orderNumber,
+                        qtyToPick: orderListForPackAndScan[0].qtyToPick,
+                        url: orderListForPackAndScan[0].url,
+                        siteOrderId: orderListForPackAndScan[0].siteOrderId,
+                        siteName: orderListForPackAndScan[0].siteName,
+                        labelError: '',
+                        labelUrl: labelUrl,
+                        packagingType:
+                        orderListForPackAndScan[0].packagingType.isEmpty
+                            ? 'NA'
+                            : orderListForPackAndScan[0].packagingType,
+                      );
+                    }
+                  } else {
+                    if (selectedPicklist == 'MSMQW') {
+                      if (isOrderSavedToDBForMSMQW[0] == true &&
+                          isAllSKUPicked[0] == true) {
+                        /// ORDER IS SAVED PREVIOUSLY AND ALL SKUs ARE PICKED NOW >>>> PRINT LABEL AND CHANGE THE LABEL FROM 'NA' TO ACTUAL LABEL IN THE DB
+                        updateLabelData(
+                          objectId: labelDataPAndSDB[labelDataPAndSDB.indexWhere(
+                                  (e) =>
+                              (e.get<String>('order_id') ?? '') ==
+                                  orderListForPackAndScanBarcodeMSMQW[0]
+                                  [0]
+                                      .orderNumber)]
+                              .get<String>('objectId') ??
+                              '',
+                          isShippedOrder:
+                          'Was Partial Picked MSMQW Order - Label Printed Now',
+                          encryptedLabel: encryptedLabel,
+                        );
+                      }
+
+                      if (isOrderSavedToDBForMSMQW[0] == false &&
+                          isAllSKUPicked[0] == true) {
+                        /// ORDER IS NOT SAVED PREVIOUSLY AND ALL SKUs ARE PICKED >>>> PRINT LABEL AND SAVE THE LABEL TO THE DB
+                        saveLabelData(
+                          serialNo: serialNoDB + 1,
+                          isShippedOrder: 'No',
+                          orderId: orderListForPackAndScanBarcodeMSMQW[0][0]
+                              .orderNumber,
+                          ean: orderListForPackAndScanBarcodeMSMQW[0]
+                              .map((e) => e.ean)
+                              .toList()
+                              .join(','),
+                          siteName: orderListForPackAndScanBarcodeMSMQW[0]
+                              .map((e) => e.siteName)
+                              .toList()
+                              .join(','),
+                          siteOrderId: orderListForPackAndScanBarcodeMSMQW[0][0]
+                              .siteOrderId,
+                          encryptedLabel: encryptedLabel,
+                        );
+                      }
+
+                      /// ADD HANDLING FOR BARCODE -- LABEL PRINTED -- MSMQW CASE
+                      saveScannedOrdersForMSMQWData(
+                        picklistType: 'MSMQW',
+                        title: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.title)
+                            .toList(),
+                        sku: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.sku)
+                            .toList(),
+                        barcode: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.ean)
+                            .toList(),
+                        orderNumber:
+                        orderListForPackAndScanBarcodeMSMQW[0][0].orderNumber,
+                        qtyToPick: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.qtyToPick)
+                            .toList(),
+                        url: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.url)
+                            .toList(),
+                        siteOrderId:
+                        orderListForPackAndScanBarcodeMSMQW[0][0].siteOrderId,
+                        siteName: orderListForPackAndScanBarcodeMSMQW[0]
+                            .map((e) => e.siteName)
+                            .toList(),
+                        labelError: labelError,
+                        labelUrl: labelUrl,
+                      );
+                    } else {
+                      saveLabelData(
+                        serialNo: serialNoDB + 1,
+                        isShippedOrder: 'No',
+                        orderId: orderListForPackAndScan[0].orderNumber,
+                        ean: orderListForPackAndScan[0].ean,
+                        siteName: orderListForPackAndScan[0].siteName,
+                        siteOrderId: orderListForPackAndScan[0].siteOrderId,
+                        encryptedLabel: encryptedLabel,
+                      );
+
+                      /// BARCODE SELECTED CASE
+                      /// SAVING DATA FOR SHOWING LAST 5 SCANNED ORDER FOR SIW
+                      /// AND SSMQW ORDERS
+                      saveScannedOrdersData(
+                        picklistType: selectedPicklist,
+                        title: orderListForPackAndScan[0].title,
+                        sku: orderListForPackAndScan[0].sku,
+                        barcode: orderListForPackAndScan[0].ean,
+                        orderNumber: orderListForPackAndScan[0].orderNumber,
+                        qtyToPick: orderListForPackAndScan[0].qtyToPick,
+                        url: orderListForPackAndScan[0].url,
+                        siteOrderId: orderListForPackAndScan[0].siteOrderId,
+                        siteName: orderListForPackAndScan[0].siteName,
+                        labelError: '',
+                        labelUrl: labelUrl,
+                        packagingType:
+                        orderListForPackAndScan[0].packagingType.isEmpty
+                            ? 'NA'
+                            : orderListForPackAndScan[0].packagingType,
+                      );
+                    }
+                  }
+                  setState(() {
+                    errorVisible = false;
+                    orderListForPackAndScan = [];
+                    orderListForPackAndScanBarcodeMSMQW = [];
+                    isLoading = false;
+                  });
+                  barcodeController.clear();
+                  FocusScope.of(context).requestFocus(barcodeFocus);
+                });
+              });
+            });
+          });
+        }
+      });
     });
   }
 
@@ -3802,6 +3800,7 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
   Future<void> printLabel({
     required String siteOrderId,
     required bool isAmazonPrime,
+    required bool isTest,
   }) async {
     setState(() {
       labelUrl = '';
@@ -3819,7 +3818,7 @@ class _PackAndScanWebState extends State<PackAndScanWeb> {
     }
     String uri = isAmazonPrime
         ? 'https://pickpackquick.azurewebsites.net/api/JadlamLabel?OrderNumber=$siteOrderIdToSent'
-        : 'https://weblegs.info/EasyPostv2/api/EasyPostVersion2?OrderNumber=$siteOrderIdToSent';
+        : 'https://weblegs.info/EasyPostv2/api/EasyPostVersion2?OrderNumber=$siteOrderIdToSent&IsTest=$isTest';
     log('V siteOrderIdToSent >>---> $siteOrderIdToSent');
     log('PRINT LABEL API URI >>---> $uri');
 

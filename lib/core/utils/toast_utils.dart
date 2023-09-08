@@ -1,3 +1,4 @@
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -82,15 +83,16 @@ class ToastUtils {
     required BuildContext context,
   }) {
     MotionToast(
+      height: 40,
+      width: calcTextSize(message, context).width + 40,
       primaryColor: Colors.grey.shade900,
       backgroundType: BackgroundType.solid,
       toastDuration: const Duration(milliseconds: 1500),
-      description: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
+      description: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(message, style: const TextStyle(color: Colors.white)),
+        ],
       ),
       displayBorder: false,
       displaySideBar: false,

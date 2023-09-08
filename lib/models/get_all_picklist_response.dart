@@ -22,9 +22,9 @@ class GetAllPicklistResponse {
       );
 
   Map<String, dynamic> toJson() => {
-    "Batch": List<dynamic>.from(batch.map((x) => x.toJson())),
-    "Sku": sku,
-  };
+        "Batch": List<dynamic>.from(batch.map((x) => x.toJson())),
+        "Sku": sku,
+      };
 }
 
 class Batch {
@@ -42,6 +42,7 @@ class Batch {
   String isAlreadyOpened;
   String totalWarehouseLocation;
   String totalDC;
+  String totalSC;
 
   Batch({
     required this.picklist,
@@ -58,39 +59,42 @@ class Batch {
     required this.isAlreadyOpened,
     required this.totalWarehouseLocation,
     required this.totalDC,
+    required this.totalSC,
   });
 
   factory Batch.fromJson(Map<String, dynamic> json) => Batch(
-    picklist: json["Picklist"] ?? 'null',
-    batchId: json["BatchId"],
-    createdOn: json["CreatedOn"],
-    requestType: json["Request_Type"],
-    status: json["status"],
-    pickedsku: json["pickedsku"],
-    totalsku: json["totalsku"],
-    pickedorder: json["pickedorder"],
-    totalorder: json["totalorder"],
-    partialSkus: json["partialSkus"],
-    partialOrders: json["partialOrders"],
-    isAlreadyOpened: json["IsAlreadyOpened"],
-    totalWarehouseLocation: json["TotalWarehouseLocation"],
-    totalDC: json["TotalDCs"],
-  );
+        picklist: json["Picklist"] ?? 'null',
+        batchId: json["BatchId"],
+        createdOn: json["CreatedOn"],
+        requestType: json["Request_Type"],
+        status: json["status"],
+        pickedsku: json["pickedsku"],
+        totalsku: json["totalsku"],
+        pickedorder: json["pickedorder"],
+        totalorder: json["totalorder"],
+        partialSkus: json["partialSkus"],
+        partialOrders: json["partialOrders"],
+        isAlreadyOpened: json["IsAlreadyOpened"],
+        totalWarehouseLocation: json["TotalWarehouseLocation"],
+        totalDC: json["TotalDCs"],
+        totalSC: json["TotalShippingClasses"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "Picklist": picklist,
-    "BatchId": batchId,
-    "CreatedOn": createdOn,
-    "Request_Type": requestType,
-    "status": status,
-    "pickedsku": pickedsku,
-    "totalsku": totalsku,
-    "pickedorder": pickedorder,
-    "totalorder": totalorder,
-    "partialSkus": partialSkus,
-    "partialOrders": partialOrders,
-    "IsAlreadyOpened": isAlreadyOpened,
-    "TotalWarehouseLocation": totalWarehouseLocation,
-    "TotalDCs": totalDC,
-  };
+        "Picklist": picklist,
+        "BatchId": batchId,
+        "CreatedOn": createdOn,
+        "Request_Type": requestType,
+        "status": status,
+        "pickedsku": pickedsku,
+        "totalsku": totalsku,
+        "pickedorder": pickedorder,
+        "totalorder": totalorder,
+        "partialSkus": partialSkus,
+        "partialOrders": partialOrders,
+        "IsAlreadyOpened": isAlreadyOpened,
+        "TotalWarehouseLocation": totalWarehouseLocation,
+        "TotalDCs": totalDC,
+        "TotalShippingClasses": totalSC,
+      };
 }

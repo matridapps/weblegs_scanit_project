@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:absolute_app/core/apis/api_calls.dart';
-import 'package:absolute_app/core/utils/toast_utils.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -38,14 +38,12 @@ class _SwitchForDCSplitSettingState extends State<SwitchForDCSplitSetting> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        if(error.isNotEmpty)
+        if (error.isNotEmpty)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(error)
-            ],
+            children: [Text(error)],
           ),
-        if(error.isEmpty)
+        if (error.isEmpty)
           Switch(
             value: light,
             onChanged: (bool value) async {
@@ -56,13 +54,11 @@ class _SwitchForDCSplitSettingState extends State<SwitchForDCSplitSetting> {
                 isDCSplitAutomatic: value == true ? 'Yes' : 'No',
                 userId: widget.userId,
               ).whenComplete(
-                    () {
-                  ToastUtils.motionToastCentered1500MS(
-                    message:
-                    'Automatic Split by Distribution Center in Picklist is ${value == true ? 'Enabled' : 'Disabled'}',
-                    context: context,
-                  );
-                },
+                () => commonToastCentered(
+                  msg:
+                      'Automatic Split by Distribution Center in Picklist is ${value == true ? 'Enabled' : 'Disabled'}',
+                  context: context,
+                ),
               );
             },
           ),
@@ -84,7 +80,7 @@ class _SwitchForDCSplitSettingState extends State<SwitchForDCSplitSetting> {
 
         setState(() {
           light = (dcSplitData[0].get<String>('is_dc_split_automatic') ?? '') ==
-              'Yes'
+                  'Yes'
               ? true
               : false;
         });

@@ -4,6 +4,7 @@ import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/toast_utils.dart';
 import 'package:absolute_app/screens/switch_for_bundle_sku_setting.dart';
+import 'package:absolute_app/screens/switch_for_dc_split_setting.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -121,29 +122,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 )
-              : SingleChildScrollView(
-                  child: GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10.0,
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _bundleSKUSettingBuilder(context, size),
-                            _defaultValuesBuilder(context, size),
-                            _defaultValueForPackAndScanBuilder(context, size),
-                            _settingForSiteName(context, size),
-                            _bottomBuilder(context, size),
-                          ],
+              : GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Column(
+                      children: [
+                        _saveChangesBuilder(context, size),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                _bundleSKUSettingBuilder(context, size),
+                                _dcSplitSettingBuilder(context, size),
+                                _defaultValuesBuilder(context, size),
+                                _defaultValueForPackAndScanBuilder(
+                                    context, size),
+                                _settingForSiteName(context, size),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -151,6 +158,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   /// BUILDER METHODS FOR MOBILE
+
+  Widget _saveChangesBuilder(BuildContext context, Size size) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 40,
+          width: 200,
+          child: RoundedLoadingButton(
+            color: Colors.green,
+            borderRadius: 10,
+            height: 50,
+            width: 160,
+            successIcon: Icons.check_rounded,
+            failedIcon: Icons.close_rounded,
+            successColor: Colors.green,
+            controller: saveValuesController,
+            onPressed: () async {
+              await saveValues(
+                length: lengthController.text.toString(),
+                width: widthController.text.toString(),
+                height: heightController.text.toString(),
+                weight: weightController.text.toString(),
+              ).whenComplete(
+                () async {
+                  await savePackAndScanValues(
+                    eanOrOrder: eanOrOrderSelected,
+                    picklistType: selectedPicklist,
+                  );
+                },
+              ).whenComplete(
+                () async {
+                  await saveSiteNameList(
+                    isSelected: checkBoxValueListForSiteName
+                        .map((e) => e == true ? 'Yes' : 'No')
+                        .toList(),
+                    userId: userIdListForSiteName,
+                  );
+                },
+              ).whenComplete(() async {
+                await getDefaultValuesForSKU();
+              }).whenComplete(() async {
+                await getPackAndScanValues();
+              }).whenComplete(() async {
+                await getSiteNameList();
+              }).whenComplete(() {
+                ToastUtils.showCenteredShortToast(
+                  message: 'Changes Saved Successfully',
+                );
+                saveValuesController.reset();
+              });
+            },
+            child: Text(
+              'Save Changes',
+              style: TextStyle(
+                fontSize: size.width * .048,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const Divider(),
+      ],
+    );
+  }
 
   Widget _bundleSKUSettingBuilder(BuildContext context, Size size) {
     return ListTile(
@@ -169,9 +242,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _dcSplitSettingBuilder(BuildContext context, Size size) {
+    return ListTile(
+      title: Text(
+        'Make Splitting by Distribution Center Automatic in Picklist',
+        style: TextStyle(
+          fontSize: size.width * .05,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        'Whenever a new request to create a SIW or SSMQW Picklist is given, If this setting is enabled, then it will automatically create separate Picklists for all Distribution Centers and If disabled, then only one Picklist will be created and there will option to Split that Picklist on Distribution Centers',
+        style: TextStyle(fontSize: size.width * .045),
+      ),
+      trailing: SwitchForDCSplitSetting(userId: widget.userId),
+    );
+  }
+
   Widget _defaultValuesBuilder(BuildContext context, Size size) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 5),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,74 +575,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _bottomBuilder(BuildContext context, Size size) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 40.0),
-          child: Divider(),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: SizedBox(
-            height: 35,
-            width: 300,
-            child: RoundedLoadingButton(
-              color: Colors.green,
-              borderRadius: 10,
-              height: 50,
-              width: 160,
-              successIcon: Icons.check_rounded,
-              failedIcon: Icons.close_rounded,
-              successColor: Colors.green,
-              controller: saveValuesController,
-              onPressed: () async {
-                await saveValues(
-                  length: lengthController.text.toString(),
-                  width: widthController.text.toString(),
-                  height: heightController.text.toString(),
-                  weight: weightController.text.toString(),
-                )
-                    .whenComplete(
-                      () async => await savePackAndScanValues(
-                        eanOrOrder: eanOrOrderSelected,
-                        picklistType: selectedPicklist,
-                      ),
-                    )
-                    .whenComplete(
-                      () async => await saveSiteNameList(
-                        isSelected: checkBoxValueListForSiteName
-                            .map((e) => e == true ? 'Yes' : 'No')
-                            .toList(),
-                        userId: userIdListForSiteName,
-                      ),
-                    )
-                    .whenComplete(() async => await getDefaultValuesForSKU())
-                    .whenComplete(() async => await getPackAndScanValues())
-                    .whenComplete(() async => await getSiteNameList())
-                    .whenComplete(() {
-                  ToastUtils.showCenteredShortToast(
-                    message: 'Changes Saved Successfully',
-                  );
-                  saveValuesController.reset();
-                });
-              },
-              child: Text(
-                'Save Changes',
-                style: TextStyle(
-                  fontSize: size.width * .048,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

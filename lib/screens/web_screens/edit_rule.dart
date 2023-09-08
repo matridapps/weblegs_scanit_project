@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/core/utils/responsive_check.dart';
-import 'package:absolute_app/core/utils/widgets.dart';
+import 'package:absolute_app/core/utils/common_screen_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -254,22 +254,16 @@ class _EditRuleState extends State<EditRule> {
           toolbarHeight: AppBar().preferredSize.height,
           title: Text(
             'Edit Rule',
-            style: TextStyle(
-              fontSize: size.height * .03,
-              color: Colors.black,
-            ),
+            style: TextStyle(fontSize: size.height * .03, color: Colors.black),
           ),
         ),
         body: isLoading == true
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: appColor,
-                ),
-              )
+            ? const Center(child: CircularProgressIndicator(color: appColor))
             : errorVisible == true
                 ? const Center(
                     child: Text(
-                        'Internet may not be available, Please check your connection and Restart the app.'),
+                      'Internet may not be available, Please check your connection and Restart the app',
+                    ),
                   )
                 : GestureDetector(
                     onTap: () {
@@ -337,30 +331,20 @@ class _EditRuleState extends State<EditRule> {
                 children: [
                   Text(
                     'Rule Name',
-                    style: TextStyle(
-                      fontSize: tFontSize,
-                      color: Colors.black,
-                    ),
+                    style: TextStyle(fontSize: tFontSize, color: Colors.black),
                   )
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                left: size.width * .025,
-              ),
+              padding: EdgeInsets.only(left: size.width * .025),
               child: SizedBox(
                 height: size.height * .03,
                 width: size.width,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Name',
-                      style: TextStyle(
-                        fontSize: stFontSize,
-                      ),
-                    )
+                    Text('Name', style: TextStyle(fontSize: stFontSize)),
                   ],
                 ),
               ),
@@ -401,10 +385,7 @@ class _EditRuleState extends State<EditRule> {
                             ),
                           ),
                           focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: appColor,
-                              width: 0.5,
-                            ),
+                            borderSide: BorderSide(color: appColor, width: 0.5),
                           ),
                           filled: true,
                           fillColor: color3,
@@ -436,12 +417,7 @@ class _EditRuleState extends State<EditRule> {
                         log('isActiveChecked - $isActiveChecked');
                       },
                     ),
-                    Text(
-                      'Active',
-                      style: TextStyle(
-                        fontSize: stFontSize,
-                      ),
-                    )
+                    Text('Active', style: TextStyle(fontSize: stFontSize))
                   ],
                 ),
               ),
@@ -1042,9 +1018,9 @@ class _EditRuleState extends State<EditRule> {
           child: SizedBox(
             height: size.height * .03,
             width: size.width,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Ship from',
                   style: TextStyle(
@@ -1186,9 +1162,9 @@ class _EditRuleState extends State<EditRule> {
           child: SizedBox(
             height: size.height * .03,
             width: size.width,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Assign to carrier',
                   style: TextStyle(
@@ -1294,10 +1270,15 @@ class _EditRuleState extends State<EditRule> {
                           customInvoiceValue =
                               customInvoice[servicesForIndexing.indexOf('None')]
                                   [0];
-                          ecdValue = ecd[servicesForIndexing.indexOf('None')][0];
-                          liabilityValue = liability[servicesForIndexing.indexOf('None')][0];
-                          preClearedValue = preCleared[servicesForIndexing.indexOf('None')][0];
-                          recipientNotificationValue = recipientNotification[servicesForIndexing.indexOf('None')][0];
+                          ecdValue =
+                              ecd[servicesForIndexing.indexOf('None')][0];
+                          liabilityValue =
+                              liability[servicesForIndexing.indexOf('None')][0];
+                          preClearedValue =
+                              preCleared[servicesForIndexing.indexOf('None')]
+                                  [0];
+                          recipientNotificationValue = recipientNotification[
+                              servicesForIndexing.indexOf('None')][0];
                           addresseeIdentificationController.text = '';
                           lcLocationNameController.text = '';
                           lcLocationTypeController.text = '';
@@ -1329,15 +1310,12 @@ class _EditRuleState extends State<EditRule> {
           child: SizedBox(
             height: size.height * .03,
             width: size.width,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Assign to service',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 )
               ],
             ),
@@ -1353,10 +1331,7 @@ class _EditRuleState extends State<EditRule> {
                 width: size.width * .83,
                 decoration: BoxDecoration(
                   color: color3,
-                  border: Border.all(
-                    width: 0.25,
-                    color: Colors.grey,
-                  ),
+                  border: Border.all(width: 0.25, color: Colors.grey),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -1369,7 +1344,8 @@ class _EditRuleState extends State<EditRule> {
                         width: 25,
                         child: FittedBox(
                           child: Image.asset(
-                              'assets/add_new_rule_assets/dd_icon.png'),
+                            'assets/add_new_rule_assets/dd_icon.png',
+                          ),
                         ),
                       ),
                       items: services
@@ -1430,10 +1406,16 @@ class _EditRuleState extends State<EditRule> {
                           /// CHANGES 04 JUNE, 2023 - FOR DPD CARRIER
                           customInvoiceValue = customInvoice[
                               servicesForIndexing.indexOf(newValue)][0];
-                          ecdValue = ecd[servicesForIndexing.indexOf(newValue)][0];
-                          liabilityValue = liability[servicesForIndexing.indexOf(newValue)][0];
-                          preClearedValue = preCleared[servicesForIndexing.indexOf(newValue)][0];
-                          recipientNotificationValue = recipientNotification[servicesForIndexing.indexOf(newValue)][0];
+                          ecdValue =
+                              ecd[servicesForIndexing.indexOf(newValue)][0];
+                          liabilityValue =
+                              liability[servicesForIndexing.indexOf(newValue)]
+                                  [0];
+                          preClearedValue =
+                              preCleared[servicesForIndexing.indexOf(newValue)]
+                                  [0];
+                          recipientNotificationValue = recipientNotification[
+                              servicesForIndexing.indexOf(newValue)][0];
 
                           addresseeIdentificationController.text = '';
                           lcLocationNameController.text = '';
@@ -1472,15 +1454,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Package type',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -1503,10 +1482,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -1519,7 +1495,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: packageType[
@@ -1573,15 +1550,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Address contains Virtual Tracking Number',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -1604,10 +1578,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -1620,7 +1591,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: virtualTracking[
@@ -1674,15 +1646,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Addressee Identification Reference Number (for Brazil, Russia and Portugal)',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -1713,10 +1682,7 @@ class _EditRuleState extends State<EditRule> {
                       controller: addresseeIdentificationController,
                       textAlignVertical: TextAlignVertical.top,
                       cursorColor: appColor,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
+                      style: TextStyle(fontSize: fontSize, color: Colors.black),
                       decoration: InputDecoration(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 10),
@@ -1727,10 +1693,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.5),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -1763,15 +1726,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'First/Second class',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -1793,10 +1753,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -1809,7 +1766,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items:
@@ -1862,15 +1820,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Guarantee By',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -1893,10 +1848,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -1909,7 +1861,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: guarantee[
@@ -1963,9 +1916,9 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Local Collect',
                     style: TextStyle(
@@ -1994,10 +1947,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2010,7 +1960,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: localCollect[
@@ -2064,15 +2015,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Local Collect Location Name',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2117,10 +2065,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.51),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -2155,15 +2100,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Local Collect Location Type',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2194,13 +2136,11 @@ class _EditRuleState extends State<EditRule> {
                       controller: lcLocationTypeController,
                       textAlignVertical: TextAlignVertical.top,
                       cursorColor: appColor,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
+                      style: TextStyle(fontSize: fontSize, color: Colors.black),
                       decoration: InputDecoration(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 10),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 0.25,
@@ -2208,10 +2148,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.5),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -2246,15 +2183,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Notification Type',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2277,10 +2211,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2346,15 +2277,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Parcel Shape',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2377,10 +2305,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2393,7 +2318,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: parcelShape[
@@ -2446,15 +2372,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Safeplace (Use the Shipping Notes in Order Info tab for Safeplace instructions)',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2477,10 +2400,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2547,15 +2467,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Postal Charges',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2586,10 +2503,7 @@ class _EditRuleState extends State<EditRule> {
                       controller: postalChargesController,
                       textAlignVertical: TextAlignVertical.top,
                       cursorColor: appColor,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
+                      style: TextStyle(fontSize: fontSize, color: Colors.black),
                       decoration: InputDecoration(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 10),
@@ -2600,10 +2514,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.5),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -2637,15 +2548,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Saturday delivery',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2668,10 +2576,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2684,7 +2589,8 @@ class _EditRuleState extends State<EditRule> {
                           width: 25,
                           child: FittedBox(
                             child: Image.asset(
-                                'assets/add_new_rule_assets/dd_icon.png'),
+                              'assets/add_new_rule_assets/dd_icon.png',
+                            ),
                           ),
                         ),
                         items: satDelivery[
@@ -2738,15 +2644,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Service Level code',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2777,10 +2680,7 @@ class _EditRuleState extends State<EditRule> {
                       controller: serviceLevelCodeController,
                       textAlignVertical: TextAlignVertical.top,
                       cursorColor: appColor,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
+                      style: TextStyle(fontSize: fontSize, color: Colors.black),
                       decoration: InputDecoration(
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 10),
@@ -2791,10 +2691,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.5),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -2829,15 +2726,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Signed consignment',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2860,10 +2754,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -2929,15 +2820,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Dangerous Goods: Medicines',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -2960,10 +2848,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3029,15 +2914,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Dangerous Goods: Perfume/Aftershave',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3060,10 +2942,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3129,15 +3008,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Dangerous Goods: Nail Varnish',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3160,10 +3036,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3229,15 +3102,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Dangerous Goods: Toiletry or medicinal aerosols',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3260,10 +3130,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3330,15 +3197,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Customs invoice type',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3361,10 +3225,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3431,15 +3292,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Destination Tax Number',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3484,10 +3342,7 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: appColor,
-                            width: 0.5,
-                          ),
+                          borderSide: BorderSide(color: appColor, width: 0.5),
                         ),
                         filled: true,
                         fillColor: color3,
@@ -3508,7 +3363,10 @@ class _EditRuleState extends State<EditRule> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Visibility(
-          visible: ecdVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes' ? true : false,
+          visible:
+              ecdVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(
               top: size.height * .015,
@@ -3517,15 +3375,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'ECD',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3533,7 +3388,10 @@ class _EditRuleState extends State<EditRule> {
           ),
         ),
         Visibility(
-          visible: ecdVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes' ? true : false,
+          visible:
+              ecdVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(left: size.width * .025),
             child: Row(
@@ -3544,10 +3402,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3566,16 +3421,16 @@ class _EditRuleState extends State<EditRule> {
                         items: ecd[servicesForIndexing.indexOf(servicesDDValue)]
                             .map(
                               (value) => DropdownMenuItem(
-                            value: value.toString(),
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Colors.black,
+                                value: value.toString(),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                         onChanged: (Object? newValue) {
                           setState(() {
@@ -3599,7 +3454,11 @@ class _EditRuleState extends State<EditRule> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Visibility(
-          visible: liabilityVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes' ? true : false,
+          visible:
+              liabilityVisible[servicesForIndexing.indexOf(servicesDDValue)] ==
+                      'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(
               top: size.height * .015,
@@ -3608,15 +3467,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Liability',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3624,7 +3480,11 @@ class _EditRuleState extends State<EditRule> {
           ),
         ),
         Visibility(
-          visible: liabilityVisible[servicesForIndexing.indexOf(servicesDDValue)] == 'Yes' ? true : false,
+          visible:
+              liabilityVisible[servicesForIndexing.indexOf(servicesDDValue)] ==
+                      'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(left: size.width * .025),
             child: Row(
@@ -3635,10 +3495,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3654,19 +3511,20 @@ class _EditRuleState extends State<EditRule> {
                                 'assets/add_new_rule_assets/dd_icon.png'),
                           ),
                         ),
-                        items: liability[servicesForIndexing.indexOf(servicesDDValue)]
+                        items: liability[
+                                servicesForIndexing.indexOf(servicesDDValue)]
                             .map(
                               (value) => DropdownMenuItem(
-                            value: value.toString(),
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Colors.black,
+                                value: value.toString(),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                         onChanged: (Object? newValue) {
                           setState(() {
@@ -3690,11 +3548,11 @@ class _EditRuleState extends State<EditRule> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Visibility(
-          visible: preClearedVisible[
-          servicesForIndexing.indexOf(servicesDDValue)] ==
-              'Yes'
-              ? true
-              : false,
+          visible:
+              preClearedVisible[servicesForIndexing.indexOf(servicesDDValue)] ==
+                      'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(
               top: size.height * .015,
@@ -3703,15 +3561,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Pre-Cleared',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3719,11 +3574,11 @@ class _EditRuleState extends State<EditRule> {
           ),
         ),
         Visibility(
-          visible: preClearedVisible[
-          servicesForIndexing.indexOf(servicesDDValue)] ==
-              'Yes'
-              ? true
-              : false,
+          visible:
+              preClearedVisible[servicesForIndexing.indexOf(servicesDDValue)] ==
+                      'Yes'
+                  ? true
+                  : false,
           child: Padding(
             padding: EdgeInsets.only(left: size.width * .025),
             child: Row(
@@ -3753,19 +3608,20 @@ class _EditRuleState extends State<EditRule> {
                                 'assets/add_new_rule_assets/dd_icon.png'),
                           ),
                         ),
-                        items: preCleared[servicesForIndexing.indexOf(servicesDDValue)]
+                        items: preCleared[
+                                servicesForIndexing.indexOf(servicesDDValue)]
                             .map(
                               (value) => DropdownMenuItem(
-                            value: value.toString(),
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Colors.black,
+                                value: value.toString(),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                         onChanged: (Object? newValue) {
                           setState(() {
@@ -3784,14 +3640,15 @@ class _EditRuleState extends State<EditRule> {
     );
   }
 
-  Widget _recipientNotificationBuilder(BuildContext context, Size size, double fontSize) {
+  Widget _recipientNotificationBuilder(
+      BuildContext context, Size size, double fontSize) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Visibility(
           visible: recipientNotificationVisible[
-          servicesForIndexing.indexOf(servicesDDValue)] ==
-              'Yes'
+                      servicesForIndexing.indexOf(servicesDDValue)] ==
+                  'Yes'
               ? true
               : false,
           child: Padding(
@@ -3802,15 +3659,12 @@ class _EditRuleState extends State<EditRule> {
             child: SizedBox(
               height: size.height * .03,
               width: size.width,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Recipient Notification',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -3819,8 +3673,8 @@ class _EditRuleState extends State<EditRule> {
         ),
         Visibility(
           visible: recipientNotificationVisible[
-          servicesForIndexing.indexOf(servicesDDValue)] ==
-              'Yes'
+                      servicesForIndexing.indexOf(servicesDDValue)] ==
+                  'Yes'
               ? true
               : false,
           child: Padding(
@@ -3833,10 +3687,7 @@ class _EditRuleState extends State<EditRule> {
                   width: size.width * .83,
                   decoration: BoxDecoration(
                     color: color3,
-                    border: Border.all(
-                      width: 0.25,
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(width: 0.25, color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -3853,19 +3704,19 @@ class _EditRuleState extends State<EditRule> {
                           ),
                         ),
                         items: recipientNotification[
-                        servicesForIndexing.indexOf(servicesDDValue)]
+                                servicesForIndexing.indexOf(servicesDDValue)]
                             .map(
                               (value) => DropdownMenuItem(
-                            value: value.toString(),
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Colors.black,
+                                value: value.toString(),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             .toList(),
                         onChanged: (Object? newValue) {
                           setState(() {
@@ -3910,10 +3761,10 @@ class _EditRuleState extends State<EditRule> {
               isBorderForEnhancementButton = true;
             });
           },
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               Icon(
                 Icons.remove_red_eye,
                 size: 16,
@@ -4613,23 +4464,31 @@ class _EditRuleState extends State<EditRule> {
 
         ecdVisible = [];
         ecd = [];
-        ecdVisible.addAll(shippingRulesFromDB.map((e) => e.get<String>('ecd_visible') ?? ""));
-        ecd.addAll(shippingRulesFromDB.map((e) => e.get<List<dynamic>>('ecd') ?? []));
+        ecdVisible.addAll(
+            shippingRulesFromDB.map((e) => e.get<String>('ecd_visible') ?? ""));
+        ecd.addAll(
+            shippingRulesFromDB.map((e) => e.get<List<dynamic>>('ecd') ?? []));
 
         liabilityVisible = [];
         liability = [];
-        liabilityVisible.addAll(shippingRulesFromDB.map((e) => e.get<String>('liability_visible') ?? ""));
-        liability.addAll(shippingRulesFromDB.map((e) => e.get<List<dynamic>>('liability') ?? []));
+        liabilityVisible.addAll(shippingRulesFromDB
+            .map((e) => e.get<String>('liability_visible') ?? ""));
+        liability.addAll(shippingRulesFromDB
+            .map((e) => e.get<List<dynamic>>('liability') ?? []));
 
         preClearedVisible = [];
         preCleared = [];
-        preClearedVisible.addAll(shippingRulesFromDB.map((e) => e.get<String>('precleared_visible') ?? ""));
-        preCleared.addAll(shippingRulesFromDB.map((e) => e.get<List<dynamic>>('precleared') ?? []));
+        preClearedVisible.addAll(shippingRulesFromDB
+            .map((e) => e.get<String>('precleared_visible') ?? ""));
+        preCleared.addAll(shippingRulesFromDB
+            .map((e) => e.get<List<dynamic>>('precleared') ?? []));
 
         recipientNotificationVisible = [];
         recipientNotification = [];
-        recipientNotificationVisible.addAll(shippingRulesFromDB.map((e) => e.get<String>('recipient_notification_visible') ?? ""));
-        recipientNotification.addAll(shippingRulesFromDB.map((e) => e.get<List<dynamic>>('recipient_notification') ?? []));
+        recipientNotificationVisible.addAll(shippingRulesFromDB
+            .map((e) => e.get<String>('recipient_notification_visible') ?? ""));
+        recipientNotification.addAll(shippingRulesFromDB
+            .map((e) => e.get<List<dynamic>>('recipient_notification') ?? []));
 
         /// adding data as per data from a saved rule
 
@@ -4656,7 +4515,6 @@ class _EditRuleState extends State<EditRule> {
           liabilityValue = widget.liability;
           preClearedValue = widget.preCleared;
           recipientNotificationValue = widget.recipientNotification;
-
 
           itemsToBeConditionedDDValue
               .addAll(widget.conditionItem.map((e) => e.toString()));

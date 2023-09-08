@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:absolute_app/core/apis/api_calls.dart';
 import 'package:absolute_app/core/utils/constants.dart';
 import 'package:absolute_app/screens/home_screen.dart';
@@ -80,7 +77,6 @@ class _SplashScreenState extends State<SplashScreen>
   void loadingData() async {
     await ApiCalls.getWeblegsData().then((data) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      log('data - ${jsonEncode(data)}');
       if (data.isEmpty) {
         Fluttertoast.showToast(
                 msg:
